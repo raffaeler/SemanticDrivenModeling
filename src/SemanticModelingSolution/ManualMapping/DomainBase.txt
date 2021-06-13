@@ -1,0 +1,30 @@
+﻿# This file contains the common concepts and related terms
+
+// The non unique identity of an entity
+$ Not necessarily an item identifier. Name, Tag, etc.
+Identity
+    Name : 100: The name of the entity
+    Title: 80
+
+Product
+    Material : 100
+
+
+
+# KnownTerms class
+# public static Term Name = new Term("Name", "The name of the entity");
+# public static Term Title = new Term("Title", "");
+#
+
+# KnownConcepts class
+# /// <summary>
+# /// The non unique identity of an entity
+# /// </summary>
+# public static Concept Identity = new Concept("Identity", "Not necessarily an item identifier. Name, Tag, etc.");
+#
+
+# 
+# Scope global = new Scope(
+#             new Imply(KnownTerms.Name, KnownConcepts.Identity)
+#             //new Imply(KnownTerms.Title, KnownConcepts.Identity)
+#            );

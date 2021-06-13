@@ -1,0 +1,11 @@
+﻿#
+// The primary component of a material
+RawMaterial
+
+Raw
+Ingredient
+Excipient
+
+
+Product
+

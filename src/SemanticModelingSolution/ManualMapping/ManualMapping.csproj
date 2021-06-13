@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="DomainBase.txt" />
+      <None Remove="ZConceptsBase.txt" />
+      <None Remove="ZConceptsPharma.txt" />
+      <None Remove="ZTermsBase.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />
+        <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!--<Analyzer Include="..\SemanticGlossaryGenerator\SemanticGlossaryGenerator.csproj" />-->
+        <ProjectReference Include="..\SemanticGlossaryGenerator\SemanticGlossaryGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <AdditionalFiles Include="DomainBase.txt" />
+        <AdditionalFiles Include="ZConceptsBase.txt" />
+        <AdditionalFiles Include="ZConceptsPharma.txt" />
+        <AdditionalFiles Include="ZTermsBase.txt" />
+        <!--<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CsvLoadType" />
+        <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CacheObject" />
+
+        <AdditionalFiles Include="ContepceptsBase.txt" CsvLoadType="Startup" />
+        <AdditionalFiles Include="Cars.csv" CsvLoadType="OnDemand" CacheObjects="true" />
+        <AdditionalFiles Include="Geometry.math" />
+        <AdditionalFiles Include="MainSettings.xmlsettings" CopyToOutputDirectory="PreserveNewest" />-->
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,183 @@
+﻿# Derived by https://www.visualsouth.com/blog/erp-terminology
+
+3rd Party Application	Software that has not been developed by the author of the ERP.
+ABC Analysis	ABC analysis classifies part IDs by the value and the usage of the item. Parts that cost the most and/or are used most frequently are "A" items. Parts that cost the least and/or are used least are "C" items. All other parts are "B" items.
+Accounting Period	A time span that contains all the financial transactions for an entity. Generally, it is 12 months.
+Accounts Payable	All unpaid balances that your company owes to its vendors.
+Accounts Receivable	All outstanding balances that your customers owe to your company.
+Actual Cost	Every labor or material transaction is valued at the cost you pay to your vendor or employee as opposed to valuing the transaction at a standard cost.
+Advanced Planning and Scheduling (APS)	A method that balances capacity and materials and provides an optimum schedule to manufacturing.
+Aging	The number of days between when the invoice was created and today. Can also be calculated between the day it is due and today.
+Allocation	Reserving materials for a specific customer order or work order.
+API	See Application Programming Interface.
+Application Programming Interface (API)	Functionality or commands in an ERP that is exposed to developers to assist in the interface between the ERP and another solution.
+APS	See Advanced Planning and Scheduling.
+Assemble-to-Order (ATO)	A business strategy that allows rapid production of customized product by combining a limited number of subassemblies into a large number of possible finished items.
+ATO	See Assemble-to-Order.
+ATP	See Available-to-Promise.
+Available-to-Promise (ATP)	The date product will be available to ship based on material and capacity availability.
+
+B2B	See Business-to-Business.
+B2C	See Business-to-Consumer.
+Backflush	The automatic issuing of raw materials from inventory to a work order.
+Backorder	There is not enough stock to fill the customer order now, but the order will be filled when stock is received.
+Bar Code	A font that converts text and numbers into lines to be read by a scanner.
+BI	See Business Intelligence.
+Bill of Lading (BOL)	A detailed listing of what is being shipped that is provided to the carrier.
+BOL	See Bill of Lading
+Bill of Material (BOM)	The raw materials that are used to build a finished good or subassembly.
+BOM	See Bill of Materials.
+Bottleneck	A resource in a chain of resources whose limited capacity reduces the capacity of the whole chain.
+Build to Stock	A strategy put in place when the lead time to the customer is shorter than the lead time to build the item, so the item is built based on an assumption of the demand.
+Burden	Costs other than direct labor and material associated with the production of goods.
+Business Intelligence (BI)	A set of tools that provides information about Key Performance Indicators (KPIs). The information is typically presented in a graphical or tabular format.
+Business-to-Business (B2B)	A business is selling to another business.
+Business-to-Consumer (B2C)	A business is selling to individual consumers.
+
+Capacity	The amount of time available at a resource.
+Capacity Requirements Planning (CRP)	Calculating the production capacity needed to meet planned and actual demand.
+Cloud	A deployment method that uses a network of remote servers to host the ERP.
+Configure Price Quote (CPQ)	Software used to collect attributes of a configured item, apply rules, then create a configuration and quote.
+Configure-to-Order (CTO)	A manufacturing process where the products have many options.
+Consumables	Items that are never in inventory (count or cost). When they are received, they are immediately expensed.
+CPQ	See Configure Price Quote
+CRM	See Customer Relationship Marketing.
+CRP	See Capacity Requirements Planning
+CTO	See Configure-To-Order.
+Customer	Who the company sells to.
+Customer Relationship Management (CRM)	Software that allows a company to capture, track and analyze customer interactions.
+Cycle Counting	A procure that audits inventory management. A small subset of inventory is counted on a regular basis. Any discrepancy is thoroughly investigated.
+
+Demand	Items that are needed to fulfill customer orders or work orders.
+Drill Down	Access the detail of the data you are viewing.
+Drop Ship (Purchased Items)	Items are purchased by the company, but shipped directly to the customer or another supplier.
+Drop Ship (Sold Items)	Items are bought by the customer, but shipped directly to another party.
+
+E-Commerce	Buy and sell transactions that take place on the internet.
+EDI	See Electronic Data Interchange.
+Electronic Data Interchange (EDI)	The transfer of data from one computer system to another without human intervention.
+Electronic Fund Transfer (EFT)	The transfer of money from one bank system to another without human intervention.
+Engineer-to-Order (ETO)	A production approach where items are engineered and built to specifications after the order has been received and perhaps a deposit paid.
+Enterprise Resource Planning (ERP)	Software that manages and integrates the entire organization such as customer relationships, sales, engineering, production, procurement, inventory and finance.
+ERP	See Enterprise Resource Planning.
+ETO	See Engineer-to-Order.
+Estimate	A calculation to determine the cost and selling price of an item.
+
+FIFO	See First In First Out.
+Financial Statements	A record of the financial activities and position of an organization.
+Finished Goods	An item that is fully produced and is ready to ship.
+First In First Out (FIFO)	In the valuation of inventory, the assumption is made that the oldest inventory ships or is consumed first.
+Fiscal Year	The year as defined by the company for financial reporting and tax purposes. It may or may not align with a calendar year.
+Fixed Assets	Assets that are necessary for production, but that are not going to quickly generate cash. Examples include equipment, vehicles, and buildings.
+Fixed Order Quantity	When inventory of an item falls below its reorder point, a predetermined quantity is reordered.
+FOB	See Free on Board.
+Forecast	Method to drive demand by predicting what future demand will be.
+Forecast Error	Difference between the actual value and the forecast value.
+Free on Board (FOB)	Defines when the ownership of product being shipped transfers from the seller to the owner.
+
+General Ledger (G/L)	An ongoing record that contains all of an organization’s financial transactions.
+G/L	See General Ledger.
+
+Implementation	The process of configuring the ERP software, developing new procedures to take advantage of the new ERP, and training employees on the new processes.
+Income Statement	A financial report that summarizes all revenue and expenses to determine the company’s profit or loss for a certain time frame.
+Interfaced Software	Two or more applications that pass data in one or two directions.
+Integrated Software	A software system that combines many functions into one application.
+Inventory	A list of the items that are on hand expressed in quantity and value.
+Inventory Adjustment	Method to increase or decrease inventory outside the normal methods of receiving or issuing items.
+Invoice	A list of products or services provided with a value owed for said products or services.
+Invoice Date	The date the invoice was created.
+Item	A single article that is kept in stock.
+
+JIT	See Just-in-Time.
+Job	See Work Order.
+Job Cost	See Work Order Cost.
+Job Shop	A manufacturing facility that produces discrete, specialized, and fairly small manufacturing runs of products that are usually not repeated.
+Just-in-Time (JIT)	Providing inventory exactly when it is needed to minimize inventory costs.
+
+Key Performance Indicator (KPI)	A measurable value that reflects how well a company is achieving key business goals.
+KPI	See Key Performance Indicators.
+
+Last In First Out (LIFO)	In the valuation of inventory, the assumption is made that the newest inventory ships or is consumed first.
+Lead Time	Total time between ordering materials and having them delivered and available for use. Also, total time between the beginning of production of an item and it being completed.
+Lean Manufacturing	A manufacturing method that focuses on the reduction of waste within a manufacturing system.
+LIFO	See Last In First Out.
+Lot Number	A number that is used to identify a specific quantity of material.
+
+Make-to-Order (MTO)	A manufacturing process where the production of an item begins after the customer’s order is received.
+Make-to-Stock (MTS)	A production strategy that matches inventory levels with customer demand forecasts.
+Master Production Schedule (MPS)	The schedule that a company uses to plan how many items need to be produced within a given timeframe.
+Material	Items that are used in the production of goods.
+Material Control	Process to assure enough (but not too much) material is available for production and sales.
+Material Handling	The physical movement of materials around a warehouse or between operations.
+Material Requirements Planning (MRP)	A system designed to react to demand for raw materials and finished goods.  It ensures that enough materials are available for production, enough finished products are available to deliver to customers, and that the lowest amount of materials and products needed are on hand.
+Materials Management	See Material Control.
+Mixed Mode Manufacturers	Companies that have more than one manufacturing model (MTO, MTS, ETO, or CTO).
+Mobile Data Collection	The ability to collect labor or material transactions on a hand held device.
+Module	A subset of an ERP system related to a certain function.
+MPS	See Master Production Schedule.
+MRP	See Material Requirements Planning.
+MRP II	See Manufacturing Resource Planning.
+MTO	See Make-to-Order.
+MTS	See Make-to-Stock.
+
+NAICS	See North American Industry Classification System.
+North American Industry Classification System (NAICS)	The standard used by Federal statistical agencies in classifying business establishments for the purpose of collecting, analyzing, and publishing statistical data related to the U.S. business economy.
+
+Outsourcing	Use of other, third party organizations to perform tasks in place of an internal resource.
+Overhead	Costs related to running a business not directly related to manufacturing.
+
+Packing Slip	A list of what is included in a shipment for the use of the recipient of goods.
+Part Numbers	Unique identifiers that identify every item.
+Parts	See Item.
+Physical Count	A process to count all items in inventory and then reconciling that against the count in the ERP system.
+Procurement	See Purchasing.
+Production Control	All activities involved in controlling the production process.
+Progress Payment	A payment the customer makes to the company before production is complete. Payments are usually tied to a milestone or date.
+Purchase Order	Authorizes a supplier to ship product (or provide a service) by a defined date at a set price.
+Purchase Requisition	A request for approval to purchase a material or service.
+Purchasing	The process to acquire raw materials, finished goods or services from suppliers.
+
+Quotation	A list of products or services and their related prices.
+
+Raw Materials	Items used in the manufacturing process of a finished good or subassembly.
+Receiving	The process to bring in goods from a supplier.
+Reorder Level	The stock level that triggers a purchase order for more supply.
+Replenishment	Putting materials into stock to replace items that have been used.
+Return Material Authorization (RMA)	The company’s authorization of the return of goods that have previously shipped.
+RMA	See Return Material Authorization.
+Routing	The sequence of manufacturing steps an item goes though during production.
+
+Safety Stock	A reserve of materials that is not normally needed, but is held to cover unexpected circumstances.
+Sales Order	A list of items or services a customer is authorizing you to provide on a defined date and price.
+Scheduling	The process of planning and arranging orders to maximize productivity, cost, and delivery times.
+SCM	See Supply Chain Management.
+Ship Via	The method to be used to ship product to the customer.
+Shipping	The process of creating the documents in ERP to transfer the products to the customers.
+Software License	Authorization from the software provider for the use of their intellectual property.
+Source Code	The actual intellectual property that is delivered by the software provider. Also known as an application or program.
+Spare parts	items held in stock as replacements to keep machinery, equipment, etc. working properly.
+Stock	See Inventory.
+Supplier	Any outside organization who replenishes or adds to inventory.
+Supply Chain	A system of activities and organizations that a product moves through between initial suppliers and final customers.
+Supply Chain Management (SCM)	Control of the Supply Chain.
+Systems Administrator	The person responsible for the configuration, deployment and upkeep of the ERP system.
+
+Traveler	A document that travels with the items being produced listing the routing steps and materials needed.
+
+UDF	See User Defined Field.
+UI	See User Interface.
+Unit of Measure	Defines how an item will be counted (each, lbs., inch, foot, etc.).
+UOM	See Unit of Measure.
+Upgrade	Replacing the current version of the software with a newer, improved version.
+User	An individual authorized to log into the ERP system.
+User Defined Field (UDF)	Fields in the ERP that can be used to capture data you define.
+User Interface (UI)	The way in which a software user is able to interact with a computer system.
+
+Vendor	See Supplier.
+Vendor-Managed Inventory	Items whose onsite stock level is controlled by the supplier.
+
+Warehouse	Any location where items are held.
+Work in Progress	Items that have entered the production cycle but are not yet finished.
+Work Order	An authorization to produce a defined quantity of an item by a certain date.
+Work Order Cost	The value of material, labor, outsourcing, and burden that went into the production of the work order.
+

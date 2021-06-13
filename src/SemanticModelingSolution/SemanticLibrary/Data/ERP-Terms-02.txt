@@ -1,0 +1,361 @@
+﻿# taken from https://www.theanswerco.com/guide-to-erp-terminology/
+# A
+ABC Analysis	Is an inventory categorization technique. Inventory with higher costs and/or that are frequently used are considered ‘A’ items. Likewise, inventory on the other end of the spectrum i.e. lowest costs and/or lowest frequency of usage, are considered ‘C’ items. ‘B’ items refer to inventory between “A” and “C”.
+
+Accounting Period	A time span that contains all the financial transactions for an entity. Generally, it consists of 12 months.
+
+Accounting Software	A computer program that is designed and based on standard accounting methodology to help end-users maintain consistency, transparency and efficiency during the accounting process.
+
+Accounts Payable (AP)	Represents money owed by a company to its vendor.
+
+Accounts Receivable (AR)	Represents all outstanding and unpaid balances that a company’s customers owe.
+
+Accpac	An ERP software. See Sage 300
+
+Actual Cost	Is the true expense that you incur to complete a task. Typically includes raw material, cost of labour, or overhead.
+
+Ad Hoc Query	Is a query posed to an information system. In ERP, it refers to the ERP system’s ability to allow end-users to ask questions and efficiently receive accurate answers.
+
+Advanced Planning and Scheduling (APS)	Is an approach that aims to optimize a company’s capacity and material to have an effective manufacturing schedule.
+
+Advanced Product Quality Planning (APQP)	Developed originally for the automotive industry, the APQP framework serves as a guide to the product development process. Typically included in an ERP quality management suite.
+
+Aged Receivables	Refers to current assets that are at risk. An example is if a customer owes money and it is long overdue in payments, implying a risk that the customer account may default.
+
+Aging	Is when a group of assets are organized according to the length of their existence.
+
+Allocation	Refers to reserving materials for specific job orders or customers.
+
+Application Programming Interface (API)	An API is an intermediary between software that a developer can use to create custom integrations between platforms. Most modern software has some API access, with most web-based platforms offering an open API (available to all). There are several protocols for API, the most popular of which is the REST API.
+
+Assemble to Order (ATO)	Is a business strategy that allows rapid, customized production by combining a limited number of subassemblies into a large number of possible finished items.
+
+Available-to-Promise (ATP)	Is the date a product will be available to be shipped based on material and the capacity availability.
+
+
+# B
+Backflush	Is the automatic issuing of raw material from inventory to a work order.
+
+Backorder	Is when there is insufficient stock in inventory to fulfil a customer order, but will be filled once there is sufficient stock.
+
+Balance-on-Hand (BOH)	The available stock in inventory.
+
+Balance Sheet	A company’s assets net value.
+
+Best–of–Breed	Refers to the best performing solution within a functional area.
+
+Best Practices	The most common business processes and ERP system configuration within the industry.
+
+Bill of Lading (BOL)	Is provided to the carrier and is a detailed listing of what is being shipped. The BOL must be signed by the shipper, transporter and receiver.
+
+Bill of Material (BOM)	The raw material needed to build a sub-assembly or finished good. It can be one level or multi-level.
+
+Blanket Order	Is an order used to minimize risk for manufacturers in situations where demand is unpredictable. It is a legally binding order in which the specifics such as quantities and delivery dates are confirmed in the future.
+
+Bottleneck	Usually a production resource that many items flow through, but due to limited capacity it leads to production process delays, impacting the entire process.
+
+Breakeven Point	Where revenue equals cost.
+
+Build–to–Stock (BTS)	A strategic production approach in which you build items ahead of time, based on assumptions derived from historical demand or sales forecast. Typically put in place when lead time to the customer is shorter than the lead time to build the product.
+
+Business Intelligence (BI)	BI constitutes a set of tools or software that transforms data from applications (like ERP software) into actionable, easy-to-understand business information. The information can be presented in a graphical or tabular format to help improve business decision-making.
+
+Business Processes	All activities or tasks in a business that helps them produce a service or product for a customer. A proper ERP system setup should be able to facilitate all business processes smoothly.
+
+Business-to-Business (B2B)	A business model where the goods or services are sold to another business, not a consumer.
+
+Business-to-Consumer (B2C)	A business model where the final end-users of the goods and services are consumers.
+
+
+# C
+Capacity Requirement Planning (CRP)	Is the calculation process of determining the production capacity that a business will need to satisfy the forecasted and actual demand.
+
+Cash Flow	Is the net effect of incoming cash (revenue, sales of assets etc.,) and outgoing cash (raw material purchases, debt reduction etc.). Click here to learn more about increasing cash flow.
+
+Change Management	Is the oft-challenging process of communicating the impact of an upcoming organizational change to employees in hopes to achieve a seamless transition. Hopefully, once this is done, your employees will see the value to the whole organization and be open to change. It is essential for successful ERP implementations as new ERP systems impact people and processes.
+
+Cloud Computing	Is an approach of using a network of remote servers to host a system like an ERP software. How to decide between Cloud vs On-Premise?
+
+Compliance	The ability to conform to legal requirements or standard industry practices.
+
+Configuration	Refers to the identifications of options to be activated and will be followed in the day-to-day business.
+
+Configure-to-Order (CTO)	Is an Assemble-to-Order variation, but includes some additional attributes (colour or size).
+
+Consumables	Are items never in inventory. Once they are received, they are expensed.
+
+Contribution	The difference between variable costs and revenue, sometimes known as variable margin.
+
+Customer Relationship Management (CRM)	Is software that helps an organization improve customer-facing processes. It allows a company to capture, track and analyze customer interactions across the customer lifecycle.
+
+Customization	In ERP, this refers to additional or rewritten code to accomplish a task that isn’t available in the standard ERP software.
+
+Cycle Counting	Is scheduled counting of small subset inventory.
+
+
+# D
+Dashboard	Are user-interfaces that integrate and display business information in visually pleasing formats for faster decision-making. They can often be customized and readily available in modern ERP systems.
+
+Data Cleansing	The process of ensuring all data is accurate and consistent. Clean data means more precise reports, easier management and helps you avoid any snafus with customers.
+
+Demand Planning	Allows organizations to be in a more informed position to plan production and inventory levels by examining external sales trends over a period of time and utilizing these trends to predict future demand.
+
+Demo	A live presentation of a software, can be the features, implementation, tips and tricks etc. in order to see what it can do. Good demos will come after a discovery and will speak directly to the stated needs of your company.
+
+Discovery	The first step in an ERP implementation, the discovery lets your consultant get to know your organization, your business drivers, and the processes used through the company. They will use this information to figure out the best platform for you and can even come into play at the configuration stage. Learn more about why a discovery is important.
+
+Discrete Manufacturing	Is manufacturing where finished products can be disassembled back into their separate components (e.g. bicycle or car).
+
+Distribution Center	A warehouse that caters to a specific region.
+
+Drill Down	Access the details behind the data you are viewing.
+
+Drop Ship (Purchased Items)	Is when items are purchased by a company and then directly shipped to another customer or supplier.
+
+Drop Ship (Sold Items)	Is when items are bought by a customer, but shipped directly to another party.
+
+
+# E
+E-Commerce	Is the process in which a transaction is done on the internet through a virtual/online store. Platforms like Shopify facilitate e-commerce for many small- to medium-sized businesses.
+
+Electronic Data Interchange (EDI)	Electronic exchange/transfer of data from one computer to another, in a standardized format, without human interference.
+
+Electronic Fund Transfer (EFT)	Electronic transfer of money from one bank system to another without human intervention.
+
+Engineer to Order (ETO)	Is a production method where components are only designed, engineered and built after an order is received.
+
+Enterprise Resource Planning (ERP)	Is a software/system that helps an organization manage information and integrate processes more efficiently and effectively.
+
+
+# F
+Financial Statements	A record of a companies financial activities and position.
+
+Finished Goods	Fully produced goods that are ready to be shipped.
+
+First-In First-Out (FIFO)	Is an inventory approach where older inventory should be consumed first, this reduces shelf life risk (expirations),
+
+Fiscal Year	A period of time that is defined by an organization as their accounting year. (It does not have to align with the calendar).
+
+Forecast	Predicting what the future demand may be.
+
+Forecast Error	The difference between the forecasted value and the actual value.
+
+Free on Board (FOB)	Defines when the ownership or a product transfers from the seller to the owner.
+
+Functionality	The range of tasks that an ERP system can perform.
+
+
+# G
+Generally Accepted Accounting Practices (GAAP)	The most popular accepted accounting standards that companies need to comply with if they hope to be perceived as reliable and credible.
+
+General Ledger (GL)	Continuous record that contains all the financial transactions within an organization.
+
+Gross Profit	The difference between a company’s cost of goods sold and revenue.
+
+
+# H
+Hardware	A term to describe the physical components that make up a computer network (e.g. computers, servers, routers etc.).
+
+Human Capital Management (HCM)	Is, strictly, the process of managing employees as assets. However, in recent years it has become interchangeable with HRM and HCM platforms like Criterion manage everything from recruitment to exit interviews.
+
+Human Resource Management (HRM)	Is typically an ERP software module that manages payroll, benefits, scheduling, etc. As a standalone software, it can cover larger areas like training and retention.
+
+
+# I
+Implementation 	Is the process of configuring an ERP software, developing new processes to utilize the ERP and training employees.
+
+Income Statement	Summarizes revenue and expenses, indicating the company’s profit or loss over a given period of time.
+
+Installation	Typically the first step in an ERP implementation process.
+
+Interfaced Software	Multiple applications that pass data in one or two directions.
+
+Integrated Software	A software that combines multiple functionalities into one application.
+
+Inventory Control	Is a method of determining an organization’s inventory limits and taking the steps to adjust inflow and outflow.
+
+Invoice	A list of goods and services, and the expected money owed by the customer in exchange.
+
+
+# J
+Job Costing	An approach where a project’s costs are recorded over time and totalled in the end.
+
+Just-in-Time (JIT)	Is a strategy aimed at providing component inventory exactly at the time when it is needed for consumption.
+
+
+# K
+Key Performance Indicator (KPI)	Any measurable value that reflects how well a business is progressing towards its key business goals.
+
+Kitting	Is an assembly process where various products are merged and packaged.
+
+Knowledge Management	The approach of retaining and organizing company knowledge, and making it accessible to anyone within the company.
+
+
+# L
+Last-In First-Out (LIFO)	Is an inventory approach where the newest inventory should be consumed first.
+
+Lead Time	The total time between an order being made and the materials being delivered and ready for use.
+
+Lean Manufacturing	A common manufacturing method focused on reducing waste in a manufacturing system.
+
+Line of Business  (LOB)	Functionalities within an ERP software that are created for a specific business need.
+
+Lot Number	Is a number or alphanumeric name used to identify a given quantity or lot of material.
+
+
+# M
+Machine Hour Rate	Is the cost of running a machine for one hour under normal circumstances.
+
+Machine Learning	Is a type of artificial intelligence (AI) that relies on pattern recognition to improve over time without being programmed.
+
+Maintenance Repair and Overhaul (MRO)	Can be an ERP software module or third-party software used to help companies with preventive maintenance and equipment failure.
+
+Make-To-Order (MTO)	A manufacturing strategy where the production of an item only begins after a customer’s order is received.
+
+Make-To-Stock (MTS)	A manufacturing strategy that matches inventory levels with the forecasted customer demand.
+
+Master Production Schedule (MPS)	A schedule that a company uses to organize and plan how many items are needed to be produced in a given timeframe.
+
+Material Control	Is a process in place to ensure there is sufficient material available for production and sale.
+
+Material Requirements Planning (MRP)	Is a system designed for production planning, scheduling and inventory planning. Ensures that there is enough material available and the minimum amount of material and product are available on hand.
+
+Module	Is a subset of an ERP system that is usually designed for a specific function.
+
+
+# N
+Network Administrator	Is the individual(s) responsible for the overall performance of the computer network such as data integrity, security, accessibility etc.
+
+Non-Disclosure Agreement (NDA)	In ERP an NDA is a binding legal document specifically for ERP consultants and salespeople.
+
+
+# O
+Off-the-Shelf (Out-of-the-box)	Refers to a software system’s functionalities as expected without any customization.
+
+Order Management	Is the process of efficiently creating, tracking and fulfilling customer orders.
+
+Outsourcing	Purchasing a semi-finished item or service from a third party instead of using internal company resources.
+
+
+# P
+Packing Slip	Is provided to the recipient of the goods and is a list of what is included in the shipment.
+
+Parallel	Refers to running two systems simultaneously to test results and new ERP systems.
+
+Physical Count	The process of counting all items in inventory and then comparing against the count in the ERP system.
+
+Point of Sale (POS) Software	The Point of Sale is the time and location of where a sales transaction occurs. POS software is what is used in the store to run the checkouts or order ticketing. Many modern POS systems will sync with live inventory and can report all transactions back to the back office.
+
+Production Control	All the activities that are involved in controlling the production process.
+
+Process Manufacturing	Is manufacturing where the finished product cannot be disassembled into its component parts (e.g. paint or bread).
+
+Progress Payment	Is an approach to reduce risk before production is final.
+
+Purchase Order	Is a document that authorizes a vendor to deliver goods or provide a service at a specific price and date.
+
+Purchase Requisition	is a document that requests for approval to purchase a good or service.
+
+
+# Q
+Quality Control	The process of ensuring a product or service meets the established standards or performance.
+
+Quotation	List of goods or service and their prices.
+
+Quote-to-Cash	Is the entire process timeline from when you deliver the quote all the way through to when you receive cash for the invoiced material, product or service. This is essential for financial forecasting.
+
+
+# R
+Radio Frequency Automatic Identification (RFID)	A small electronic chip that stores information with radio waves. Similar to barcodes but more expensive and far superior. A great example of this is the card you use for public transport (the Compass Card here in BC, PRESTO in Toronto, or the Oyster Card in London, UK).
+
+Raw Materials	The items used in the creation of a finished good.
+
+Reorder Level	A predetermined inventory limit that triggers a purchase order.
+
+Replenishment	Replacing materials that have been used to make a product in your inventory, to avoid shortages.
+
+Requirements	A list detailing the business functions and processes for a project.
+
+Request for Proposal (RFP)	A request used to gain bids and proposals from vendors when an organization looks to buy a new ERP platform.
+
+Return Merchandise Authorization (RMA)	A document of a company’s authorization of the return of goods that were previously shipped.
+
+Return on Investment (ROI)	A measurement that calculates how profitable an investment is.
+
+
+# S
+Safety Stock	Is a reserve of material that can help to cover unexpected circumstances.
+
+Sales Forecasting	Is the process of predicting future sales.
+
+Sales History	A data set of all sales records.
+
+Sales Order	A list of goods or services that have been purchased by a customer and provided at a defined date and price.
+
+Scalability	Is the ability for a software to accommodate growth within a business process.
+
+Scheduling	Is the process of planning and arranging activities to optimize productivity and resources.
+
+Self-Service Portal	Is a portal that gives an organization’s customers or employees access to delegated modules of your ERP system.
+
+Setup	In the ERP world, this describes the process of integrating data and grouping this data to meet customer needs.
+
+Shipping	Involves the creation of necessary documents in the ERP system so that goods can be efficiently delivered to customers.
+
+Stock Keeping Unit (SKU)	Is a unique identifier for a manufactured or purchased good. (e.g. Barcode)
+
+Software as a Service (SAAS)	Is a business model that refers to a subscription-based licensing and distribution model. Providers host software applications over the internet and customers can access them without needing to have a costly infrastructure in place.
+
+Software License	Is authorization from the software provider for the use of their property, product, or service.
+
+Source Code	The actual Intellectual Property that is delivered by the software provider. This is every line of code that makes up the platform, before any integration or customization has been done.
+
+Supply Chain Management (SCM)	Is the management and control of the supply chain. This covers everything from import/export logistics, inventory storage and transport, first- (and subsequent) tier suppliers.
+
+Synchronize	This is the process that takes place when an ERP system goes live.
+
+Systems Administrator	The individual(s) responsible for the configuration, deployment and upkeep of the ERP system.
+
+
+# T
+Technical Support	Is what a technology vendor provides to their customers when an application or program is not performing to expectation.
+
+Total Cost of Ownership (TCO)	All the additional costs in a software purchase that are added on top of the initial purchase price. Often, this means things like maintenance, licensing fees, add-on purchases, consultation, etc.
+
+Third-Party Application	Software or applications that aren’t developed by the original manufacturer but are sold through a vendor. For example, many apps on the Intacct Marketplace are third-party solutions because they were not built and designed by Sage Intacct.
+
+Total Quality Management (TQM)	Management that aims to enhance product and service quality across the entire operation span.
+
+
+# U
+User	Any individual that has access to log into the ERP system. For some ERP platforms, individual licenses are used for every employee; this helps ensure role-based accountability when it comes to audits.
+
+User Defined Field (UDF)	is a field in an ERP that can be defined by an end-user.
+
+User Interface (UI)	Is the way that an ERP user is able interact with a computer system. Without a UI, functionality would be restricted to reading lines upon lines of code and answering back in code. UI’s put an aesthetic format on top of this, allowing us to interact with the elements using visual navigations. Simple “UI” often leads to easy-to-use software.
+
+User Experience (UX)	Is the way that an ERP user experiences a computer system. The ability for users to go from one functionality of the software to another is a key part of UX.
+
+
+# V
+Value-Added Reseller (VAR)	Provide customers with fully customized software services. It refers to a “middleman” organization that adds value through additional features or services. Usually, large software organizations work through VARs to reach small to midsize customers. The Answer Company is a VAR for Sage and Acumatica.
+
+Vendors	Individuals or organizations that supply material or services at a certain quality for a specified amount of cash.
+
+Vendor Managed Inventory (VMI)	Is an approach where a vendor controls their customers’ raw material supply and ensures that the inventory is neither excessively high or low.
+
+Version	The generation of an application or program.
+
+
+# W
+Warehouse Management System (WMS)	Usually refers to a module or system that is specifically designed to help manage warehousing and distribution centre processes, transactions, and activities.
+
+Workflow Management	Aims to make the workflow more efficient in organizations by controlling and following up on a human approval chain. Good workflow management should be part and parcel of an automated ERP.
+
+Work Orders	Also known as job orders, it is a document that specifies the material and labour operations needed in order for the product to be manufactured by a specified date.
+
+Work Order Costs	Represents the value of materials, labour, outsourcing, and resources that went into the work order.
+
+
+# Y
+Year-to-date	Refers to the period of time beginning the first day of the current calendar year, up to the current date.

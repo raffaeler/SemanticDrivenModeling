@@ -1,0 +1,44 @@
+﻿
+
+
+Identity (Id, Natural Id, Name, Description, Color, Image, Code, Tag, Category)
+    Unique, LocallyUnique, Partial
+    # Partial => Category
+    # Tag => Clp?
+
+Human notes
+
+Measure (Quantity, Length, Size, ...) ()
+    quantitative, qualitative
+    objective, subjective
+
+Direction (Incoming, Outgoing, ...)
+    abstract, linear, angular
+
+Time (Date, Time, Duration)
+    Absolute, Relative, Resolution
+
+Position (Index, Sequence, Phase)
+
+
+Entity
+    physical, abstract
+
+State (Opened, Closed, Started, Finished, ...)
+    Lifecycle, 
+    
+
+Composition (Recipe, Formula, Package)
+
+Process (Methodology)
+    Processing, executing
+
+Subject (Company, Person, Employee)
+
+
+Location (Address, Coordinates, Warehouse, Store)
+
+Document (Invoice, )
+    Official, Internal, Assembly
+
+

@@ -1,0 +1,152 @@
+﻿Name	Name of the item / persona / material / object
+Title	Alternative to name
+Description	The human description of the entity
+Phrase	.
+Tag	.
+
+
+Id	.
+NaturalId	.
+Product	.
+Material	.
+Lot	.
+Batch	Alternative name for Lot
+Code	.
+Expiry	.
+Expiration	.
+Date	.
+Time	.
+Duration	.
+Sample	.
+Quantity	.
+Qtt	Alternative for Quantity
+Number	.
+Net	.
+Gross	.
+Tare	.
+Value	.
+Color	.
+Image	.
+Picture	.
+Recipe	.
+Formula	.
+Methodology	.
+Method	.
+Phase	.
+Index	.
+Control	.
+Check	.
+Price	.
+Tax	.
+Percentage	.
+Percent	.
+Log	.
+
+
+
+
+
+Company	.
+Enterprise	.
+Client	.
+Customer	.
+Owner	.
+Employee	.
+Operator	.
+Contact	.
+Address	.
+Coordinates	.
+GPS	.
+City	.
+Zip	.
+Province	.
+Nation	.
+State	.
+Inventory	.
+Store	.
+Warehouse	.
+Supplier	.
+
+
+
+Category	.
+Classification	.
+Invoice	.
+Transport	.
+Shipping	.
+Package	.
+Picking	.
+
+Policy	.
+
+Clp	.
+Hazard	.
+Signal	.
+Warning	.
+Dangerous	.
+Severity	.
+Mandatory	.
+Optional	.
+Approval	.
+Approved	.
+Signature	.
+Signed	.
+
+Closed	.
+Open	.
+Started	.
+Finished	.
+Locked	.
+Free	.
+
+Incoming	.
+Outgoing	.
+Input	.
+Output	.
+In	.
+Out	.
+Enter	.
+Exit	.
+
+
+Total	.
+Partial	.
+
+
+Volume	.
+Mass	.
+Weight	.
+Length	.
+Size	.
+Dimension	.
+
+
+Create	.
+Modify	.
+Update	.
+Delete	.
+
+
+Created	.
+Modified	.
+Updated	.
+Deleted	.
+
+
+Hint	.
+Suggestion	.
+
+Minimum
+Maxiumum
+Min
+Max
+
+
+Index
+Sequence
+Seq
+
+
+High
+Medium
+Low

@@ -1,0 +1,160 @@
+﻿// Name of the item / persona / material / object
+Name : Identity
+
+// The human description of the entity
+$Verbose human-readable description of the entity
+Description	
+    Phrase
+
+Tag : Identity
+
+
+Id : UniqueIdentity
+NaturalId : UniqueIdentity
+
+Product : Entity : Product
+
+Lot : QuantitativeMeasure
+Lot : Entity : Lot
+Code : Identity
+Expiry : AbsoluteTime
+Expiry : RelativeTime
+Date : AbsoluteTime
+Time : AbsoluteTime
+Duration : RelativeTime
+Sample : QuantitativeMeasure
+Sample : Entity : Product
+
+Quantity : QuantitativeMeasure
+Number : QuantitativeMeasure
+Net : QuantitativeMeasure : Net
+Gross : QuantitativeMeasure : Gross
+Tare : QuantitativeMeasure : Tare
+Value : QuantitativeMeasure
+Value : QualitativeMeasure
+
+Color : QuantitativeMeasure
+Image : Identity
+Picture : Identity
+
+$ Can be just a description
+Recipe : HumanDescription
+Recipe : Entity : Product
+
+Phase : RelativePosition
+Index : RelativePosition
+Control : QualitativeMeasure
+Price : QuantitativeMeasure
+Tax : QuantitativeMeasure
+Percentage : QuantitativeMeasure
+Log : HumanDescription
+
+
+
+Company : Entity : Company
+Enterprise : Entity : Company
+Client : Entity : Company
+Customer : Entity : Company
+Customer : Entity : Person
+Owner : Entity : Company
+Owner : Entity : Person
+Employee : Entity : Person
+Operator : Entity : Person
+Company : Entity : Person
+Contact : Entity : Person
+Inventory : Entity: Inventory
+Store : Entity: Store
+Warehouse : Entity: Warehouse
+Supplier : Entity: Supplier
+
+Address : AbsolutePosition
+Coordinates: AbsolutePosition
+GPS: AbsolutePosition
+City: RelativePosition
+Zip: RelativePosition
+Province: RelativePosition
+Nation: RelativePosition
+State: RelativePosition
+
+
+
+Category : Identifier
+
+Invoice : Entity: Document
+Transport : HumanDescription
+Shipping : HumanDescription
+Package : HumanDescription
+Picking : Entity : Picking
+
+Policy : Entity : Policy
+
+Clp : Identifier
+Hazard : Identifier
+Signal : Identifier
+Warning : Identifier
+Dangerous : Identifier
+Severity : Identifier
+Mandatory : Identifier
+Optional : Identifier
+Approval : Identifier
+Approved : Identifier
+Signature : Identifier
+Signed
+
+Closed
+Open
+Started
+Finished
+Locked
+Free
+
+Incoming
+    Enter
+Outgoing
+    Exit
+Input
+    In
+Output
+    Out
+
+Total
+Partial
+
+
+Volume
+Mass
+Weight
+Length
+Size
+Dimension
+
+
+Create
+Modify
+Update
+Delete
+
+
+Created
+Modified
+Updated
+Deleted
+
+
+Hint
+    Suggestion
+
+Minimum
+    Min
+Maxiumum
+    Max
+
+
+Index
+Sequence
+Seq
+
+
+High
+Medium
+Low

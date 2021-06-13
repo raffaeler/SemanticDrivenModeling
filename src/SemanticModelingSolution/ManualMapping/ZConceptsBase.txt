@@ -1,0 +1,55 @@
+﻿# Undefined is always needed to find unmappable concepts in the graph
+$ The Undefined Concept is needed as a special case when a pre-defined Concept is not defined
+Undefined
+
+# identity concept
+// This is the identity field
+$ Not necessarily item identifier. Name, Tag, etc.
+Identity
+
+// Unique identifier
+$ Unique identifier also known as key
+UniqueIdentity
+
+// Human readable descriptions
+HumanDescription
+
+$ Quantitative measure 
+QuantitativeMeasure
+
+$ Qualitative measure
+QualitativeMeasure
+
+$ Linear Direction
+LinearDirection
+
+$ Angular Direction
+AngularDirection
+
+$ Absolute date or time
+AbsoluteTime
+
+$ Relative date or time
+RelativeTime
+
+$ Any absolute location information
+AbsolutePosition
+
+$ Any relative location information
+RelativePosition
+
+$ Any state related information (open/close, shipped, deleted, etc.)
+State
+
+// Process comment 1
+Process
+    Process Alias 1
+    Process Alias 2
+
+Subject
+Location
+Document
+
+$ A complex entity
+Entity
+

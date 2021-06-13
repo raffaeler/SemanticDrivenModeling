@@ -1,0 +1,22 @@
+﻿# This file contains the common concepts and related terms
+#
+# // The non unique identity of an entity        This is a comment that goes into the Concept declaration [KnownConcepts class]
+# $ Not necessarily an item identifier           This is the description of the Concept [KnownConcepts class]
+# Identity                                       This is the Concept name [KnownConcepts class]
+#     Name : 100: The name of the entity         A Term with name "Name" and description "The name of the entity" is created  [KnownTerms class]
+#     Title: 80                                  A Term with name "Title" and no description [KnownTerms class]
+#                                                Two TermsToConcepts are added to the Domain class:
+#                                                - new TermsToConcept(KnownConcepts.Identity, (KnownTerms.Name, 100))
+#                                                - new TermsToConcept(KnownConcepts.Identity, (KnownTerms.Title, 80))
+# 
+
+
+// The non unique identity of an entity
+$ Not necessarily an item identifier. Name, Tag, etc.
+Identity
+    Name : 100: The name of the entity
+    Title: 80
+
+//
+Product
+    Material : 100

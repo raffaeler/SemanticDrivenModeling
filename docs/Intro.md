@@ -1,0 +1,1 @@
+La natura dell'Ingegneria è quella di risolvere i problemi in modo pragmatico e ripetibile.

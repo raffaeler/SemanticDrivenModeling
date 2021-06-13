@@ -1,0 +1,638 @@
+﻿#A
+Abbreviations	Shortened forms of a set of words, consisting of initial letters pronounced separately, for example, invitation to tender (ITT)
+ABC classification	A system of prioritizing different types of inventory based on their value or importance to the business
+Acceptance criteria	Indicators or measures used to assess whether a product or service meets the standard required
+Acceptance sampling	A measure, using the number of defects detected, that determines whether a batch of manufactured products meets the standard required
+Accreditation	A process of external verification to provide evidence that a standard of quality has been achieved, for example, competency, authority or credibility
+Accruals	An adjustment made to the accounts of a company that has the effect of putting aside money for future use. It can be an adjustment to sales or an adjustment to costs
+Activity-based costing (ABC)	An accounting method in which indirect costs are assigned to activities used in the production of a product or delivery of a service. These activities are then used to apportion those costs to products and services in a way that gives a clearer understanding of the total cost of a product or service
+Ad-hoc purchase	An item bought for a single and non-recurring use or purpose
+Adaptive	Having the ability or tendency to adapt to different situations
+Aerosol	Solid particles that remain suspended in air as fog or smoke
+Algorithm	The process or rule used by an IT system to perform calculations, data processing or automated tasks
+Allocated overhead	Overheads are the cost of things that are needed to manufacture an item or deliver a service but are not associated with just one product. The total overhead cost is spread among all products or services and this is the allocated overhead
+An individual with capacity	A person who is legally able to enter into a contract because of their appropriate age and state of mind
+Approved supplier list	A list of suppliers whose basic credentials have been checked. This would normally cover financial stability, compliance with any laws or licences needed to operate, adequate insurance, health and safety policies and the like. There is no contract with the suppliers, but there is some assurance as to their appropriateness for specified categories. This list may restrict what types of order (by category, value or geographical location) can be placed with each of them
+Arm’s-length trading relationship	A relationship between two parties who trade with each other in which there is no involvement other than the trade itself
+AS	Australian Standards contracts
+Assets	The value of everything an organisation owns
+Audit	A systematic inspection of a process or procedure to assess compliance with requirements or regulations
+Audit trail	A record, history or series of documents that provide evidence of a sequence of processes that led to an outcome
+#B
+Back order	Customer orders which cannot be immediately fulfilled and are awaiting future stock delivery/manufacture before fulfillment
+Balanced scorecard	An approach to measuring performance that looks at multiple variables. The variables might be equally important, or given different weightings to reflect degrees of importance
+Bar code	An optical, machine-readable representation of data
+Barrier to entry	Often high costs or high levels of competition, linked to supplying a new product or service into a market.
+Base price	The initial price of something without the added costs such as handling, transport and profit
+Batch quantity	Amount of products produced at a time
+Benchmarking	Comparing an element of one business, such as price, quality or service, against another
+Bespoke	Made or provided especially for a specific end user
+Best value	The best possible outcome from a procurement process that gets the right balance between price and quality
+Bid	Offer of a price
+Bidder (or tenderer)	A potential supplier who makes an offer (a bid is an offer or tender)
+Bilateral trade agreements	An exchange agreement between two nations or trading groups that gives each party favoured trade status connected to certain goods obtained from the signatories. The agreement sets purchase guarantees and removes tariffs and other trade
+Bill of lading	A carrier’s contract and receipt for goods it agrees to transport from one place to another and to deliver to a designated recipient (consignee)
+Bill of materials (BOM)	A comprehensive list of components, items, materials and parts to create a product, essentially a recipe for the production of an item
+Biodiversity	Biodiversity is short for biological diversity. It refers to a high level of the variety of plant and animal life in the world or in a particular habitat – it is considered to be both important and desirable.
+Biomass	Biomass is organic matter or plant material converted for use as a fuel (biofuel)
+Biophysical	A branch of science concerned with the application of physical principles and methods to biological problems
+Blanket order	An order that is placed with the supplier which allows the buyer to call off quantities as they need them over an agreed time period. This works in accordance with a manufacturing organisation’s production schedule
+Blockchain technology	An encrypted network that stores records of a transaction and communicates this to all other nodes points within the network
+Board meeting	Regularly held meetings between all the directors of an organisation
+Bottleneck	A specific stage in a process which slows down the flow of production and limits the overall output rate
+Bottom line	An accounting term meaning a company’s income after all expenses have been deducted from revenues
+Bounce back	An automated e-mail sent in response to an e-mail or contact form
+Brand	The image of an organisation. The name, logo, slogan, colours, etc., that differentiate it from the competition
+Break even	The point at which a business recovers what it has spent and starts to make a profit
+Budget	Financial plan for a set period of time on how much can be spent
+Buffer stock	Amount of stock held in stores at any time in addition to actual requirements
+Business-critical	A supply or service without which the business could not operate
+Business-to-business (B2B)	A transaction between businesses (e.g., in the supply chain)
+Business-to-customer (B2C)	A transaction between a business and the end user of its product or service (e.g., an individual shopper)
+Business case	A justification for a proposed project or undertaking on the basis of its expected benefits
+Business cycle	The rise and fall over time of output in an economy as measured by gross domestic product (GDP)
+Buyer’s view	The buyer’s perspective on a supply market and the suppliers and products in it
+Buying	The physical act of placing orders to make a purchase
+Buy in	When people believe and support an idea
+
+#C
+CA	The Chartered Accountant qualification
+CAD	Computer aided design – drawings created using software
+Call-off schedule	A schedule produced to state what amounts of products are to be delivered when
+Capital	The amount of money or assets available to be leveraged by a person or organisation, e.g., when starting a company, or buying an asset such as machinery
+Capital costs	Large, fixed, one-off expenses incurred in getting a business or process operational
+Capital purchase	The purchase of an item that is a long-term asset such as a building or equipment
+Carbon Disclosure Project (CDP)	An organisation working with companies and cities to disclose the environmental impact of major corporations in the interest of fighting climate change
+Cartel	A group of companies claiming to act independently, but actually acting together to control prices by price-fixing, limiting supply or other restrictive practices
+Cashable savings	Savings that has no impact on the product or service quality but which result in a sustainable reduction in the budget for purchases of that item
+Cash flow statement	An accounting document that summarises the incomings and outgoings of cash in an organisation
+Cash flow	The amount of money moving in and out of a business in a particular period
+Catalogue	A list of items for sale that often contains descriptions, pictures, prices and availability
+Category	A group of goods or services that have shared characteristics
+Category aware	Understanding the market and risks associated with a particular commodity or service
+Certificate of origin (COO)	A document required by customs officials, identifying the country of origin of imported goods, and certified by the supplier’s country’s designated authority, to authenticate the source of the goods
+Channel	The way products and services get to the customer
+Chemical process	A process in which chemicals or chemical compounds are changed with the help of chemical reactions
+Chief executive officer (CEO)	The most senior person in an organisation, with overall responsibility for its success
+Chief procurement officer (CPO)	Chief procurement officer or procurement and supply director – the person with overall responsibility for procurement and supply within an organisation
+Climate proofing	Identifying risks to an asset, as a consequence of climate variability and change, and ensuring that those risks are reduced to acceptable levels by making changes
+Closed system	A system or process that, once started, does not allow new entrants. A framework agreement might have multiple buyers and multiple suppliers, but once set up no additional buyers or suppliers can be added to it
+CO2	The chemical formula for carbon dioxide which is a colourless, odourless gas found in our atmosphere
+Co-operative	A people-centred enterprise owned and run by and for their members, which either reinvests any profits or returns it to their members
+Cohesiveness	Working together effectively
+Collaborative	Working together for mutual benefit
+Collusion	Where two or more potential suppliers (or the purchaser and one or more suppliers) secretly co-operate to undermine the competitiveness of a tender process
+Combustion	The process of burning a fuel so it reacts with oxygen to release energy
+Commercial	To do with business, intended to make a profit
+Competitive advantage	Putting an organisation in a strong position against their competition
+Conflict	A disagreement, or difference of opinions or principles
+Conflict of interest (COI)	Where an individual is unable to remain impartial due to a personal, professional or public interest
+Conformance	The meeting of a required specification or standard
+Conglomerate	Two or more corporations engaged in entirely different businesses that fall under one corporate group
+Consignment	A specific quantity of goods being carried
+Consignment note	A document describing the contents of a shipment, prepared by a consignor (supplier) and countersigned by the carrier as a proof that the carrier has received the goods for delivery
+Consignment stock	Inventory owned by the supplier but held at the buyer’s premises
+Consolidated deliveries	The practice of grouping deliveries with similar products or products which have similar transportation requirements in one journey to reduce the unit cost instead of making many single deliveries of the same item
+Consumer	An individual or organisation who pays an amount to consume goods or services
+Consumerism	A theory that encourages the increasing purchase of goods and services
+Continuing professional development (CPD)	Undertaking training or attending courses to develop knowledge
+Continuous improvement	An ongoing effort to improve products, processes and services
+Contract	A legally enforceable written or oral agreement between two or more competent parties that defines a job or service to be performed
+Contract clause	A single, usually numbered, paragraph in a contract setting out the detail of a single condition (or ‘term’) of the contract
+Contract compliance	Where items purchased conform to the agreed contract
+Contract management	Dealing with contracts with suppliers to make sure the terms of the contract are met
+Contract period/contract term	In this context the contract term is the same as the contract period (i.e. the length of time during which the contract operates). It begins with the START DATE and ends with the EXPIRY DATE. The start date is not necessarily the date on which the contract is signed, but the date on which it comes into effect. The expiry date may be expressed as an actual calendar date (preferred) or as a given number of months (e.g., 36 months) from the start date
+Control chart	A chart that can be used to analyse how a process changes over time
+Control measure	An action to reduce the potential likelihood that a risk will occur or the impact that it will have
+Copyright	A legal right created by the law that gives exclusive rights to the generator of the work
+Core competencies	Processes which are critical to an organization achieving success and competitive advantage
+Corporate governance	The mechanisms, procedures and processes that are used to control and direct an organisation
+Corporate social responsibility (CSR)	A business approach that contributes to sustainable development by delivering social, environmental and economic benefits for all stakeholders. The CSR policy may cover fundraising for charity, ethical behaviour, social and environmental policies, etc.
+Cost centre	Area of the business or budget to which the purchase needs charging
+Cost driver	Anything that means the cost of a good or service will change
+Cost of goods sold (COGS)	The direct costs for producing goods, i.e. the cost of the materials used, as well as the cost of the labour to produce them and any other allocated overheads. It excludes and distribution or sales costs
+Costs	The amount of money that has gone out of the business
+Counter-offer	A response to an offer that is different from the original
+Credit limit	The amount of money an organisation can borrow from a creditor
+Credit note	A document issued to correct mistakes on an invoice – a credit note reduces the amount owed on the invoice document
+Credit rating	A score given to an organisation which is based on the amount of risk they propose to the debtor
+Cross docking	A logistics procedure where incoming products are loaded directly onto an outgoing carrier with minimal handling and storage time
+Cross-functional teams	Teams that involve individuals from different departments that work together towards a common goal
+Culture	The shared values, practices and beliefs within an organisation that determine how its procedures are carried out and how it is run overall
+Customer	The person who purchases and pays for (but doesn’t necessarily use) a product or service
+Customer relationship management (CRM) system	A database to keep track of customers, contacts and a record of transactions
+Customs	The area of government that controls and administers policies and procedures for the import and export of goods
+
+#D
+Decarbonisation	The reduction or removal of carbon dioxide from energy sources
+Decommission	The activities performed to take a product or service out of use and make it unavailable to customers
+Degrowth	A downscaling of production and consumption
+Demand	How much or many of a product or service customers are prepared to buy at different prices
+Demand curve	A graphical representation of how price changes with changes in the demand for an item
+Demographics	The type, age, culture, interests and financial position of people
+Dependent demand stock	Raw materials or component parts whose demand (ordering levels) is influenced by demand for the finished product
+Depreciation	The reduction over time in the value of an asset held by a company, often due to wear and tear. An amount for this is treated as a cost in a company’s annual accounts
+Depreciation charge	The amount of money by which annual accounts are adjusted to reflect the cost of a reduction in the value of assets. This money is put aside to purchase a replacement for the asset at a future date
+Depreciation of assets	An accounting method of spreading the cost of an asset over a defined period, usually several financial years
+Design specification	A detailed document that sets out the precise way that a product must be built or a service delivered; includes technical drawings, standards that must be met and dimensions
+Devolve	Delegate or transfer power
+Direct call off	The act of placing an order under a framework agreement without having further competition
+Direct cost	Cost that is directly associated with the production of a good or service
+Direct labour cost	The salary cost for employees who work in the manufacturing process of an item or delivery of a service
+Direct material cost	The cost of materials and components used in the production of an item or delivery of a service
+Direct supplies	Raw materials and goods for use in production
+Disclosure of gifts	Declaring gifts or hospitality received from a supplier to ensure transparency of dealings
+Discretionary spending	Spending by consumers on things they want to buy rather than on things they have to buy such as food and housing
+Diseconomy of scale	Where unit costs rise with rising output
+Dissolved	Ceased trading
+Distribution	The process of moving materials or products from one supply chain participant to another
+Distribution channel	The network used to get a product or service from the manufacturer or creator to the end user or consumer. It can include wholesalers, agents and retailers
+Dividend	Money paid from the company’s earnings to the shareholder
+Domestic	Private, not business
+Downstream environmental factors	Impacts on the environment caused as a result of the use of the goods you are producing
+Downtime	Time when production or services cannot be carried out
+Dual-sourcing	Using two or more suppliers for a product, splitting demand between them, to keep pricing competitive and ensure continuity of supply
+Due diligence	Undertaking a thorough appraisal or conducting an evaluation to establish all the facts prior to entering into an agreement
+
+#E
+E-sourcing	The electronic procurement of products or services using Internet-enabled applications and decision support tools. These tools facilitate interactions between buyers and suppliers through the use of online negotiations, online auctions, reverse auctions, etc.
+Early adopters	A group of consumers who are the first after the innovators to buy or use a new product or technology
+Eco-Management and Audit Scheme (EMAS)	Designed by the European Commission to be used to monitor and improve the environmental performance of organisations
+E-commerce (or electronic commerce)	Buying and selling goods and services, or transmitting funds or data, over an electronic network, primarily the Internet
+Economic growth	The increase over time in the value of goods and services produced by a country, often defined as a value per head of population
+Economic operator	A contractor, supplier or service provider that operates in a particular market
+Economic order quantity (EOQ)	The most economically viable quantity in which to buy stock which considers not only the material costs, but also associated costs such as storage, transport and administration costs
+Economy	The state of money flow, manufacturing, distribution, availability and consumption, or scarcity, of goods and services, energy, labour, or other resources at country level
+Economy of scale	The trend of cost per unit being reduced as output increases due to factors such as increased bargaining power and the cost of tooling being shared amongst larger numbers of units
+Electronic data interchange (EDI)	The exchange of data between companies in computerised format
+Embedded carbon	The range of greenhouse gas (GHG) carbon emissions associated with the production process
+Embezzlement	The act of someone stealing assets for which they are responsible
+Emerging market	A country that is progressing toward becoming more advanced, usually by means of rapid growth, investment and industrialisation
+Enforceable by law	A court can compel those involved in the contract to fulfil their contractual obligations
+Enterprise resource planning (ERP)	A computer system that analyses the current inventory, forecast demand and expected delivery of new supplies to calculate demand and identify requirements from suppliers
+Environmental Protection Agency (EPA)	A USA governmental regulatory agency
+Equilibrium point	The optimum price at which there is equal supply and demand of an item
+Equity	The value of the assets minus the value of the liabilities
+Epoxy floor paint	A hard-wearing, matt floor coating designed to resist chemicals and disguise minor floor imperfections
+Ergonomics	Adapting the workplace environment to the user, e.g., ensuring chairs and desks are at a comfortable working height, lighting is adequate for tasks, etc.
+Escalation process	A set of procedures put in place to deal with potential problems
+Escrow agreement	In the context of computer software, an escrow agreement involves the supplier placing a copy of the software source (original and updated) code (i.e. the raw form of the software design) with a third party. If the software supplier ceases trading, the purchaser will then be provided with the source code, which will enable them to continue to use and, where necessary, adapt and update the software (provided that they can appoint appropriately skilled personnel to do so)
+Ethics	Principles that govern a person’s or an organisation’s behaviour
+Evaluation criteria	The standards that a potential supplier needs to meet
+Exchange rate	The value of one currency compared with another, which can vary from day to day
+Executing contracts	This expression has two meanings: a. to draw up formal contracts and sign/seal them, and b. to carry out your obligations under the contract
+Expedite	To make special requests and make additional effort to ensure goods are delivered in less than the normal lead time
+Expediting	Monitoring the progress of an order to ensure stock is received as quickly as possible
+Expeditor	The person in the buying organisation who carries out the expediting function in procurement, which means following the issue of a purchase order or contract from receipt of order by supplier, through to delivery, dealing with delivery problems as they arise
+Expenditure	Money spent on goods or services
+Expenses	Costs incurred from travelling, staying in hotels, eating out, etc., whilst carrying out your job
+Exposure	The number/value of contracts a purchaser has with a single supplier; it is a rough guide to how much any difficulties faced by the supplier will affect the purchaser
+Express terms	Contractual terms that are agreed between two parties and written into a contract
+External stakeholders	People, groups or organisations who don’t belong to an organisation but are nevertheless impacted by it, or have an impact upon it
+
+
+#F
+Fast-moving consumer goods (FMCG)	An organisation that makes products that sell quickly and at a low cost
+Feedback	Information about the customer’s views on a product or service
+Fill rate	The percentage of orders fulfilled from available stock within a set time
+Financial regulations	Internal documents setting out how money is managed within the organisation, including how budgets are set, who can authorise expenditure and, often, rules around what procurement processes must be used
+Financial return	The amount of money that is either made or lost from an investment
+Financial year	A twelve-month period of trading. Businesses’ financial years can start at any time as long as they run for a complete year
+Finished goods	Items that have been through the manufacturing process, are complete and are suitable for sale
+First article inspection	The process of checking a product manufactured for the first time to determine that it meets design and specification requirements
+First in-first out (FIFO)	Items purchased first are sold first, e.g., an electrical component sold out of inventory would be issued at the oldest or first price
+First-party audit	An inspection of an organisation by an auditor employed by the organisation (also known as an internal audit)
+Fit for purpose	The product or service is capable of doing what it was designed to do
+Fixed asset	Something owned by an organisation that is used to generate income – fixed assets can be property, machinery or land
+Fixed cost	A cost that remains constant in the short term irrespective of production volumes
+Flat structure	A structure with few or no levels of management
+Force majeure	Circumstances that cannot be foreseen which prevent a contract from being fulfilled
+Forecasting	The process of using existing data to predict future demand for products or services
+Franchise	A joint venture between a person who wants to start a business and a person who already had a business idea registered. The franchisee buys the right to use the business idea from the franchisor. McDonald’s is a well-known franchise
+Fraud	Deception intended to result in personal gain
+Free-trade area	A group of countries who have abolished tariffs, quotas and other barriers to trade within the group
+Friction	The resistance that one surface or object encounters when moving over another
+Fugitive dust	Visible emissions released from sources other than stacks, e.g., dust blown from storage piles, road dust, emissions leaking from the sides of buildings or open areas in buildings
+Full container load (FCL)	A single delivery of goods that completely fills a container
+Full truckload (FTL)	The amount of freight required to fill a truck by cubic metres / feet or mass
+Fully operational	Complete and working to full capacity, i.e. a factory would be built and producing goods
+
+#G
+Game theory	The study of mathematical models that explain how people co-operate or compete. It is used in economics and market analysis to understand collaboration and conflict in negotiating situations
+Gantt chart	A type of chart that shows the schedule of a project. It can be tailored to work for procurement milestones
+Gated process	A project management technique in which a project or process is divided into meaningful phases with checks and evaluations at the end of each phase. The project cannot continue unless a gate is passed
+GHG emissions inventory	A report estimating the volume of greenhouse gases produced
+Go live	The date on which the contract starts
+Goods-in	An area in an organisation that receives and books in deliveries
+Gross amount	Total amount payable including taxes
+Gross domestic product (GDP)	The total value of the output of businesses and people in a country in a year
+Gross national product (GNP)	The total value of the output of businesses and people of a country in a year no matter where in the world they are located
+
+#H
+Habitat	An ecological or environmental area that is inhabited by a particular species of animal, plant or other type of organism
+Hard skills	Specific skills that have to be taught, such as learning to use a new computer system, or gaining a professional qualification
+Hardware	The physical parts of a computer
+Hedge	A means of limiting the negative impact of an event
+Hierarchy	A system where members of an organisation are ranked according to their status or power
+High-bay racking	Pallet racking that extends to ceiling level. This will require specially extended masts on forklift trucks
+High-bay warehousing	A system of warehousing which looks to maximize utilisation of space using a system of pallets and shelves stacked vertically and the use of machinery such as forklift trucks to retrieve items
+Home page	The first page you see when you open a website
+Horizon scanning	A formal gathering of data and information from various sources (and often of unrelated subject matter) and combining it to predict approaching risks or opportunities in order to support decision making
+Hurricane intensity	The measurement of the strength and destructive capacity of a hurricane
+
+#I
+Implied terms	Contractual terms that exist even if they are not stated in the contract, i.e. the law of the land
+Impartial	Open-minded, without pre-determined ideas, and taking all views into account
+Imperfect competition	A market structure where many companies are competing but each is selling a slightly different product
+In-house	Something conducted within an organisation by its own workforce
+Inclusive price	Price for the whole amount, including taxes
+Incorporated company	A company that is treated in law as being distinct from its owner
+INCO terms	International commercial terms of sale that assign costs and responsibilities between the buyer and seller when delivering products
+Independent demand stock	Finished products whose demand (ordering levels) is not dependent on other items of stock
+Index	A collection of data that can be used for comparison, e.g., The Dow Jones Index
+Indirect cost/indirect spend	Costs that are not directly incurred in the manufacture of a product or delivery of a service, e.g., insurance
+Indirect supplies	Services, tools and equipment that do not form part of the finished product but are required to maintain the business and production process, e.g., repairs, stationery, consultancy
+Inducement	Something offered to persuade or influence an individual to conduct themselves or business in a certain way
+Induction	A person’s formal introduction to an organization and its procedures
+Inflated	Higher than necessary
+Input	Resources used in the production of a product or creation of a service that lead to the desired ‘output’ (e.g., people, raw materials, information)
+Insolvent	Unable to pay the money owed
+Institute of Chartered Accounts of Scotland (ICAS)	The world’s first professional body of chartered accountants
+Intangible	Something you cannot physically see or touch
+Intangible cost	A cost to an organisation that is known but cannot be quantified
+Integrated report	A short document about an organisation’s features and how this creates value in the short, medium and long term
+Intense precipitation	Heavy rain or snow
+Interest rate	The percentage of money that is required to be paid back in addition to money borrowed, or the percentage of money that is gained in addition to money saved
+Intermodal	Shipments that utilise different modes of transport, e.g., a shipping container carried by lorry to a dock where it is loaded aboard a ship
+Internal rate of return	The means by which an investment or project is evaluated financially. It is the interest rate at which the net present value of cash flows is equal to zero
+Internal stakeholders	People, groups or organisations with an inside interest in an organisation, including shareholders and employees who own or work for the business
+International Integrated Reporting Council (IIRC)	A global coalition that promotes reporting about value creation
+Interpersonal skills	Skills used when communicating and dealing with people
+In the public domain	Generally known either by the public at large, or a certain section of it; readily obtainable outside of the organisation
+Inventory	The stock of goods, materials or products
+Inventory management	The process of ensuring the safe and efficient storage and control of stock, including managing demand and movement
+Invitation to tender (or Invitation to treat) (ITT)	Document inviting potential suppliers to quote for business
+Invoices	Statements of what has been supplied and a request for payment
+ISO	International Organization for Standardization (www.iso.org)
+ISO 9000	A set of international quality management and quality assurance standards that help companies effectively document and maintain an efficient quality system. They are not specific to any one industry and can be applied to organisations of any size
+ISO 9001	ISO 9001 is a document describing the requirements an organisation must fulfill to meet the ISO 9000 standards
+ISO 14001	This sets out the international standards for an environmental management system
+ISO 26000	This is the international standard developed to help organisations in selecting and addressing their social responsibilities
+IT network	A computer network that allows computers or systems to share data
+
+#J
+Johari window	A technique that can be used to help an organisation (or person) improve their understanding of their relationship with themselves and others
+Joint contracts tribunal (JCT)	A family of standard contracts used in construction in the UK
+Just in time (JIT)	A system that works alongside Lean manufacturing. In order to reduce waste in the supply chain, JIT makes sure that stock is not held unnecessarily in inventory
+
+
+#K
+Kaizen	An approach involving continuous improvement. A long-term approach, that seeks to make small changes in processes to improve quality and efficiency
+Kanban	A production method where instructions are sent from one operation to the next on a card, including specific items and quantities. (Translated from the Japanese, it literally means ‘signboard’ or ‘billboard’). The aim is to reduce waste through over-production
+Key customer segments	A method of splitting a company’s clients into groups so that marketing efforts can be more focused. It is often based on demographics such as age or geographic location or on buying behaviour
+Key performance indicator (KPI)	Values that can be measured or monitored to assess levels of achievement
+Kyoto Protocol	International treaty which commits state parties to reduce greenhouse gas emissions
+
+#L
+Laggards	The last group of consumers who buy or use a new product or technology
+Landed cost	Cost of a product plus the relevant logistics costs, such as transportation, warehousing, handling, etc.
+Landfill	Landfill is a system of garbage disposal in which the waste is buried between layers of earth which has the effect of building up low-lying land
+Last in-first out (LIFO)	Items purchased last are sold first. As these items are likely to be higher in value, the remaining inventory has a lower value
+Law of demand	The quantity of an item purchased varies inversely with its price, other factors remaining constant
+Law of supply	As the price of an item increases the supply of the item will also increase, other factors remaining constant
+Lead time	The lapse of time between placing an order with a supplier and receipt of the goods
+Lean	A business methodology that aims to create more value with fewer resources
+Lean manufacturing	Processes that improve efficiency by reducing wasted time, materials and money
+Learning curve	A graphical representation of how when greater numbers of an item are produced, unit costs reduce
+Ledger	A book or computer file used to balance accounting figures such as deposits and receipts
+Less than container load (LCL)	A single delivery of goods that does not completely fill a container. This may incur additional charges
+Less than truckload (LTL)	A shipment containing fewer items than are required for the shipment to be eligible for full truckload rates
+Letter of credit (LC)	A document used between a buyer’s and seller’s bank to facilitate a transfer of funds upon performance of the contract and presentation of specified documents, e.g., signed delivery note
+Liabilities	The amount a business owes, e.g., loans, debts, accounts payable
+Liable	Legally responsible for any actions taken that may have a negative consequence
+Life-cycle assessment (LCA)	A technique to assess the environmental impact of each step in a product’s life from raw material extraction through to the use, repair and maintenance of the product (also called a life-cycle analysis or a cradle-to-grave analysis)
+Life-cycle cost	The total cost involved in items of inventory, including purchasing price, inward delivery, receipt and handling, storage, packing and preparation, dispatch costs, insurance and overheads
+Life-cycle plan	A plan addressing the impacts on the various stages of staff, products and environment life cycles
+Lifetime cost	The total cost of ownership over the life of an asset
+Linear pricing	The unit price doesn’t change according to the quantity purchased
+Liquidated damages	A set sum agreed by the organisation and the supplier (the parties) and is included in the contract, which will be paid if one of the parties breaches a term of the contract
+Liquidation	A form of insolvency when an organisation is brought to an end
+Logistics	The control of the flow of goods or services between two points
+Long tail spend	The part of an organisation’s spend profile that isn’t managed directly by the procurement department
+Loss leader	A product or service delivered at a price that makes a loss for the supplier in the hope of future gains; usually used to break into a new market or to increase market share
+Low-cost country (LCC)	Low-cost-country sourcing (LCCS). A procurement strategy to source from low-cost countries (LCC) either because of reduced production price, or improved capacity, quality, or logistics
+
+#M
+Macro environment	External factors beyond an organisation’s control that will influence its success, such as government policy, technology, and social and cultural factors
+Make-to-stock	Where an item is produced specifically to go into stock, for later sale
+Make or buy	A decision about what products or services an organisation will manufacture or provide themselves in-house, and which will be purchased from outside sources
+Manual handling	The transport or support of any load by one or more employees, including lifting, putting down, pushing, pulling, carrying or moving a load
+Manufacturing resource planning (MRPII)	A computer-based inventory management system that combines all available strategic and planning data to support inventory forecasting
+Market	Where buyers meet sellers to trade products and services. This can relate to a specific location or to the general economic environment
+Market analysis	This helps procurement professionals to understand how the supply market works, the direction that the market is going in, the level of competition and the key suppliers in the market
+Market factors	Elements that influence the demand for, or the price of, a good or service
+Market knowledge	A detailed understanding of the influences, activities and trends in the market for a particular product or service (also known as category knowledge)
+Market price	The amount that customers are charged, depending on supply and demand for the products or services
+Market saturation	This usually means that there is more than enough supplier capacity to meet customer demand
+Market segment	A group of consumers with common characteristics that are grouped together for the purpose of marketing a product or service
+Master production schedule (MPS)	A plan that a company has produced for the purposes of scheduling machinery, staffing, resourcing, etc., that is used to ensure smooth, continuous productions
+Material assets	Tangible items that are required to carry out an organisation’s activities, such as tools, machinery, staff and buildings
+Material requirements planning (MRP)	An electronic system used to plan production which includes scheduling orders, monitoring inventory and managing the production process
+Materials management	The part of the procurement process that makes sure organisations have the materials they need to operate
+Maverick spend/off-contract spend	Where local staff ignore existing contractual arrangements and purchase from other suppliers. This may be for fraudulent reasons, but most often it is simply because they believe they can get a better deal and do not understand the overall impact on the business
+Mean	Another name for the average. The mean is calculated by adding all of the values together, then dividing by the number of values
+Method statement	A plan or procedure that details how a process or task will be carried out
+Micro environment	Factors that directly influence an organisation’s success, such as competitors, suppliers, employees and customers
+Micro-, Small and Medium Enterprises (MSME)	The expansion of SME to include microbusinesses, which are usually defined as having fewer than ten employees
+Middle majority	A group of consumers who buy or use a new product or technology after seeing it used successfully by innovators and early adopters
+Milestones	Important stages or events within a process
+Mini-competition	A limited tender exercise, usually only on price, under the rules set out in a framework agreement; only suppliers appointed to the framework are able to take part
+Minimum order quantity (MOQ)	The smallest amount of a product a buyer can order from the supplier
+Minutes	A written record of a meeting, stating when it took place, who was present, what was discussed and what actions have been agreed
+Mission statement	Short statement setting out an organisation’s purpose
+Mitigation/mitigating action	An action that reduces the severity of an outcome
+Mixed loads	This is where a vehicle contains more than one type of product
+Mobilisation	When a contract shifts from one supplier to another
+Modern-day slavery	The act of forcing people to work in poor conditions for little or no money
+Monopoly	A situation in a market where one organization controls the supply of goods or services and new entrants find it difficult to enter the market
+Monopsony	A market with only one buyer
+Moonlighting	Paid work from a second job that is done without a main employer’s consent
+Movements	A shift in demand or supply, or price
+Multilateral trade agreements	An exchange agreement between more than two nations or trading groups that gives each group favoured trade status connected to certain goods obtained from the signatories
+Multilingual	In or using several different languages
+Multi-nationals	Organisations that have facilities and assets in more than one country
+
+#N
+Net amount	Total amount payable excluding taxes
+New Engineering Contract (NEC)	A family of standard contracts used in construction in the UK
+Non-cashable savings	One-time savings that do not reduce the ongoing future budget
+Non-governmental organisation (NGO)	A non profit organisation that operates independently of any government
+Non-linear pricing	The unit price does change as the quantity ordered changes
+Non-verbal communications	Using pictures, facial expressions or body language to convey information
+
+#O
+Objective	In the context of data, something is objective if it is pure fact, with no opinion or interpretation attached to it
+Obligations	In terms of a contract, the actions that each party must carry out
+Obsolescence	The state of becoming discontinued, outdated or no longer useful
+Obsolescent stock	Stock that is outdated and no longer useful
+Occupational Health & Safety Agency (OHSA)	A USA governmental regulatory agency
+Off-the-shelf	Goods or services that are readily available and not made to order
+Offer	An invitation communicated by one party to another to enter into a legal contract
+Officers	Positions appointed by the Board of Directors. Examples of officers are CEO (chief operating officer) and FO (financial officer)
+OJEU	Official Journal of the European Union
+Oligopoly	A market structure where a small number of competitors dominate the market
+Open-book contract	A contract in which both the purchaser and supplier share all financial information relating to the contract, including figures that would normally be considered commercially confidential
+Open account	This is an arrangement where the items are delivered before payment is due, for example, on credit terms such as 30 days
+Opening stock	The amount, type and value of goods available for sale at the beginning of a set period
+Operating costs	Day-to-day expenses of running an organisation, e.g., rent, salaries, transport costs, power and insurance
+Operating environment	Everything external to the business that has an impact on how it operates. This will include regulations, social expectations, the economy, its relative position in the market, the competitiveness of the market, etc.
+Opportunity cost	A benefit that could have accrued if a person had taken a different action
+Ordering system	A method used to determine the size and timing of an organisation’s orders
+Organisation	A body that buys goods or services from a supplier
+Organisational culture	The shared values and beliefs that influence how people in an organisation behave
+Original equipment manufacturer (OEM)	A manufacturer that produces goods for another company to sell under their own branding, particularly computer and IT equipment
+Oscillating	An object that oscillates moves repeatedly from one position to another
+Outcome-focused specification	Type of performance specification that describes the functions or performance that a product must fulfil
+Output	The amount of goods or services an organisation is producing or supplying
+Outsource	Contract another company to undertake a task or job
+Over-spec’d (over-specified)	Having a specification that is better than is required to be fit for purpose
+Over-supply	Where more goods or services are available than there are buyers for them. This most often occurs in agriculture where the harvest may vary from year to year, depending on the weather, and the produce cannot be kept for a long time
+Overdraft	A short-term agreement with a bank to lend money
+
+#P
+Packaging	The process of covering an item in a specified material to protect the item and in some cases make it more appealing to the customer
+Packing list	An itemised list of a package’s contents which is prepared by the shipper
+Packing	The process of preparing goods for storage or distribution by protecting the contents from outside elements
+Pallet	A platform used for storing and moving stock
+Palletisation	Performing material handling tasks, such as storing and shipping products, using pallets
+Participative	To be involved and contribute to the task or project
+Partnership	A legal form of a business that is owned by two or more individuals
+Patented	The inventor has been legally granted exclusive rights to make or sell their idea or invention
+Patent	Legally grants the inventor sole rights to make or sell their idea or invention
+Payment terms	The time in which a buyer has to pay the supplier for goods or services received
+Perfect competition	A market structure where many companies are competing, each selling the same product.
+Performance	A term used in contract law to describe what should be done
+Performance management	Any activity that is carried out to make sure goals are achieved
+Performance management framework	A series of standards and targets that are to be achieved by the supplier, definitions of how performance against those standards will be measured and actions expected to be taken on the basis of the measurement results
+Performance specification	Outlines what the product or service is to do or achieve – this covers its output requirements, tolerances and functions it may have to perform
+Peri-urban	An area that surrounds a metropolitan area or city
+Personal improvement plan (PIP)	A type of action plan geared towards personal improvement
+Petty cash	Money readily available for use by employees on small items
+Photovoltaic	Energy generated using solar cells
+Picking	The process of selecting items from stock or assembling the items required to fill an order
+Piece part price	Price per individual item
+Pitch	A business case delivered to an organisation to try to sell a product or service
+Plagiarism	Passing off another person’s work as your own
+Positive-sum game	Gains by one person or party do not equal the loss to the other
+Poverty line	The minimum level of income required by a family to cover the basic needs of food, clothing and shelter
+Personal protective equipment (PPE)	Equipment such as a hard hat, work boots or a high-visibility jacket
+Pre-qualification questionnaire (PQQ)	A document sent to potential suppliers asking for information necessary to support their qualification as an approved supplier
+Pre-qualify	Match a certain set of criteria to qualify immediately for invitation to tender or request for information (RFQ)
+Preferred supplier list	A pre-approved list of suppliers whose financial stability and technical capability have already been checked
+Price-penetration strategy	A pricing strategy that aims to attract customers away from competitors by offering a lower price
+Price-skimming strategy	A pricing strategy that markets products in the early stages of their life cycle at a higher price than at a later stage
+Price elasticity	A measure of the change in demand for a product or service in relation to changes in its price
+Price on application (POA)	Meaning you can find out the price when you contact the organisation
+Price volatility	Prices that rise and fall repeatedly and unpredictably over short periods of time
+Pricing model	How the price for goods or services will be presented in a request for information (RFI)
+Pricing schedule appendix	Additional pages, containing more details about the pricing schedule, at the end of the contract
+Primary packaging	The packaging that is in immediate contact with the product (e.g., small box, bottle, bag, etc.)
+Primary sector	The first stage of the production and manufacturing process (e.g., farming and the extraction of raw materials)
+Private limited company (Plc)	A legal form of company in which ownership is apportioned through the number of shares held. Liability of the holders of these shares is limited to the share value and the shares cannot be traded
+Private sector	Organisations run with the aim of making a profit
+Proactive	Anticipating needs and acting accordingly
+Probity	Honesty or integrity
+Process mapping	A way to provide a visual representation of a process
+Procure to pay (P2P)	The process of requisitioning, purchasing, receiving, paying for, and accounting for goods and services
+Procurement	The act of obtaining something, whether tangible or intangible, such as a product or service
+Procurement platform	The activities that determine the specification and quantities of a product or service prior to contracting for its supply. It is based on a balance of financial and non-financial requirements
+Procurement specification	A document that presents prospective suppliers with a clear, accurate and full description of the organisation’s needs and enables them to propose a solution to meet those needs
+Product label	Part of the packaging of a product. The product label is the written information on the outer packaging that gives important information that needs to be communicated to the customer
+Product life cycle	The stages a product goes through, from initial concept through to decline and removal from the market
+Profitability	The ability of the organisation to make a profit
+Profit	The amount by which the revenues of a company exceed its costs
+Proforma invoice	A document which confirms the sale which is sent to the buyer in advance of items being shipped and provides details such as description of items, shipment weight, transport charges, etc.
+Promotional mix	The aspects of product, place, price and promotion that are used in the marketing of a product or service
+Propulsion system	A machine that produces thrust to push an object forward
+Prospective suppliers	Suppliers that may wish to work with a buyer or who a buyer may wish to work with
+Prototype	A sample or model of an idea or concept
+Public limited company	A legal form of company in which ownership is apportioned through the number of shares held. Liability of the holders of these shares is limited to the share value and the shares can be traded through an exchange
+Public procurement	Purchasing carried out by government departments, local authorities and some other designated types of organisation, particularly those funded or supported through taxation
+Public sector organisations	Service organisations run by the government and usually funded by taxes
+Purchase order (PO)	Legally binding documents that set out the details of the transaction that the supplier and buyer have agreed
+Purchasing	The processes concerned with acquiring goods and services, including payment of invoices – it is part of the wider procurement process
+
+#Q
+Qualified bid	A bid where the potential supplier has ‘exempted themselves’ from one or more of the requirements of the tender (i.e. the bid specifically states that it does not comply with one or more aspects of the specification or contract terms)
+Qualitative	Measured in terms of quality
+Qualitative research	Research designed to gain insights into reasons why something happens
+Quality assurance	Processes put in place the ensure that quality requirements will be met
+Quality control	Checking a product against a set of criteria to ensure it meets quality standards
+Quality management system (QMS)	A formal system that includes documented processes and procedures that outline the responsibilities for achieving quality within an organisation
+Quantitative	Measured in terms of numbers or quantity
+Quantitative research	Research that uses statistics and mathematics as a means of analysing data
+Quota	A limit on the quantity or value of a particular type of import or export
+
+#R
+Radio frequency identification (RFID) tag	Data chips that are attached to products and contain a signal for tracking and identification
+Rationalisation	The process of reviewing products and consolidating variety to reduce inventory costs
+Re-engineering	Redesigning existing products and services
+Reactive	Responding to needs when they present themselves
+Read receipt	A response from an e-mail recipient that indicates the message was opened
+Rebate	An amount paid back on top of any discounts that have previously been agreed
+Reciprocal	Something that is the same on both sides
+Recruitment	The act of finding a person or persons to do a role within an organisation
+Redundant stock	Excess stock that is not required
+Regression analysis	Statistical methods used for predicting what will happen in one variable as a result of a change in another – e.g., will quality improve by X amount if the price is increased by Y amount? Quality is not a direct function of price, so it may do so, or it may not. Regression analysis looks at probabilities
+Regulatory framework	A model that policy makers and others can use to reform and apply regulations in an effective and logical way
+Remedies	Contractual remedies are the provisions in a contract that enable the injured party to take action when the other party does not comply with the contract terms
+Remittance advice	A document confirming that payment has been made
+Reprocurement	To procure again – put in place a new contract when a previous one expires or is terminated
+Request for information (RFI)	A document used to gather information about suppliers and their capabilities prior to a formal procurement process
+Request for proposal (RFP)	A document used to canvass potential solutions from suppliers when the specification is still unclear
+Request for quotation (RFQ)	An invitation to suppliers to bid on specific products or services
+Request for tender (RFT)	Document inviting potential suppliers to quote for business
+Requisition	Paper or electronic document stating a need for procurement to supply a product or service
+Residual waste	Waste that is not able to be recycled or re-used and which ends up in garbage dumps called landfills
+Return on investment (ROI)	A measure of profitability that indicates whether a gain or loss has been generated compared with the initial cost
+Revenue	The amount of income that has come into a business
+Risk assessment	An assessment that considers the severity of a hazard and its potential outcome in conjunction with other factors including the level of exposure, the number of individuals exposed and the risk of the hazard being realised
+Risk register	A document that sets out identified risks, the likelihood and impact of them materialising and who is responsible for dealing with them
+Road safety impact assessment (RSIA)	A formal, independent assessment of the impact of new or altered layouts and entry points on the safety of a road
+Roll-over contract	Contract that automatically renews on expiry unless notice is given that it is not to do so
+Roller-stacker shelf mechanism	A set of rotating decks or shelves within a secure container that eliminates wasted space between racks and improves security
+
+#S
+Safety stock	Extra stock that is held in case it is needed in unexpected situations, such as demand rising or suppliers being unable to deliver
+Sales and operations planning (S&OP)	A multi-department planning process based on factors including expected levels of demand and supply
+Sales tax	A tax collected by the retailer at the final stage of the supply chain
+Samples	Examples of the product that is required
+Scalability	An organisation’s ability to increase its production profitability
+Scanner	A device that optically scans images
+Schedule of rates	An itemised list of component parts within a lump-sum contract, or a list of individual products, giving a price for each unit
+Schematic	A diagram showing the main form and features of something to help people to understand it
+Scorecards	Reports used to track the achievement of, or progress towards, targets or goals that can include quantitative and qualitative data
+Search engine	A software system or program that is designed to search for information on the Internet
+Secondary sector	The second stage of the production and manufacturing process, e.g., manufacturing industries
+Second-party audit	An inspection of a supplier by an organisation/ company contracted by the organisation (otherwise known as an external or supplier audit)
+Self-assessment tool	An evaluation method that an organisation will use to assess performance
+Sensitive receptors	People or living things that are more readily affected by exposure to contaminants or toxic materials, e.g., people in schools, day-care centres, hospitals and nursing homes
+Service credits	A deduction against fees payable as compensation for poor service, usually a pre-determined percentage derived from a contractual performance management framework
+Service level agreement (SLA)	An agreement between a supplier and a buyer based on quality, delivery, availability and other measurable criteria
+Service sector	The third of three sectors recognised by economists. The first sector covers farming and raw materials, the second is manufacturing and the third covers the production and delivery of services
+Shares	The means by which a business is apportioned among its owners
+Shift	A change in either the quantity supplied, or the quantity demanded while the price remains the same
+Shipping address	The address to which deliveries are to be sent
+Shop floor	Within manufacturing, the area where the goods are made
+Signed off	A process of approving a sample so that orders can be placed or produced
+Silo thinking	When people within a department do not share their knowledge or ideas with others outside the department
+Single administrative document (SAD)	A standardised customs form used to control goods being moved in and out of the EU, Switzerland, Norway, Iceland, Turkey, Macedonia and Serbia
+Slotting (or profiling)	The process of identifying the most efficient placement for each item in a warehouse
+Small- and medium-sized enterprise (SME)	A small- or medium-sized enterprise that is independent of other companies and is defined in terms of the number of employees it has
+SMART	SMART objectives are: Specific, Measurable, Achievable, Realistic, and Time bound
+Social sustainability	The impact a business can have on people and communities and actions to make this a positive impact
+Soft skills	Skills that may be taught but are more likely to develop with time and practice, for example, team working and good communication
+Software	Programmed code that makes computers (hardware) operate
+Sole trader	Someone who has exclusive ownership of a business and can keep any surplus profits but is responsible for any losses
+Specification	A detailed description of what is required
+Spend analytics	Gathering, cleansing, classifying and assessing spend data, with the aim of making efficiencies and reducing costs
+Spot buying	One-off purchases or immediate requirements, common in domestic buying
+Staged pricing	Payment split into instalments across the period of the contract
+Staggered delivery	This is where a full order is broken down into smaller loads and delivered against a schedule, e.g., 40% delivered in Month 1, 60% delivered in Month 2
+Stakeholder	Anyone with an interest, or stake, in the organisation or project
+Standard deviation	A statistical measure that captures the difference between the average and the outliers in a set of data
+Standing orders	Document setting out the internal rules of an organisation
+Statutory	An action that is required by and controlled by law
+Stewardship	Care and responsibility for minimizing a product’s environmental impact throughout all stages of the product life cycle, including end of life management
+Stock	Goods, products or materials held for future use or supply, often called inventory
+Stockholder	American term for shareholder
+Stock keeping unit (SKU)	An identification code for an item of inventory, usually displayed as a bar code linked to a database
+Stockout	When an inventory item is unavailable
+Stocktake	The process of physically counting products in a warehouse to match them to the computerized inventory
+Strategic business decisions	Long-term decisions often made by senior management which affect the future and direction of an organisation
+Strategic core	A category of a buyer’s portfolio in which items have major consequences for the company if they are not available when needed
+Strategic plan	A document that includes details of the organisation’s goals and the actions to be taken to achieve them
+Strategic procurement	The practice of focusing on building long-term relationships with suppliers that could lead to a source of competitive advantage
+Strategic	High-level planning, usually related to long-term goals
+Subjective	In the context of data, something is subjective if it is a matter of opinion, which may differ from one person to another
+Substitutes	Goods which, as a result of changed conditions, may replace each other in the market
+Subtract or outsource	To employ another organisation to fulfil a contract or part of a contract
+Supplier inspection	A way of testing a supplier’s product or service to confirm compliance with the standard set by the organisation
+Supplier ranking	A priority order of suppliers that can be used for sourcing
+Supplier relationship management (SRM)	Process for identifying all interactions with key suppliers and then managing them in a way that increases the value from the relationship for both parties
+Supplier relationship manager (SRM)	The role responsible for developing and maintaining supplier relationships
+Supply	How much or how many of a product or service an organisation has to sell, or, the act of physically getting something from the supplier to the buyer
+Supply chain	A network of individuals, organisations, technology, activities and resources working together to make sure goods or services reach the end user
+Supply organization	A supplier
+Sustainability	Supporting future ecological balance by not harming the environment or depleting natural resources
+Sustainability development goals (SDG)	17 goals introduced by the United Nations General Assembly to achieve a better and more sustainable future for all
+Sustainably	In a way that avoids the destruction of nature and helps to keep a good ecological balance
+Synchronisation	The process of precisely co-ordinating or matching two or more activities, devices or processes in time
+System-generated reference number	A reference number automatically assigned to a record in a computer system
+Systemic	An attribute that applies to a whole system rather than one particular part of it
+
+#T
+Tall structure	Also known as a hierarchical structure and based on a pyramid – every staff member has somebody to report to
+Tangible	Something you can physically see or touch
+Target audience	People or organisations at which products such as a film, advertisement or website is aimed
+Tariff	A tax paid on a particular type of import or export
+Technical (or conformance) specification	The set of standards that a requirement must meet or exceed
+Technology chasm	The gap between the early adopters and larger market segments such as early majority in a product life cycle
+Telematics	Information technology dealing with the long-distance transmission of computerised information
+Tender	A request from a buying organisation to invite suppliers to formally quote on a large value project
+Term contracts	Contracts written to last a period of time and include agreed terms
+Tertiary sector	The third stage of the production and manufacturing process, where a service is delivered in industries, e.g., banking, communications and marketing
+Testimonial	A formal statement from a customer giving feedback about the product, service or company and often used for promotional purposes
+The Carbon Trust	An independent, expert partner of leading organisations around the world, helping them contribute to and benefit from a more sustainable future through carbon reduction, resource efficiency strategies and commercialising low carbon technologies
+The Greenhouse Gas Protocol (GHG Protocol) Corporate Standard	The most widely used international accounting tool for government and business leaders to understand, quantify, and manage greenhouse gas emissions
+Third-party audit	An inspection of an organisation by an independent company or body
+Third-party logistics (3PL)	The use of third-party businesses to outsource part or all of an organisation’s fulfilment, logistics, transport, warehousing or distribution
+Third-sector organisations (TSOs)	Not-for-profit, non-governmental organisations run with the aim of achieving social goals, such as charities or community groups
+Threshold	In the procurement context, an upper limit to the amount a contract may cost without certain legal requirements coming into force
+Tooling	Cutting tools, moulds, fixtures of accessories needed on a machine to manufacture a product
+Total cost approach	An approach that considers all the costs associated with procuring an item
+Total cost of ownership (TCO)	A structured approach to calculating the full costs associated with buying and using an asset or acquisition over its entire life cycle
+Total costs	The total amount of costs spent, including fixed, variable, direct and indirect costs
+Total quality management (TQM)	Efforts of all departments within an organisation to improve processes, products and services
+Trade body	An organisation that represents and works for a particular group of individuals or companies, with a specific industry focus, is usually funded by them
+Traffic	Visits or clicks on a website
+Transcendental	Pre-supposed and beyond practically gained experience
+Transformational step change	An organisational change that is significant and carried out over a period of time
+Transparency	Operating in such a way that everyone can see the actions performed
+Turnover	The amount of money taken by a business in a particular period
+
+#U
+Unambiguous	Clear and not open to interpretation
+Unincorporated company	A company in which there is no legal distinction between the company and its owner
+Union	A group of workers joined together in a specific type of organisation for the purpose of improving working conditions
+Unit load	A standard unit that combines individual items to ensure easy and efficient handling
+Up-skill	Increase the ability of an individual through training and personal development
+Upstream environmental factors	Impacts on the environment caused by the extraction of raw materials or the manufacture of goods being purchased
+
+#V
+Value added tax (VAT)	An indirect tax collected by sellers at every stage in the supply chain, based on the value added at each stage of a product’s or service’s production or distribution
+Value propositions	The attributes of a product or service that makes it attractive to customers
+Variable costs	Costs that change with the output of the organisation
+Variant bid	A tender offer that does not quite match the specification of contract terms, but has been authorised as a secondary offer from a supplier. It is used to see if the proposed specification and contract terms can be improved upon via competitive offers and must be authorised by the purchaser as part of the invitation to tender
+Vendor-managed inventory	An agreement between an organisation and a supplier where the supplier is given control of ordering (replenishment) decisions
+Venture capitalists	Specialist companies that invest in businesses (particularly start-ups)
+Verbal communications	Using the spoken or written word to convey information, for example face-to-face or on the phone, reports, e-mails or posters
+Vertical integration	When one organisation in a supply chain moves into a different stage of that supply chain, either by starting its own business or by acquiring an existing one
+Violation	Breaching an agreement, policy or code of conduct
+Vision statement	A statement describing the future desired state of the organisation
+
+#W
+Waiting time charge	Charge applied by a supplier if their specified waiting time to be offloaded is exceeded
+Warehouse slotting	The process of assigning identity codes to picking locations based on various criteria such as unit sales, size or weight
+Warranty	A promise made by the supplier to the buyer, in return for a monetary sum, to repair or replace a product or service without further charge in an agreed period of time
+Water purification	The process of removing chemicals, biological contaminants, suspended solids and gases from contaminated water
+Waybill (or airway bill)	A bill of lading issued by an airline certifying that items carried comply with standards set by the International Air Transport Authority (IATA)
+Wearing parts	Parts with a limited lifespan that need replacing periodically
+Whistle-blower	A person who discloses activity or information which they believe to be illegal, unethical or not in accordance with the organisation’s policies and procedures
+Wire transfer	A method of transferring funds electronically from one person or entity to another using bank accounts
+Word-of-mouth	The informal sharing of information between people
+Working capital	Capital of a business that is used in its day-to-day trading operations, calculated as the current assets minus the current liabilities
+Work in progress inventory	Assets that are being used in the production process, which may include raw materials, labour and overheads
+
+#XYZ
+Zero-sum game	A ‘zero-sum game’ is an interaction where every gain by one person is an equal loss to the other, so the net gain (the total of the benefits to both parties) is zero
