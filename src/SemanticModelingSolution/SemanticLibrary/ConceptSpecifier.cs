@@ -8,7 +8,7 @@ namespace SemanticLibrary
 {
     /// <summary>
     /// </summary>
-    public record ConceptAttribute(string Name)
+    public record ConceptSpecifier(string Name)
     {
     }
 }

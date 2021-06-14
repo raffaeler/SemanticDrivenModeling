@@ -84,6 +84,17 @@ namespace SemanticGlossaryGenerator.Helpers
             return initializer;
         }
 
+        internal ExpressionSyntax CreateInitializersWithExpressions(string type, params ExpressionSyntax[] arguments)
+        {
+            var typeName = SyntaxFactory.ParseTypeName(type);
+            var argumentList = SyntaxFactory.ArgumentList(
+                SyntaxFactory.SeparatedList(arguments
+                    .Select(a => SyntaxFactory.Argument(a))));
+
+            var initializer = SyntaxFactory.ObjectCreationExpression(typeName, argumentList, null);
+            return initializer;
+        }
+
         internal ExpressionSyntax CreateStringLiteralExpression(string literal)
         {
             return SyntaxFactory.LiteralExpression(

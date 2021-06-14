@@ -21,14 +21,14 @@ namespace SemanticGlossaryGenerator
 
         private void OnParsed(string word, string description, List<string> comments, List<string> aliases)
         {
-            var words = word.Split(_listSep, StringSplitOptions.RemoveEmptyEntries)
+            var words = word.Split(_listSep, StringSplitOptions.None)
                 .Select(w => w.Trim())
                 .ToList();
 
             var newAliases = aliases
-                .Select(a => a.Split(_listSep, StringSplitOptions.RemoveEmptyEntries)
-                                .Select(w => w.Trim())
-                                .ToList())
+                .Select(a => a.Split(_listSep, StringSplitOptions.None)
+                    .Select(w => w.Trim())
+                    .ToList())
                 .ToList();
 
             _commit(words, description, comments, newAliases);

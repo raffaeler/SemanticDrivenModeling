@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SemanticLibrary
 {
-    public record ConceptNature(string Name, params ConceptAttribute[] ConceptAttributes)
+    public record ConceptNature(string Name, params ConceptSpecifier[] ConceptSpecifiers)
     {
     }
 }

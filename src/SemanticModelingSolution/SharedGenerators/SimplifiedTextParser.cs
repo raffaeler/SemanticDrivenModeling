@@ -108,9 +108,11 @@ namespace SemanticGlossaryGenerator
         private void Emit(string word, string description)
         {
             if (word == null) return;
-            description = description == null ? string.Empty : description;
 
-            _commit(word, description, _comments, _aliases);
+            _commit(word,
+                description == null ? string.Empty : description,
+                _comments == null? new List<string>() : _comments,
+                _aliases == null ? new List<string>() : _aliases);
             Reset();
         }
     }

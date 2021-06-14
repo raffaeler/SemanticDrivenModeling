@@ -20,14 +20,18 @@ namespace TestConsole
             });
             var sourceTerms = gen.Terms.Generate();
             var sourceConcepts = gen.Concepts.Generate();
+            var sourceConceptSpecifiers = gen.ConceptSpecifiers.Generate();
             var sourceDomain = gen.Domain.Generate();
 
             var txtTerms = sourceTerms.ToString();
             var txtConcepts = sourceConcepts.ToString();
+            var txtConceptSpecifiers = sourceConceptSpecifiers.ToString();
             var txtDomain = sourceDomain.ToString();
             Console.WriteLine(txtTerms);
             Console.WriteLine();
             Console.WriteLine(txtConcepts);
+            Console.WriteLine();
+            Console.WriteLine(txtConceptSpecifiers);
             Console.WriteLine();
             Console.WriteLine(txtDomain);
         }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using LegacyModels;
 
 using SemanticLibrary;
-using SemanticLibrary.Known;
+//using SemanticLibrary.Known;
 using GeneratedCode;
 
 namespace ManualMapping

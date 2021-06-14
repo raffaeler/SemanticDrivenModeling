@@ -1,30 +1,157 @@
 ﻿# This file contains the common concepts and related terms
+#
+# // The non unique identity of an entity  This is a comment that goes into the Concept declaration [KnownConcepts class]
+# $ Not necessarily an item identifier     This is the description of the Concept [KnownConcepts class]
+# Identity                                 This is the Concept name [KnownConcepts class]
+#     :Name: 100: The name of the entity   Global context, Term with name "Name", description "The name of the entity" [KnownTerms class]
+#     :Title: 80                            A Term with name "Title" and no description [KnownTerms class]
+#     Person:FirstName:100                 In the context of a person, the FirstName is his/her identity
+#                                          Two TermsToConcepts are added to the Domain class:
+#                                          - new TermsToConcept(KnownConcepts.Identity, null, (KnownTerms.Name, 100))
+#                                          - new TermsToConcept(KnownConcepts.Identity, null, (KnownTerms.Title, 80))
+#                                          - new TermsToConcept(KnownConcepts.Identity, KnownConcepts.Person, (KnownTerms.FirstName, 100))
+# 
+
+// Undefined is always needed to find unmappable concepts in the graph
+$ The Undefined Concept is needed as a special case when a pre-defined Concept is not defined
+Undefined
+
+// Any is used when some term or context is valid domain-wide
+$ Domain wide context
+Any
+
+
+
+// Unique identifier
+$ Unique identifier also known as key
+UniqueIdentity
+    :Id: 100: The unique identifier
+    :NaturalId: 100: A human-readable unique identifier
 
 // The non unique identity of an entity
 $ Not necessarily an item identifier. Name, Tag, etc.
 Identity
-    Name : 100: The name of the entity
-    Title: 80
+    :Name : 100: The name of the entity
+    Person:FirstName : 100: 
+    Person:LastName : 100: 
+    Person:MiddleName : 100: 
+    :Title: 80
+    :Code : 100
+    :Image : 80
+    :Picture : 80
+    :Tag : 50
 
 Product
-    Material : 100
+    :Material : 100
+
+Lot
+    :Batch : 100
+
+// A set of ingredients making up a product
+Composition
+    :Ingredient : 100
+
+Person
+    :Human: 80
+    :Employee : 100
+    :Contact:100
+    :Owner:50
+    :Operator: 90
+
+// Human readable descriptions
+HumanDescription
+    :Description: 100
+    :Phrase : 80
+    :Note: 100
+    :Notes: 100
+    Product:Recipe
+    Product:Formula
+    Product:Method
+    Product:Methodology
+    Product:Phase
+
+Attribute
+    :Category
+    :Sample
+
+$ SI Length (meter)
+UnitLength
+    :Quantity
+
+$ SI Mass (kg)
+UnitMass
+    :Weight
+    :Net[Net]
+    :Gross[Gross]: 100: Gross weight
+    :Tare[Tare] : 100: Tare weight
+
+
+$ Quantitative measure 
+QuantitativeMeasure
+    :Quantity
+    :Qtt
+    :Number
+    :Net
+    :Gross
+    :Tare
+    :Value:80
+    :Percentage
+    :Percent
+
+
+$ Qualitative measure
+QualitativeMeasure
+    :Color
+    :Appearance
+    :Shape : 80
 
 
 
-# KnownTerms class
-# public static Term Name = new Term("Name", "The name of the entity");
-# public static Term Title = new Term("Title", "");
-#
+$ Linear Direction
+LinearDirection
+    :Direction : 50
 
-# KnownConcepts class
-# /// <summary>
-# /// The non unique identity of an entity
-# /// </summary>
-# public static Concept Identity = new Concept("Identity", "Not necessarily an item identifier. Name, Tag, etc.");
-#
+$ Angular Direction
+AngularDirection
+    :Direction : 50
 
-# 
-# Scope global = new Scope(
-#             new Imply(KnownTerms.Name, KnownConcepts.Identity)
-#             //new Imply(KnownTerms.Title, KnownConcepts.Identity)
-#            );
+$ Absolute date or time
+AbsoluteTime
+    :Expiry
+    :Expiration
+    :Date
+    :Time
+
+$ Relative date or time
+RelativeTime
+
+$ Any absolute location information
+AbsolutePosition
+
+$ Any relative location information
+RelativePosition
+    :Index:100
+
+$ Any state related information (open/close, shipped, deleted, etc.)
+State
+
+Constraint
+
+Validation
+    :Valid
+    :Checked
+    Product:Control
+    Product:Check
+
+// Process comment 1
+Process
+    :ProcessAlias1
+    :ProcessAlias2
+
+Subject
+Location
+Document
+
+$ A complex entity
+Entity
+

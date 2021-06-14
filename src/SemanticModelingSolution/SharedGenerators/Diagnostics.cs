@@ -12,19 +12,36 @@ namespace SemanticGlossaryGenerator
         {
             { "SM01", new DiagnosticDescriptor(
                     id: "SM01",
-                    title: "Concept strings cannot contain spaces",
-                    messageFormat: "Concept strings cannot contain spaces: '{0}'",
+                    title: "String not valid",
+                    messageFormat: "{0} string contain invalid character(s): '{1}'",
                     category: "Parser",
                     DiagnosticSeverity.Error,
                     isEnabledByDefault: true) },
 
-            { "SM03", new DiagnosticDescriptor(
-                        id: "SM03",
-                        title: "Duplicate concepts are not allowed",
-                        messageFormat: "Duplicate concepts are not allowed: skipping '{0}'",
+            { "SM02", new DiagnosticDescriptor(
+                        id: "SM02",
+                        title: "Duplicates are not allowed",
+                        messageFormat: "Duplicate {0}s are not allowed: skipping '{1}'",
                         category: "Parser",
                         DiagnosticSeverity.Warning,
                         isEnabledByDefault: true) },
+
+            { "SM03", new DiagnosticDescriptor(
+                        id: "SM03",
+                        title: "Undefined Concept",
+                        messageFormat: "Concept '{0}' must be also defined and not just used as a context",
+                        category: "Parser",
+                        DiagnosticSeverity.Warning,
+                        isEnabledByDefault: true) },
+
+            { "SM04", new DiagnosticDescriptor(
+                        id: "SM04",
+                        title: "Invalid Term[ConceptSpecifier]",
+                        messageFormat: "The item'{0}' is not a valid 'Term[Specifier]'",
+                        category: "Parser",
+                        DiagnosticSeverity.Warning,
+                        isEnabledByDefault: true) },
+
         };
     }
 }
