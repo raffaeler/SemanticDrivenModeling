@@ -63,5 +63,18 @@ namespace SemanticStructuresTests
 
             parser.Feed(null);
         }
+
+        [TestMethod]
+        public void TestPascalCaseExtract()
+        {
+            CollectionAssert.AreEqual(new string[] { "Id" }, LexicalHelper.CamelPascalCaseExtract("Id"));
+            CollectionAssert.AreEqual(new string[] { "Id" }, LexicalHelper.CamelPascalCaseExtract("id"));
+            CollectionAssert.AreEqual(new string[] { "First", "Name" }, LexicalHelper.CamelPascalCaseExtract("FirstName"));
+            CollectionAssert.AreEqual(new string[] { "First", "Name" }, LexicalHelper.CamelPascalCaseExtract("firstName"));
+            CollectionAssert.AreEqual(new string[] { "AName" }, LexicalHelper.CamelPascalCaseExtract("AName"));
+            CollectionAssert.AreEqual(new string[] { "My", "AName" }, LexicalHelper.CamelPascalCaseExtract("MyAName"));
+        }
+
+
     }
 }

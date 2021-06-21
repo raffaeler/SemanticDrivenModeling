@@ -47,7 +47,7 @@ namespace SemanticGlossaryGenerator
                 return;
             }
 
-            if (line.StartsWith(InternalCommentTag))
+            if (line.StartsWith(InternalCommentTag) || line.TrimStart().StartsWith(InternalCommentTag))
             {
                 return;
             }

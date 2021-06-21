@@ -21,11 +21,11 @@ $ Domain wide context
 Any
 
 
-
 // Unique identifier
 $ Unique identifier also known as key
 UniqueIdentity
     :Id: 100: The unique identifier
+    :Guid: 100: The unique identifier
     :NaturalId: 100: A human-readable unique identifier
 
 // The non unique identity of an entity
@@ -39,17 +39,58 @@ Identity
     :Code : 100
     :Image : 80
     :Picture : 80
+    :Barcode
     :Tag : 50
+
 
 Product
     :Material : 100
+    :Article: 100
+    :Ingredient : 80
+    :Excipient : 80
+    :Item : 50
 
 Lot
     :Batch : 100
 
 // A set of ingredients making up a product
 Composition
-    :Ingredient : 100
+    :Inventory
+    :Stock
+    :Goods
+    :Freight
+    :Supply
+    :Picking
+#    :Ingredient : 100
+
+Company
+    :Enterprise
+    :Branch : 80
+    :Client[Customer]
+    :Customer[Customer]
+    :Supplier[Supplier]
+    :Vendor[Supplier]
+
+Document
+    :Invoice[Invoice]
+    :Bill[Invoice]
+    :Certificate
+    :Receipt
+    :Record
+    :Report
+    :Paper
+    :Form
+
+Order
+
+Purchase
+    :Purchasing
+
+Sales
+    :Selling
+
+Delivery
+
 
 Person
     :Human: 80
@@ -58,25 +99,57 @@ Person
     :Owner:50
     :Operator: 90
 
+Workflow
+    :Policy
+    :Incoming[In]
+    :Received[In]
+    :Enter[In]
+    :Outgoing[Out]
+    :Exit[Out]
+    :Input[In]
+    :In[In]
+    :Output[Out]
+    :Out[Out]
+
+
 // Human readable descriptions
 HumanDescription
     :Description: 100
     :Phrase : 80
     :Note: 100
     :Notes: 100
+    :Remarks
     Product:Recipe
     Product:Formula
     Product:Method
     Product:Methodology
     Product:Phase
+    :Hint
+    :Suggestion
+
 
 Attribute
     :Category
+    :Type
+    :Kind
+    :Classification
     :Sample
+
+#TODO: UnitOfMeasure is a problem because of the casing
+Units
+    :UnitOfMeasure
+    :Uom
 
 $ SI Length (meter)
 UnitLength
+    :Length
+    :Size
     :Quantity
+    :Dimension
+
+UnitVolume
+    :Volume
+
 
 $ SI Mass (kg)
 UnitMass
@@ -86,9 +159,11 @@ UnitMass
     :Tare[Tare] : 100: Tare weight
 
 
+
 $ Quantitative measure 
 QuantitativeMeasure
     :Quantity
+    :Amount
     :Qtt
     :Number
     :Net
@@ -97,6 +172,8 @@ QuantitativeMeasure
     :Value:80
     :Percentage
     :Percent
+    :Total
+    :Partial
 
 
 $ Qualitative measure
@@ -125,15 +202,62 @@ AbsoluteTime
 $ Relative date or time
 RelativeTime
 
+Communication
+    :Contact
+    :Email
+    :Phone
+    :Cell
+
+Package
+    :Packet
+    :Pack
+    :Parcel
+
+Shipping
+    :Transport
+    :Shipment
+
 $ Any absolute location information
 AbsolutePosition
+    :Location
+    :Address[Address]
+    :Coordinates
+    :GPS
+
 
 $ Any relative location information
 RelativePosition
-    :Index:100
+    :Index[Index]:100
+    :Sequence[Index]
+    :Seq[Index]
+    :Street[Street]
+    :Zip[Zip]
+    :ZipCode[Zip]
+    :Country[Country]
+    :City[City]
+    :Province[Province]
+    :Nation[Country]
+    :State[State]
+    :Region[State]
 
+# State collides with State / RelativePosition
 $ Any state related information (open/close, shipped, deleted, etc.)
-State
+Status
+    :Create
+    :Modify
+    :Update
+    :Delete
+    :Created
+    :Modified
+    :Updated
+    :Deleted
+    #
+    :Closed
+    :Opened
+    :Started
+    :Finished
+    :Locked
+    :Free
 
 Constraint
 
@@ -145,13 +269,55 @@ Validation
 
 // Process comment 1
 Process
-    :ProcessAlias1
-    :ProcessAlias2
+    :Procedure
 
-Subject
-Location
-Document
 
 $ A complex entity
 Entity
 
+Bank
+
+Money
+    :Currency[Currency]
+    :Credit
+    :Cash
+    :Price
+    :Payment
+    :Tax[Tax]
+    :Percentage: 30
+    :Percent:30
+
+
+Log
+
+Bounds
+    :Limits
+    :Minimum[Min]
+    :Min[Min]
+    :Maxiumum[Max]
+    :Max[Max]
+    :High[High]
+    :Medium[Medium]
+    :Low[Low]
+
+Safety
+    :Clp
+    :Hazard
+    :Signal
+    :Warning
+    :Dangerous
+    :Severity
+    :Mandatory
+    :Approval
+    :Approved
+    :Signature
+    :Signed
+
+Place
+    :Store
+    :Warehouse
+
+
+ZTooGeneric
+    :Subject
+    :Owner

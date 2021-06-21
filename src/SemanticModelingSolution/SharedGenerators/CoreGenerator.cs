@@ -50,7 +50,7 @@ namespace SemanticGlossaryGenerator
             ConceptSpecifiers.Usings.Add("SemanticLibrary");
 
             ConceptSpecifiers.Members.Add(ConceptSpecifiers.CreateStaticField(
-                new string[]{ "Default specifier when the term does not add any further information" },
+                new string[] { "Default specifier when the term does not add any further information" },
                 ConceptSpecifierClassName,
                 NoneConceptSpecifier,
                 ConceptSpecifiers.CreateInitializersWithStrings(ConceptSpecifierClassName, NoneConceptSpecifier)));
@@ -59,6 +59,7 @@ namespace SemanticGlossaryGenerator
             Domain.Usings.Add("System");
             Domain.Usings.Add("System.Collections.Generic");
             Domain.Usings.Add("SemanticLibrary");
+            Domain.BaseClass = "DomainBase";
 
             Domain.Members.Add(Domain.CreatePropertyWithInitializer(
                 new[] { TermsToConceptPropertyComment, },
@@ -74,6 +75,7 @@ namespace SemanticGlossaryGenerator
         public void ProcessFile(FileInfo fileInfo, Action<string, string[]> onError)
         {
             HashSet<string> conceptsUniqueness = new HashSet<string>();
+            HashSet<string> specifiersUniqueness = new HashSet<string>();
             HashSet<string> termsUniqueness = new HashSet<string>();
             HashSet<string> contexts = new HashSet<string>();
 
@@ -84,7 +86,8 @@ namespace SemanticGlossaryGenerator
                     int termsIndex = 1;
                     if (!AreValidWords("Concept", conceptsUniqueness, words, onError))
                     {
-                        return;                    }
+                        return;
+                    }
 
                     if (!AreValidWords("Term", termsUniqueness, aliasesList
                                                 .Where(a => a.Count > termsIndex)
@@ -95,6 +98,14 @@ namespace SemanticGlossaryGenerator
                     }
 
                     var mainConcept = words.First();
+                    if (!termsUniqueness.Contains(mainConcept))
+                    {
+                        Terms.Members.Add(Terms.CreateStaticField(null, TermClassName, mainConcept,
+                            Terms.CreateInitializersWithStrings(TermClassName, mainConcept)));
+
+                        termsUniqueness.Add(mainConcept);
+                    }
+
                     List<string> specifiers = new();
 
                     foreach (var aliases in aliasesList)
@@ -115,8 +126,12 @@ namespace SemanticGlossaryGenerator
                             contexts.Add(contextConcept);
                         }
 
-                        Terms.Members.Add(Terms.CreateStaticField(new[] { termDescription }, TermClassName, term,
-                            Terms.CreateInitializersWithStrings(TermClassName, term, termDescription)));
+                        if (!termsUniqueness.Contains(term))
+                        {
+                            Terms.Members.Add(Terms.CreateStaticField(new[] { termDescription }, TermClassName, term,
+                                Terms.CreateInitializersWithStrings(TermClassName, term, termDescription)));
+                            termsUniqueness.Add(term);
+                        }
 
                         if (!string.IsNullOrEmpty(specifier))
                         {
@@ -140,17 +155,29 @@ namespace SemanticGlossaryGenerator
                         //    Domain.CreateTuple(Domain.CreateMemberAccess2(GeneratdTermsClassName, term), Domain.CreateNumericLiteralExpression(weight))));
                     }
 
+                    // the term of the concept is linked to its same concept
+                    links.Add(Domain.CreateCreateObject(TermsToConceptClassName,
+                        Domain.CreateMemberAccess2(GeneratedConceptsClassName, mainConcept),
+                        Domain.CreateMemberAccess2(GeneratedConceptsClassName, "Any"),   // no context here
+                        Domain.CreateMemberAccess2(GeneratedConceptSpecifiersClassName, NoneConceptSpecifier),
+                        Domain.CreateMemberAccess2(GeneratdTermsClassName, mainConcept),
+                        Domain.CreateNumericLiteralExpression(100)));
+
 
                     List<ExpressionSyntax> expressions = new();
                     expressions.Add(Concepts.CreateStringLiteralExpression(mainConcept));
                     expressions.Add(Concepts.CreateStringLiteralExpression(description));
                     foreach (var specifier in specifiers)
                     {
-                        ConceptSpecifiers.Members.Add(ConceptSpecifiers.CreateStaticField(
-                            Array.Empty<string>(),
-                            ConceptSpecifierClassName,
-                            specifier,
-                            ConceptSpecifiers.CreateInitializersWithStrings(ConceptSpecifierClassName, specifier)));
+                        if (!specifiersUniqueness.Contains(specifier))
+                        {
+                            ConceptSpecifiers.Members.Add(ConceptSpecifiers.CreateStaticField(
+                                Array.Empty<string>(),
+                                ConceptSpecifierClassName,
+                                specifier,
+                                ConceptSpecifiers.CreateInitializersWithStrings(ConceptSpecifierClassName, specifier)));
+                            specifiersUniqueness.Add(specifier);
+                        }
 
                         expressions.Add(Concepts.CreateMemberAccess2(GeneratedConceptSpecifiersClassName, specifier));
                     }
@@ -222,13 +249,17 @@ namespace SemanticGlossaryGenerator
                     return false;
                 }
 
-                if (uniqueness.Contains(item))
+                // duplicate terms are allowed
+                if (itemName != "Term")
                 {
-                    onError("SM02", new string[] { itemName, item });
-                    return false;
-                }
+                    if (uniqueness.Contains(item))
+                    {
+                        onError("SM02", new string[] { itemName, item });
+                        return false;
+                    }
 
-                uniqueness.Add(item);
+                    uniqueness.Add(item);
+                }
             }
 
             return true;

@@ -22,6 +22,7 @@ namespace SemanticGlossaryGenerator.Helpers
         public HashSet<string> Usings { get; } = new();
         public string Namespace { get; }
         public string ClassName { get; }
+        public string BaseClass { get; set; }
 
         internal List<MemberDeclarationSyntax> Members { get; } = new();
 
@@ -39,7 +40,7 @@ namespace SemanticGlossaryGenerator.Helpers
 
             var classDeclaration = SyntaxFactory.ClassDeclaration(ClassName);
             classDeclaration = classDeclaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
-            classDeclaration = AddBaseTypes(classDeclaration);
+            classDeclaration = AddBaseType(classDeclaration);
 
 
             //classDeclaration = classDeclaration.AddMembers();
@@ -52,9 +53,15 @@ namespace SemanticGlossaryGenerator.Helpers
             return SourceText.From(compilationUnit.NormalizeWhitespace().ToFullString(), Encoding.UTF8);
         }
 
-        private ClassDeclarationSyntax AddBaseTypes(ClassDeclarationSyntax classDeclaration)
+        private ClassDeclarationSyntax AddBaseType(ClassDeclarationSyntax classDeclaration)
         {
-            // classDeclaration.AddBaseListTypes( ... )
+            if (!string.IsNullOrEmpty(BaseClass))
+            {
+                classDeclaration = classDeclaration.AddBaseListTypes(
+                    SyntaxFactory.SimpleBaseType(
+                        SyntaxFactory.IdentifierName(BaseClass)));
+            }
+
             return classDeclaration;
         }
 

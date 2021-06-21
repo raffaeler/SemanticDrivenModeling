@@ -13,6 +13,18 @@ A semantic model describes all the conceptual characteristics that are needed to
 
 
 
+### Differences with OWL / RDF
+
+1. Restrict to specific domains instead of pretending to be omniscient
+
+2. On a service boundary a model just carry information, not behaviors
+
+   Instead, service calls determine the behavior of a service
+
+3. 
+
+
+
 
 
 # Terms

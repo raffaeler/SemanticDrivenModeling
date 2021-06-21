@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SemanticLibrary
 {
-    public record Term(string Name, string Description = "")
+    public record Term(string Name, string Description = "", bool IsUnknown = false)
     {
         public Term(string name, string description, params string[] terms) :
             this(name, description)

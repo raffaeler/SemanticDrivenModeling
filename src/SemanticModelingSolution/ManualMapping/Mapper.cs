@@ -11,6 +11,7 @@ using LegacyModels;
 using SemanticLibrary;
 //using SemanticLibrary.Known;
 using GeneratedCode;
+using SemanticLibrary.Helpers;
 
 namespace ManualMapping
 {
@@ -36,15 +37,16 @@ namespace ManualMapping
             //    //.Map(a => a.ArticleClass, KnownConcepts.
             //    ;
 
+            //Domain domain = new();
+            //var properties = typeof(Article)
+            //    .GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Public)
+            //    .Select(p => p.Name);
+            //LexicalHelper.CamelPascalCaseExtract
+
 
         }
 
         //public static Concept Excipient = new Concept("Excipient", "");
-
-        public List<TermsToConcept> Links { get; } = new()
-        {
-            //new TermsToConcept(KnownConcepts.Identity, (KnownTerms.Name, 80), (KnownTerms.Name, 80)),
-        };
 
         public void BuildConceptGraph()
         {

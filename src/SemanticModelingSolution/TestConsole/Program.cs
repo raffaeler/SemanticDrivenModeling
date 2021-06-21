@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+
+using ERP_Model.Models;
+
+using LegacyModels;
 
 using SemanticGlossaryGenerator;
 using SemanticGlossaryGenerator.Helpers;
@@ -9,6 +14,7 @@ namespace TestConsole
 {
     class Program
     {
+
         static void Main(string[] args)
         {
             CoreGenerator gen = new CoreGenerator();
