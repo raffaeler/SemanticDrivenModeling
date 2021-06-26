@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using LegacyModels;
+
 using ManualMapping;
 
 using SemanticLibrary;
@@ -66,31 +68,43 @@ namespace MappingConsole
 
         static void Main(string[] args)
         {
-            SemanticAnalysis analysis = new SemanticAnalysis();
-            var step1 = analysis.Analyze("Lot");
-            var step2 = analysis.Analyze(step1, "Article", typeof(string));
+            //Visit(new Type[] { typeof(Lot), typeof(Article) });
+            //Visit(_domain1);
+            //Visit(_domain2);
 
-            //var visitor = new ModelGraphVisitor(typeof(Lot), typeof(Article));
-            //var visitor = new ModelGraphVisitor(_domain1);
-            var visitor = new ModelGraphVisitor(_domain2);
-            IList<TermsToConcept> classTermsToConcepts = null;
-            visitor.Visit(
-                (string className) =>
-                {
-                    classTermsToConcepts = analysis.Analyze(className);
-                    var concepts = classTermsToConcepts.Select(t => t.Concept);
-                    Console.WriteLine();
-                    Console.WriteLine($"Type {className} => [{string.Join(", ", concepts.Select(c => c.Name))}]");
-                },
-                (string className, PropertyInfo pi, ModelGraphVisitor.PropertyKind kind, Type coreType) =>
-                {
-                    var propertytermsToConcepts = analysis.Analyze(classTermsToConcepts, pi.Name, coreType);
-                    var concepts = propertytermsToConcepts.Select(t => t.Concept);
-                    Console.Write($"    - {{P}} {pi.Name.PadRight(30)} => [{string.Join(", ", concepts.Select(c => c.Name)).PadRight(60)}]");
-                    Console.WriteLine($" <== {pi.PropertyType.Name.PadRight(20)} - {kind.ToString().PadRight(20)} - {coreType?.Name}");
-                });
+            Visit(_domain1, new[] { typeof(ERP_Model.Models.Supplier) });
+            Visit(_domain2, new[] { typeof(coderush.Models.Vendor) });
+        }
+
+        static void VisitCompare(Type[] domain1, Type[] domain2)
+        {
+            var semantic1 = new SemanticAnalysis();
+
+
+
+            var semantic2 = new SemanticAnalysis();
 
         }
+
+        static void Visit(Type[] domainTypes, Type[] visitOnlyTheseTypes = null)
+        {
+            var visitor = new ModelGraphVisitor(domainTypes);
+            visitor.Visit(VisitType, VisitProperty, visitOnlyTheseTypes);
+
+            static void VisitType(ModelTypeNode modelTypeNode)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Type {modelTypeNode.TypeName} => [{string.Join(", ", modelTypeNode.CandidateConceptNames)}]");
+            }
+
+            static void VisitProperty(ModelPropertyNode modelPropertyNode)
+            {
+                Console.Write($"    - {{P}} {modelPropertyNode.Name.PadRight(30)} => [{string.Join(", ", modelPropertyNode.CandidateConceptNames).PadRight(60)}]");
+                Console.WriteLine($" <== {modelPropertyNode.Property.PropertyType.Name.PadRight(20)} - {modelPropertyNode.PropertyKind.ToString().PadRight(20)} - {modelPropertyNode.CoreType?.Name}");
+            }
+        }
+
+
 
 
     }

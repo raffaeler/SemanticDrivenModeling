@@ -167,7 +167,7 @@ namespace SemanticGlossaryGenerator
                     List<ExpressionSyntax> expressions = new();
                     expressions.Add(Concepts.CreateStringLiteralExpression(mainConcept));
                     expressions.Add(Concepts.CreateStringLiteralExpression(description));
-                    foreach (var specifier in specifiers)
+                    foreach (var specifier in specifiers.Distinct())
                     {
                         if (!specifiersUniqueness.Contains(specifier))
                         {

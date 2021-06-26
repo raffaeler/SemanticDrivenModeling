@@ -44,6 +44,8 @@ A semantic model describes all the conceptual characteristics that are needed to
 
 ## Notes
 
+La natura dell'Ingegneria è quella di risolvere i problemi in modo pragmatico e ripetibile.
+
 
 
 
