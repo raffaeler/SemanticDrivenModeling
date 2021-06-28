@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -69,27 +70,32 @@ namespace MappingConsole
         static void Main(string[] args)
         {
             //Visit(new Type[] { typeof(Lot), typeof(Article) });
-            //Visit(_domain1);
-            //Visit(_domain2);
+            Visit(_domain1);
+            Visit(_domain2);
 
-            Visit(_domain1, new[] { typeof(ERP_Model.Models.Supplier) });
-            Visit(_domain2, new[] { typeof(coderush.Models.Vendor) });
+            //var models1 = Visit(_domain1, new[] { typeof(ERP_Model.Models.Supplier) });
+            
+            //VisitCompare();
         }
 
-        static void VisitCompare(Type[] domain1, Type[] domain2)
+        static void VisitCompare()
         {
-            var semantic1 = new SemanticAnalysis();
+            var models2 = Visit(_domain2, new[] { typeof(coderush.Models.Vendor) });
+            Debug.Assert(models2.Count == 1);
+            var model2 = models2.Single();
+            var modelsDomain1 = Visit(_domain1);
 
-
-
-            var semantic2 = new SemanticAnalysis();
+            foreach (var model in modelsDomain1)
+            {
+                //if(model.C)
+            }
 
         }
 
-        static void Visit(Type[] domainTypes, Type[] visitOnlyTheseTypes = null)
+        static IList<ModelTypeNode> Visit(Type[] domainTypes, Type[] visitOnlyTheseTypes = null)
         {
             var visitor = new ModelGraphVisitor(domainTypes);
-            visitor.Visit(VisitType, VisitProperty, visitOnlyTheseTypes);
+            return visitor.Visit(VisitType, VisitProperty, visitOnlyTheseTypes);
 
             static void VisitType(ModelTypeNode modelTypeNode)
             {

@@ -18,6 +18,12 @@ namespace ManualMapping
         public PropertyKind PropertyKind { get; set; }
 
         /// <summary>
+        /// TODO: if the property points back to a previously visited node, this is null.
+        /// There should be instead a different property allowing to know the ModelTypeNode of the recursed type
+        /// </summary>
+        public ModelTypeNode NavigationNode { get; set; }
+
+        /// <summary>
         /// The type of the property extracted from the collection.
         /// If the property type is string, this is still string
         /// But if the property type is List of string, this is string

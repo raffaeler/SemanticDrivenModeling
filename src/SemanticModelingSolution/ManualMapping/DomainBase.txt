@@ -239,6 +239,7 @@ RelativePosition
     :Nation[Country]
     :State[State]
     :Region[State]
+    :Line[Index]:100
 
 # State collides with State / RelativePosition
 $ Any state related information (open/close, shipped, deleted, etc.)

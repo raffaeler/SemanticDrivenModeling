@@ -17,8 +17,8 @@ namespace ManualMapping
         private BindingFlags _flags = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance;
         private HashSet<string> _visited = new();
         private Type[] _types;
-        Action<string> _onType;
-        Action<string, PropertyInfo, PropertyKind, Type> _onProperty;
+        //Action<string> _onType;
+        //Action<string, PropertyInfo, PropertyKind, Type> _onProperty;
 
         Action<ModelTypeNode> _onTypeNode;
         Action<ModelPropertyNode> _onPropertyNode;
@@ -30,7 +30,7 @@ namespace ManualMapping
             _types = domainTypes;
         }
 
-        public virtual void Visit(Action<ModelTypeNode> onTypeNode, Action<ModelPropertyNode> onPropertyNode, Type[] visitOnlyTypes = null)
+        public virtual IList<ModelTypeNode> Visit(Action<ModelTypeNode> onTypeNode, Action<ModelPropertyNode> onPropertyNode, Type[] visitOnlyTypes = null)
         {
             _analysis = new SemanticAnalysis();
             _onTypeNode = onTypeNode;
@@ -38,44 +38,47 @@ namespace ManualMapping
 
             var typesToVisit = visitOnlyTypes == null ? _types : visitOnlyTypes;
 
+            List<ModelTypeNode> result = new();
             foreach (var type in typesToVisit)
             {
-                VisitType(type);
+                result.Add(VisitType(type));
             }
+
+            return result;
         }
 
-        public virtual void VisitOnly(Action<string> onType, Action<string, PropertyInfo, PropertyKind, Type> onProperty,
-            params Type[] types)
+        //public virtual void VisitOnly(Action<string> onType, Action<string, PropertyInfo, PropertyKind, Type> onProperty,
+        //    params Type[] types)
+        //{
+        //    _analysis = new SemanticAnalysis();
+        //    _onType = onType;
+        //    _onProperty = onProperty;
+
+        //    foreach (var type in types)
+        //    {
+        //        VisitType(type);
+        //    }
+        //}
+
+        //public virtual void VisitAll(Action<string> onType, Action<string, PropertyInfo, PropertyKind, Type> onProperty)
+        //{
+        //    _analysis = new SemanticAnalysis();
+        //    _onType = onType;
+        //    _onProperty = onProperty;
+
+        //    foreach (var type in _types)
+        //    {
+        //        VisitType(type);
+        //    }
+        //}
+
+        private ModelTypeNode VisitType(Type type)
         {
-            _analysis = new SemanticAnalysis();
-            _onType = onType;
-            _onProperty = onProperty;
-
-            foreach (var type in types)
-            {
-                VisitType(type);
-            }
-        }
-
-        public virtual void VisitAll(Action<string> onType, Action<string, PropertyInfo, PropertyKind, Type> onProperty)
-        {
-            _analysis = new SemanticAnalysis();
-            _onType = onType;
-            _onProperty = onProperty;
-
-            foreach (var type in _types)
-            {
-                VisitType(type);
-            }
-        }
-
-        private void VisitType(Type type)
-        {
-            if (_visited.Contains(type.AssemblyQualifiedName)) return;
+            if (_visited.Contains(type.AssemblyQualifiedName)) return null;//TODO maintain matching ModelTypeNode as well and return it
 
             _visited.Add(type.AssemblyQualifiedName);
 
-            _onType?.Invoke(type.Name);
+            //_onType?.Invoke(type.Name);
             var classTermsToConcepts = _analysis.Analyze(type.Name);
             var modelTypeNode = new ModelTypeNode()
             {
@@ -85,11 +88,12 @@ namespace ManualMapping
             _onTypeNode?.Invoke(modelTypeNode);
 
             var properties = type.GetProperties(_flags);
-            List<Type> toVisit = new();
+            List<(ModelPropertyNode, Type)> toVisit = new();
             foreach (var property in properties)
             {
                 (PropertyKind classification, Type coreType) = Classify(property.PropertyType);
-                OnVisitProperty(modelTypeNode, type, property, classification, coreType);
+                var modelPropertyNode = OnVisitProperty(modelTypeNode, type, property, classification, coreType);
+                modelTypeNode.PropertyNodes.Add(modelPropertyNode);
 
                 switch (classification)
                 {
@@ -103,21 +107,26 @@ namespace ManualMapping
                     case PropertyKind.OneToManyToDomain:
                     case PropertyKind.OneToOneToUnknown:
                     case PropertyKind.OneToManyToUnknown:
-                        toVisit.Add(coreType == null ? property.PropertyType : coreType);
+                        {
+                            var t = coreType == null ? property.PropertyType : coreType;
+                            toVisit.Add((modelPropertyNode, t));
+                        }
                         break;
                 }
             }
 
-            foreach (var visitType in toVisit)
+            foreach (var (modelPropertyNode, visitType) in toVisit)
             {
-                VisitType(visitType);
+                modelPropertyNode.NavigationNode = VisitType(visitType);
             }
+
+            return modelTypeNode;
         }
 
-        protected virtual void OnVisitProperty(ModelTypeNode modelTypeNode, Type type, PropertyInfo propertyInfo, PropertyKind classification, Type coreType)
+        protected virtual ModelPropertyNode OnVisitProperty(ModelTypeNode modelTypeNode, Type type, PropertyInfo propertyInfo, PropertyKind classification, Type coreType)
         {
             //Console.WriteLine($"{type.Name} - {propertyInfo.Name} - {propertyInfo.PropertyType.Name} - {classification} - {coreType?.Name}");
-            _onProperty?.Invoke(type.Name, propertyInfo, classification, coreType);
+            //_onProperty?.Invoke(type.Name, propertyInfo, classification, coreType);
             var propertyTermsToConcepts = _analysis.Analyze(modelTypeNode.TermsToConcepts, propertyInfo.Name, coreType);
             var modelPropertyNode = new ModelPropertyNode()
             {
@@ -129,6 +138,7 @@ namespace ManualMapping
             };
 
             _onPropertyNode?.Invoke(modelPropertyNode);
+            return modelPropertyNode;
         }
 
         protected virtual bool BelongToDomain(Type type) => _types.Contains(type);

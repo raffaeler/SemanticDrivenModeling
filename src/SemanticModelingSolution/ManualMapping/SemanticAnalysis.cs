@@ -7,6 +7,7 @@ using SemanticLibrary.Helpers;
 using GeneratedCode;
 using System.Linq;
 using System.Diagnostics;
+using Humanizer;
 
 namespace ManualMapping
 {
@@ -52,6 +53,7 @@ namespace ManualMapping
 
         private TermsToConcept ConceptsLinksSelector(string term, Concept context)
         {
+            term = term.Singularize(false);
             var filtered = _domain.Links.Where(t => string.Compare(t.Term.Name, term, true) == 0).ToArray();
             if (filtered.Length == 0)
             {
