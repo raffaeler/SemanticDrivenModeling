@@ -15,7 +15,8 @@ namespace ManualMapping
     public class ModelGraphVisitor
     {
         private BindingFlags _flags = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance;
-        private HashSet<string> _visited = new();
+        //private HashSet<string> _visited = new();
+        private Dictionary<string, ModelTypeNode> _visited = new();
         private Type[] _types;
         //Action<string> _onType;
         //Action<string, PropertyInfo, PropertyKind, Type> _onProperty;
@@ -74,17 +75,19 @@ namespace ManualMapping
 
         private ModelTypeNode VisitType(Type type)
         {
-            if (_visited.Contains(type.AssemblyQualifiedName)) return null;//TODO maintain matching ModelTypeNode as well and return it
+            ModelTypeNode modelTypeNode;
+            if (_visited.TryGetValue(type.AssemblyQualifiedName, out modelTypeNode)) return modelTypeNode;
 
-            _visited.Add(type.AssemblyQualifiedName);
 
             //_onType?.Invoke(type.Name);
             var classTermsToConcepts = _analysis.Analyze(type.Name);
-            var modelTypeNode = new ModelTypeNode()
+            modelTypeNode = new ModelTypeNode()
             {
                 TermsToConcepts = classTermsToConcepts,
                 Type = type,
             };
+
+            _visited[type.AssemblyQualifiedName] = modelTypeNode;
             _onTypeNode?.Invoke(modelTypeNode);
 
             var properties = type.GetProperties(_flags);

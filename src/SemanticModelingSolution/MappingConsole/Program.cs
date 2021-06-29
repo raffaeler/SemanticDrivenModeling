@@ -7,6 +7,7 @@ using System.Reflection;
 using LegacyModels;
 
 using ManualMapping;
+using ManualMapping.MatchingRules;
 
 using SemanticLibrary;
 
@@ -70,25 +71,27 @@ namespace MappingConsole
         static void Main(string[] args)
         {
             //Visit(new Type[] { typeof(Lot), typeof(Article) });
-            Visit(_domain1);
-            Visit(_domain2);
+            //Visit(_domain1);
+            //Visit(_domain2);
 
             //var models1 = Visit(_domain1, new[] { typeof(ERP_Model.Models.Supplier) });
             
-            //VisitCompare();
+            VisitCompare();
         }
 
         static void VisitCompare()
         {
+            var modelsDomain1 = Visit(_domain1);
+
             var models2 = Visit(_domain2, new[] { typeof(coderush.Models.Vendor) });
             Debug.Assert(models2.Count == 1);
             var model2 = models2.Single();
-            var modelsDomain1 = Visit(_domain1);
 
-            foreach (var model in modelsDomain1)
-            {
-                //if(model.C)
-            }
+            var matcher = new StandardConceptMatchingRule();
+
+            var winner = matcher.FindMatch(model2, modelsDomain1);
+            
+            var list = matcher.FindOrderedMatches(model2, modelsDomain1);
 
         }
 
