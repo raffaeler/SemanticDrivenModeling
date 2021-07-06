@@ -12,7 +12,7 @@ namespace ManualMapping
     /// <summary>
     /// A class navigating a model composed by all the specified types
     /// </summary>
-    public class ModelGraphVisitor
+    public class DomainTypesGraphVisitor
     {
         private BindingFlags _flags = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance;
         //private HashSet<string> _visited = new();
@@ -26,7 +26,7 @@ namespace ManualMapping
         SemanticAnalysis _analysis;
 
 
-        public ModelGraphVisitor(params Type[] domainTypes)
+        public DomainTypesGraphVisitor(params Type[] domainTypes)
         {
             _types = domainTypes;
         }
@@ -80,10 +80,10 @@ namespace ManualMapping
 
 
             //_onType?.Invoke(type.Name);
-            var classTermsToConcepts = _analysis.Analyze(type.Name);
+            var classTermToConcepts = _analysis.Analyze(type.Name);
             modelTypeNode = new ModelTypeNode()
             {
-                TermsToConcepts = classTermsToConcepts,
+                TermToConcepts = classTermToConcepts,
                 Type = type,
             };
 
@@ -101,8 +101,8 @@ namespace ManualMapping
                 switch (classification)
                 {
                     case PropertyKind.BasicType:
-                    case PropertyKind.OneToManyBasicType:
                     case PropertyKind.Enum:
+                    case PropertyKind.OneToManyBasicType:
                     case PropertyKind.OneToManyEnum:
                         break;
 
@@ -126,18 +126,19 @@ namespace ManualMapping
             return modelTypeNode;
         }
 
-        protected virtual ModelPropertyNode OnVisitProperty(ModelTypeNode modelTypeNode, Type type, PropertyInfo propertyInfo, PropertyKind classification, Type coreType)
+        protected virtual ModelPropertyNode OnVisitProperty(ModelTypeNode modelTypeNode, Type type,
+            PropertyInfo propertyInfo, PropertyKind classification, Type coreType)
         {
             //Console.WriteLine($"{type.Name} - {propertyInfo.Name} - {propertyInfo.PropertyType.Name} - {classification} - {coreType?.Name}");
             //_onProperty?.Invoke(type.Name, propertyInfo, classification, coreType);
-            var propertyTermsToConcepts = _analysis.Analyze(modelTypeNode.TermsToConcepts, propertyInfo.Name, coreType);
+            var propertyTermToConcepts = _analysis.Analyze(modelTypeNode.TermToConcepts, propertyInfo.Name, coreType);
             var modelPropertyNode = new ModelPropertyNode()
             {
                 Parent = modelTypeNode,
                 Property = propertyInfo,
                 PropertyKind = classification,
                 CoreType = coreType,
-                TermsToConcepts = propertyTermsToConcepts,
+                TermToConcepts = propertyTermToConcepts,
             };
 
             _onPropertyNode?.Invoke(modelPropertyNode);

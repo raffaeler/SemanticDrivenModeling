@@ -63,14 +63,14 @@ namespace TestConsole
             gen.Members.Add(gen.CreateStaticField(comments.ToArray(), "Concept", word,
                 gen.CreateInitializersWithStrings("Concept", word, description)));
 
-            var co = gen.CreateCreateObject("TermsToConcept",
+            var co = gen.CreateCreateObject("TermToConcept",
                         gen.CreateMemberAccess2("KnownConcepts", "Identity"),
                         gen.CreateTuple(gen.CreateMemberAccess2("KnownTerms", "Name"), gen.CreateNumericLiteralExpression(90)));
 
             gen.Members.Add(gen.CreatePropertyWithInitializer(
                 new[] { "a", "b", "c" },
-                gen.MakeListOfT("TermsToConcept"), "Links",
-                gen.CreateInitializerWithCollection("TermsToConcept"
+                gen.MakeListOfT("TermToConcept"), "Links",
+                gen.CreateInitializerWithCollection("TermToConcept"
                 //co, co, co
                 )));
 

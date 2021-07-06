@@ -20,12 +20,17 @@ namespace SemanticGlossaryGenerator
         public static readonly string GeneratedConceptSpecifiersClassName = "KnownConceptSpecifiers";
         public static readonly string GeneratedDomainClassName = "Domain";
 
+        public static readonly string BaseTermsClassName = "KnownBaseTerms";
+        public static readonly string BasedConceptsClassName = "KnownBaseConcepts";
+        public static readonly string BasedConceptSpecifiersClassName = "KnownBaseConceptSpecifiers";
+        public static readonly string BasedDomainClassName = "DomainBase";
+
         public static readonly string TermClassName = "Term";
         public static readonly string ConceptClassName = "Concept";
         public static readonly string ConceptSpecifierClassName = "ConceptSpecifier";
-        public static readonly string TermsToConceptClassName = "TermsToConcept";
-        public static readonly string TermsToConceptPropertyName = "Links";
-        public static readonly string TermsToConceptPropertyComment = "The relationships between terms and a concept";
+        public static readonly string TermToConceptClassName = "TermToConcept";
+        public static readonly string TermToConceptPropertyName = "Links";
+        public static readonly string TermToConceptPropertyComment = "The relationships between terms and a concept";
 
         public static readonly string NoneConceptSpecifier = "None";
 
@@ -36,6 +41,11 @@ namespace SemanticGlossaryGenerator
             Concepts = new ClassGenerator(Namespace, GeneratedConceptsClassName);
             ConceptSpecifiers = new ClassGenerator(Namespace, GeneratedConceptSpecifiersClassName);
             Domain = new ClassGenerator(Namespace, GeneratedDomainClassName);
+
+            Terms.BaseClass = BaseTermsClassName;
+            Concepts.BaseClass = BasedConceptsClassName;
+            ConceptSpecifiers.BaseClass = BasedConceptSpecifiersClassName;
+            Domain.BaseClass = BasedDomainClassName;
 
             Terms.Usings.Add("System");
             Terms.Usings.Add("System.Collections.Generic");
@@ -49,22 +59,22 @@ namespace SemanticGlossaryGenerator
             ConceptSpecifiers.Usings.Add("System.Collections.Generic");
             ConceptSpecifiers.Usings.Add("SemanticLibrary");
 
-            ConceptSpecifiers.Members.Add(ConceptSpecifiers.CreateStaticField(
-                new string[] { "Default specifier when the term does not add any further information" },
-                ConceptSpecifierClassName,
-                NoneConceptSpecifier,
-                ConceptSpecifiers.CreateInitializersWithStrings(ConceptSpecifierClassName, NoneConceptSpecifier)));
+            // moved into the base class
+            //ConceptSpecifiers.Members.Add(ConceptSpecifiers.CreateStaticField(
+            //    new string[] { "Default specifier when the term does not add any further information" },
+            //    ConceptSpecifierClassName,
+            //    NoneConceptSpecifier,
+            //    ConceptSpecifiers.CreateInitializersWithStrings(ConceptSpecifierClassName, NoneConceptSpecifier)));
 
 
             Domain.Usings.Add("System");
             Domain.Usings.Add("System.Collections.Generic");
             Domain.Usings.Add("SemanticLibrary");
-            Domain.BaseClass = "DomainBase";
 
             Domain.Members.Add(Domain.CreatePropertyWithInitializer(
-                new[] { TermsToConceptPropertyComment, },
-                Domain.MakeListOfT(TermsToConceptClassName), TermsToConceptPropertyName,
-                Domain.CreateInitializerWithCollection(TermsToConceptClassName)));
+                new[] { TermToConceptPropertyComment, },
+                Domain.MakeListOfT(TermToConceptClassName), TermToConceptPropertyName,
+                Domain.CreateInitializerWithCollection(TermToConceptClassName)));
         }
 
         public ClassGenerator Terms { get; }
@@ -142,21 +152,21 @@ namespace SemanticGlossaryGenerator
                             specifier = NoneConceptSpecifier;
                         }
 
-                        links.Add(Domain.CreateCreateObject(TermsToConceptClassName,
+                        links.Add(Domain.CreateCreateObject(TermToConceptClassName,
                             Domain.CreateMemberAccess2(GeneratedConceptsClassName, mainConcept),
                             Domain.CreateMemberAccess2(GeneratedConceptsClassName, contextConcept),
                             Domain.CreateMemberAccess2(GeneratedConceptSpecifiersClassName, specifier),
                             Domain.CreateMemberAccess2(GeneratdTermsClassName, term),
                             Domain.CreateNumericLiteralExpression(weight)));
 
-                        //links.Add(Domain.CreateCreateObject(TermsToConceptClassName,
+                        //links.Add(Domain.CreateCreateObject(TermToConceptClassName,
                         //    Domain.CreateMemberAccess2(GeneratedConceptsClassName, mainConcept),
                         //    Domain.CreateMemberAccess2(GeneratedConceptsClassName, contextConcept),
                         //    Domain.CreateTuple(Domain.CreateMemberAccess2(GeneratdTermsClassName, term), Domain.CreateNumericLiteralExpression(weight))));
                     }
 
                     // the term of the concept is linked to its same concept
-                    links.Add(Domain.CreateCreateObject(TermsToConceptClassName,
+                    links.Add(Domain.CreateCreateObject(TermToConceptClassName,
                         Domain.CreateMemberAccess2(GeneratedConceptsClassName, mainConcept),
                         Domain.CreateMemberAccess2(GeneratedConceptsClassName, "Any"),   // no context here
                         Domain.CreateMemberAccess2(GeneratedConceptSpecifiersClassName, NoneConceptSpecifier),
@@ -204,7 +214,7 @@ namespace SemanticGlossaryGenerator
             }
 
             var statements = links
-                .Select(e => Domain.CreateAddCollection(TermsToConceptPropertyName, e));
+                .Select(e => Domain.CreateAddCollection(TermToConceptPropertyName, e));
 
             Domain.Members.Add(Domain.CreateConstructor(Array.Empty<string>(), statements.ToArray()));
         }

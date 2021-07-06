@@ -6,19 +6,11 @@
 #     :Name: 100: The name of the entity   Global context, Term with name "Name", description "The name of the entity" [KnownTerms class]
 #     :Title: 80                            A Term with name "Title" and no description [KnownTerms class]
 #     Person:FirstName:100                 In the context of a person, the FirstName is his/her identity
-#                                          Two TermsToConcepts are added to the Domain class:
-#                                          - new TermsToConcept(KnownConcepts.Identity, null, (KnownTerms.Name, 100))
-#                                          - new TermsToConcept(KnownConcepts.Identity, null, (KnownTerms.Title, 80))
-#                                          - new TermsToConcept(KnownConcepts.Identity, KnownConcepts.Person, (KnownTerms.FirstName, 100))
+#                                          Three TermToConcepts are added to the Domain class:
+#                                          - new TermToConcept(KnownConcepts.Identity, null, (KnownTerms.Name, 100))
+#                                          - new TermToConcept(KnownConcepts.Identity, null, (KnownTerms.Title, 80))
+#                                          - new TermToConcept(KnownConcepts.Identity, KnownConcepts.Person, (KnownTerms.FirstName, 100))
 # 
-
-// Undefined is always needed to find unmappable concepts in the graph
-$ The Undefined Concept is needed as a special case when a pre-defined Concept is not defined
-Undefined
-
-// Any is used when some term or context is valid domain-wide
-$ Domain wide context
-Any
 
 
 // Unique identifier
@@ -32,9 +24,10 @@ UniqueIdentity
 $ Not necessarily an item identifier. Name, Tag, etc.
 Identity
     :Name : 100: The name of the entity
-    Person:FirstName : 100: 
-    Person:LastName : 100: 
-    Person:MiddleName : 100: 
+    Person:First : 100: 
+    Person:Last : 100: 
+    Person:Middle: 100: 
+    Person:Mid: 100: 
     :Title: 80
     :Code : 100
     :Image : 80
@@ -202,12 +195,6 @@ AbsoluteTime
 $ Relative date or time
 RelativeTime
 
-Communication
-    :Contact
-    :Email
-    :Phone
-    :Cell
-
 Package
     :Packet
     :Pack
@@ -218,11 +205,11 @@ Shipping
     :Shipment
 
 $ Any absolute location information
-AbsolutePosition
+Coordinates
     :Location
-    :Address[Address]
-    :Coordinates
     :GPS
+    :Latitude
+    :Longitude
 
 
 $ Any relative location information
@@ -230,15 +217,6 @@ RelativePosition
     :Index[Index]:100
     :Sequence[Index]
     :Seq[Index]
-    :Street[Street]
-    :Zip[Zip]
-    :ZipCode[Zip]
-    :Country[Country]
-    :City[City]
-    :Province[Province]
-    :Nation[Country]
-    :State[State]
-    :Region[State]
     :Line[Index]:100
 
 # State collides with State / RelativePosition
@@ -322,3 +300,21 @@ Place
 ZTooGeneric
     :Subject
     :Owner
+
+$ address
+Address
+    :Address[Street]
+    :Street[Street]
+    :Zip[Zip]
+    :ZipCode[Zip]
+    :City[City]
+    :Province[Province]
+    :State[State]
+    :Region[State]
+    :Country[Country]
+    :Nation[Country]
+    :Email[Email]
+    :Phone[Phone]
+    :Cell[Phone]
+    :Website[Url]
+    :Url[Url]

@@ -90,13 +90,13 @@ namespace GeneratedCode
         /// <summary>
         /// The relationships between terms and a concept
         /// </summary>
-        public List<TermsToConcept> Links { get; } = new()
+        public List<TermToConcept> Links { get; } = new()
         {};
         public Domain()
         {
-            Links.Add(new TermsToConcept(KnownConcepts.Identity, (KnownTerms.Name, 100)));
-            Links.Add(new TermsToConcept(KnownConcepts.Identity, (KnownTerms.Title, 80)));
-            Links.Add(new TermsToConcept(KnownConcepts.Product, (KnownTerms.Material, 100)));
+            Links.Add(new TermToConcept(KnownConcepts.Identity, (KnownTerms.Name, 100)));
+            Links.Add(new TermToConcept(KnownConcepts.Identity, (KnownTerms.Title, 80)));
+            Links.Add(new TermToConcept(KnownConcepts.Product, (KnownTerms.Material, 100)));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace ManualMapping
             _domain = new Domain();
         }
 
-        public IList<TermsToConcept> Analyze(string className)
+        public IList<TermToConcept> Analyze(string className)
         {
             var conceptsLinksClass = LexicalHelper.CamelPascalCaseExtract(className)
                 .Select(t => ConceptsLinksSelector(t, KnownConcepts.Any))
@@ -27,23 +27,65 @@ namespace ManualMapping
             return conceptsLinksClass;
         }
 
-        public IList<TermsToConcept> Analyze(IList<TermsToConcept> classTermsToConcepts, string propertyName, Type propertyType)
+        public IList<TermToConcept> Analyze(IList<TermToConcept> classTermToConcepts, string propertyName, Type propertyType)
         {
 
-            var mainConcepts = classTermsToConcepts.Select(c => c.Concept);
+            var mainConcepts = classTermToConcepts.Select(c => c.Concept);
 
-            var conceptsLinksProperty = LexicalHelper.CamelPascalCaseExtract(propertyName)
-                .Select(t=> ConceptsLinksSelector(t, mainConcepts))
+            // the where condition removes the concepts that are equal to the class name
+            // example: class named Address and property named AddressCity
+            // the concept Address is removed from the property
+            IList<TermToConcept> conceptsLinksProperty = LexicalHelper.CamelPascalCaseExtract(propertyName)
+                .Select(t => ConceptsLinksSelector(t, mainConcepts))
+                //.Where(ttc => !mainConcepts.Contains(ttc.Concept))
                 .ToList();
+
+            // If there are multiple terms pointing to the same concept
+            // it is necessary to reduce the information because otherwise
+            // the scoring system will be higher when we will start the next phase
+            conceptsLinksProperty = FilterOutDuplicateConcepts(conceptsLinksProperty);
 
             return conceptsLinksProperty;
         }
 
-        private TermsToConcept ConceptsLinksSelector(string term, IEnumerable<Concept> contexts)
+        private IList<TermToConcept> FilterOutDuplicateConcepts(IEnumerable<TermToConcept> conceptsLinksProperty)
+        {
+            List<TermToConcept> result = new();
+            var grouped = conceptsLinksProperty
+                .GroupBy(g => g.Concept)
+                .Select(g => g);
+
+            foreach (var g in grouped)
+            {
+                var groupingConcept = g.Key;
+                //var termToConcepts = g.ToList();
+                TermToConcept selected = null;
+                foreach (var item in g)
+                {
+                    if (selected == null || item.Weight > selected.Weight)
+                    {
+                        selected = item;
+                        continue;
+                    }
+
+                    if(item.ConceptSpecifier != KnownConceptSpecifiers.None && selected.ConceptSpecifier == KnownConceptSpecifiers.None)
+                    {
+                        selected = item;
+                        continue;
+                    }
+                }
+
+                result.Add(selected);
+            }
+
+            return result;
+        }
+
+        private TermToConcept ConceptsLinksSelector(string term, IEnumerable<Concept> contexts)
         {
             var ttcs = contexts.Select(c => ConceptsLinksSelector(term, c)).ToArray();
             Debug.Assert(ttcs.Length != 0);
-            if(ttcs.Length == 1)
+            if (ttcs.Length == 1)
             {
                 return ttcs.Single();
             }
@@ -51,7 +93,7 @@ namespace ManualMapping
             return ttcs.OrderByDescending(t => t.Weight).First();
         }
 
-        private TermsToConcept ConceptsLinksSelector(string term, Concept context)
+        private TermToConcept ConceptsLinksSelector(string term, Concept context)
         {
             term = term.Singularize(false);
             var filtered = _domain.Links.Where(t => string.Compare(t.Term.Name, term, true) == 0).ToArray();
@@ -82,9 +124,9 @@ namespace ManualMapping
             return subfiltered.OrderByDescending(s => s.Weight).First();
         }
 
-        private TermsToConcept MakeUndefined(string term)
+        private TermToConcept MakeUndefined(string term)
         {
-            return new TermsToConcept(KnownConcepts.Undefined, KnownConcepts.Any, KnownConceptSpecifiers.None,
+            return new TermToConcept(KnownConcepts.Undefined, KnownConcepts.Any, KnownConceptSpecifiers.None,
                 new Term(term, string.Empty, true), 100);
         }
     }

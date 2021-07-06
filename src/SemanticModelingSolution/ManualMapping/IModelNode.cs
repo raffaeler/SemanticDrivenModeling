@@ -16,5 +16,6 @@ namespace ManualMapping
     /// </summary>
     public interface IModelNode
     {
+        IList<TermToConcept> TermToConcepts { get; }
     }
 }

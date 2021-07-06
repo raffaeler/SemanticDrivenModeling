@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\ManualMapping\ManualMapping.csproj" />
         <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
     </ItemGroup>
 
