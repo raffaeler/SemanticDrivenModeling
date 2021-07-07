@@ -221,7 +221,7 @@ namespace SemanticGlossaryGenerator.Helpers
         }
 
         internal PropertyDeclarationSyntax CreatePropertyWithInitializer(string[] commentLines,
-            NameSyntax typeName, string propertyName, ExpressionSyntax initializer)
+            NameSyntax typeName, string propertyName, ExpressionSyntax initializer, bool isOverride = false)
         {
             SyntaxTrivia comment = CreateXmlComment(true, commentLines);
 
@@ -236,12 +236,15 @@ namespace SemanticGlossaryGenerator.Helpers
                 SyntaxFactory.Identifier(propertyName))
                 ;
 
-            propertyDeclaration = propertyDeclaration
-                .WithModifiers(SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(
+            var modifiers = new List<SyntaxToken>();
+            modifiers.Add(SyntaxFactory.Token(
                         SyntaxFactory.TriviaList(comment),
                         SyntaxKind.PublicKeyword,
-                        SyntaxFactory.TriviaList())))
+                        SyntaxFactory.TriviaList()));
+            if (isOverride) modifiers.Add(SyntaxFactory.Token(SyntaxKind.OverrideKeyword));
+
+            propertyDeclaration = propertyDeclaration
+                .WithModifiers(SyntaxFactory.TokenList(modifiers))
                 .WithAccessorList(SyntaxFactory.AccessorList(
                         SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
                             SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)

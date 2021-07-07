@@ -12,5 +12,6 @@ namespace SemanticLibrary
     /// </summary>
     public abstract class DomainBase
     {
+        public abstract List<TermToConcept> Links { get; }
     }
 }

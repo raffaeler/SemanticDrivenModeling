@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -67,12 +68,53 @@ namespace SemanticStructuresTests
         [TestMethod]
         public void TestPascalCaseExtract()
         {
-            CollectionAssert.AreEqual(new string[] { "Id" }, LexicalHelper.CamelPascalCaseExtract("Id"));
-            CollectionAssert.AreEqual(new string[] { "Id" }, LexicalHelper.CamelPascalCaseExtract("id"));
-            CollectionAssert.AreEqual(new string[] { "First", "Name" }, LexicalHelper.CamelPascalCaseExtract("FirstName"));
-            CollectionAssert.AreEqual(new string[] { "First", "Name" }, LexicalHelper.CamelPascalCaseExtract("firstName"));
-            CollectionAssert.AreEqual(new string[] { "AName" }, LexicalHelper.CamelPascalCaseExtract("AName"));
-            CollectionAssert.AreEqual(new string[] { "My", "AName" }, LexicalHelper.CamelPascalCaseExtract("MyAName"));
+            var testDomain = new MyDomain();
+
+            CollectionAssert.AreEqual(new string[] { "Id" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "Id"));
+            CollectionAssert.AreEqual(new string[] { "Id" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "id"));
+            CollectionAssert.AreEqual(new string[] { "First", "Name" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "FirstName"));
+            CollectionAssert.AreEqual(new string[] { "First", "Name" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "firstName"));
+            CollectionAssert.AreEqual(new string[] { "AName" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "AName"));
+            CollectionAssert.AreEqual(new string[] { "My", "AName" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "MyAName"));
+        }
+
+        [TestMethod]
+        public void TestPascalCaseExtract2()
+        {
+            var testDomain = new MyDomain();
+
+            CollectionAssert.AreEqual(new string[] { "ZipCode" }, LexicalHelper.CamelPascalCaseExtract(testDomain.ComposedTerms, "ZipCode"));
+            CollectionAssert.AreEqual(new string[] { "Mega", "ZipCode" }, LexicalHelper.CamelPascalCaseExtract(testDomain.ComposedTerms, "MegaZipCode"));
+            CollectionAssert.AreEqual(new string[] { "Mega", "ZipCode", "Id" }, LexicalHelper.CamelPascalCaseExtract(testDomain.ComposedTerms, "MegaZipCodeId"));
+        }
+
+        [TestMethod]
+        public void TestPascalCaseExtract3()
+        {
+            var testDomain = new GeneratedCode.Domain();
+            var composedTerms = testDomain.Links
+                .Select(ttc => ttc.Term.Name)
+                .Where(t => t.ToCharArray().Where(c => char.IsUpper(c)).Count() > 1).ToList();
+
+            CollectionAssert.AreEqual(new string[] { "ZipCode" }, LexicalHelper.CamelPascalCaseExtract(composedTerms, "ZipCode"));
+            CollectionAssert.AreEqual(new string[] { "Mega", "ZipCode" }, LexicalHelper.CamelPascalCaseExtract(composedTerms, "MegaZipCode"));
+            CollectionAssert.AreEqual(new string[] { "Mega", "ZipCode", "Id" }, LexicalHelper.CamelPascalCaseExtract(composedTerms, "MegaZipCodeId"));
+        }
+
+        private class MyDomain : DomainBase
+        {
+            public override List<TermToConcept> Links => AllTerms
+                .Select(t => new TermToConcept(null, null, null, new Term(t), 0))
+                .ToList();
+
+            public List<string> AllTerms => new()
+            {
+                "Id", "First", "Name", "AName","My", "ZipCode"
+            };
+
+            public List<string> ComposedTerms => Links
+                .Select(ttc => ttc.Term.Name)
+                .Where(t => t.ToCharArray().Where(c => char.IsUpper(c)).Count() > 1).ToList();
         }
 
 

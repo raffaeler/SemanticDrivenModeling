@@ -20,7 +20,7 @@ namespace SemanticStructuresTests
     [TestClass]
     public class VisitorTests
     {
-        static Type[] _domain1 = new Type[]
+        static Type[] _domainTypes1 = new Type[]
         {
             typeof(ERP_Model.Models.Supply           ),
             typeof(ERP_Model.Models.SupplyItem       ),
@@ -43,7 +43,8 @@ namespace SemanticStructuresTests
         [TestMethod]
         public void ModelNodeVisitorTests()
         {
-            var modelsDomain1 = new DomainTypesGraphVisitor(_domain1).Visit(null, null, null);
+            var domain = new GeneratedCode.Domain();
+            var modelsDomain1 = new DomainTypesGraphVisitor(domain, _domainTypes1).Visit(null, null, null);
             var supplier = modelsDomain1.Single(m => m.Type.Name == "Supplier");
             var delivery = modelsDomain1.Single(m => m.Type.Name == "Delivery");
 

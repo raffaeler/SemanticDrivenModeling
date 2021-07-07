@@ -74,7 +74,7 @@ namespace SemanticGlossaryGenerator
             Domain.Members.Add(Domain.CreatePropertyWithInitializer(
                 new[] { TermToConceptPropertyComment, },
                 Domain.MakeListOfT(TermToConceptClassName), TermToConceptPropertyName,
-                Domain.CreateInitializerWithCollection(TermToConceptClassName)));
+                Domain.CreateInitializerWithCollection(TermToConceptClassName), true));
         }
 
         public ClassGenerator Terms { get; }

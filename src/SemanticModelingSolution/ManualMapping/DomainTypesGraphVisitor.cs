@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
+using SemanticLibrary;
 using SemanticLibrary.Helpers;
 
 namespace ManualMapping
@@ -24,16 +25,20 @@ namespace ManualMapping
         Action<ModelTypeNode> _onTypeNode;
         Action<ModelPropertyNode> _onPropertyNode;
         SemanticAnalysis _analysis;
+        private List<Term> _allTerms;
+        private DomainBase _domain;
 
 
-        public DomainTypesGraphVisitor(params Type[] domainTypes)
+        public DomainTypesGraphVisitor(DomainBase domain, params Type[] domainTypes)
         {
+            _domain = domain;
+
             _types = domainTypes;
         }
 
         public virtual IList<ModelTypeNode> Visit(Action<ModelTypeNode> onTypeNode, Action<ModelPropertyNode> onPropertyNode, Type[] visitOnlyTypes = null)
         {
-            _analysis = new SemanticAnalysis();
+            _analysis = new SemanticAnalysis(_domain);
             _onTypeNode = onTypeNode;
             _onPropertyNode = onPropertyNode;
 
@@ -80,7 +85,7 @@ namespace ManualMapping
 
 
             //_onType?.Invoke(type.Name);
-            var classTermToConcepts = _analysis.Analyze(type.Name);
+            var classTermToConcepts = _analysis.AnalyzeType(type.Name);
             modelTypeNode = new ModelTypeNode()
             {
                 TermToConcepts = classTermToConcepts,
@@ -131,7 +136,7 @@ namespace ManualMapping
         {
             //Console.WriteLine($"{type.Name} - {propertyInfo.Name} - {propertyInfo.PropertyType.Name} - {classification} - {coreType?.Name}");
             //_onProperty?.Invoke(type.Name, propertyInfo, classification, coreType);
-            var propertyTermToConcepts = _analysis.Analyze(modelTypeNode.TermToConcepts, propertyInfo.Name, coreType);
+            var propertyTermToConcepts = _analysis.AnalyzeProperty(modelTypeNode.TermToConcepts, propertyInfo.Name, coreType);
             var modelPropertyNode = new ModelPropertyNode()
             {
                 Parent = modelTypeNode,

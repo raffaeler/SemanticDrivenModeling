@@ -15,7 +15,7 @@ namespace MappingConsole
 {
     class Program
     {
-        static Type[] _domain1 = new Type[]
+        static Type[] _domainTypes1 = new Type[]
         {
             typeof(ERP_Model.Models.Supply           ),
             typeof(ERP_Model.Models.SupplyItem       ),
@@ -35,7 +35,7 @@ namespace MappingConsole
             typeof(ERP_Model.Models.SupplyItem       ),
         };
 
-        static Type[] _domain2 = new Type[]
+        static Type[] _domainTypes2 = new Type[]
         {
             typeof(coderush.Models.Bill               ),
             typeof(coderush.Models.BillType           ),
@@ -71,34 +71,35 @@ namespace MappingConsole
         static void Main(string[] args)
         {
             //Visit(new Type[] { typeof(Lot), typeof(Article) });
-            //Visit(_domain1);
-            //Visit(_domain2);
+            //Visit(_domainTypes1);
+            //Visit(_domainTypes2);
 
-            //var models1 = Visit(_domain1, new[] { typeof(ERP_Model.Models.Supplier) });
-            
+            //var models1 = Visit(_domainTypes1, new[] { typeof(ERP_Model.Models.Supplier) });
+
             VisitCompare();
         }
 
         static void VisitCompare()
         {
-            var modelsDomain1 = Visit(_domain1);
+            var domain = new GeneratedCode.Domain();
+            var modelsDomain1 = Visit(domain, _domainTypes1);
 
-            var models2 = Visit(_domain2, new[] { typeof(coderush.Models.Vendor) });
+            var models2 = Visit(domain, _domainTypes2, new[] { typeof(coderush.Models.Vendor) });
             Debug.Assert(models2.Count == 1);
             var model2 = models2.Single();
 
-            var matcher = new ConceptMatchingRule();
+            var matcher = new ConceptMatchingRule(true);
 
             var winner = matcher.FindMatch(model2, modelsDomain1);
-            
+
             var list = matcher.FindOrderedMatches(model2, modelsDomain1)
                 .ToList();
 
         }
 
-        static IList<ModelTypeNode> Visit(Type[] domainTypes, Type[] visitOnlyTheseTypes = null)
+        static IList<ModelTypeNode> Visit(DomainBase domain, Type[] domainTypes, Type[] visitOnlyTheseTypes = null)
         {
-            var visitor = new DomainTypesGraphVisitor(domainTypes);
+            var visitor = new DomainTypesGraphVisitor(domain, domainTypes);
             return visitor.Visit(VisitType, VisitProperty, visitOnlyTheseTypes);
 
             static void VisitType(ModelTypeNode modelTypeNode)

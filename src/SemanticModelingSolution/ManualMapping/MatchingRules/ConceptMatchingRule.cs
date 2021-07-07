@@ -12,6 +12,12 @@ namespace ManualMapping.MatchingRules
     public class ConceptMatchingRule : IConceptMatchingRule
     {
         private const int _minimumScoreForTypes = 50;
+        private readonly bool _enableVerboseLogOnConsole;
+
+        public ConceptMatchingRule(bool enableVerboseLogOnConsole)
+        {
+            _enableVerboseLogOnConsole = enableVerboseLogOnConsole;
+        }
 
         public ModelTypeNode FindMatch(ModelTypeNode source, IEnumerable<ModelTypeNode> targets, IEnumerable<Concept> contexts = null)
         {
@@ -124,14 +130,16 @@ namespace ManualMapping.MatchingRules
 
         private int GetPropertyScore(ModelPropertyNode source, ModelPropertyNode target)
         {
+            if (_enableVerboseLogOnConsole) VerboseLog(source, target);
             var sourceContexts = source.Parent.CandidateConcepts;
             var targetContexts = target.Parent.CandidateConcepts;
             int score = 0;
-            foreach (var sourceTtc in source.TermToConcepts)
+            foreach (var targetTtc in target.TermToConcepts)
             {
-                foreach (var targetTtc in target.TermToConcepts)
+                foreach (var sourceTtc in source.TermToConcepts)
                 {
-                    score += GetScore(false, sourceTtc, targetTtc, sourceContexts, targetContexts);
+                    //score += GetScore(false, sourceTtc, targetTtc, sourceContexts, targetContexts);
+                    score += GetPropertyScore(sourceTtc, targetTtc, sourceContexts, targetContexts);
                 }
             }
 
@@ -141,7 +149,30 @@ namespace ManualMapping.MatchingRules
         private int GetPropertyScore(TermToConcept source, TermToConcept target,
             IEnumerable<Concept> sourceContexts = null, IEnumerable<Concept> targetContexts = null)
         {
-            return 0;
+            double increment = 0.0;
+            bool matchingTopConcepts = target.Concept == source.Concept &&
+                (source.Concept != KnownBaseConcepts.Any || source.Concept != KnownBaseConcepts.Undefined);
+
+            bool matchingConceptContext = target.ContextConcept == source.Concept &&
+                (source.Concept != KnownBaseConcepts.Any || source.Concept != KnownBaseConcepts.Undefined); //change weight
+
+            bool matchingSpecifiers = target.ConceptSpecifier == source.ConceptSpecifier &&
+                source.ConceptSpecifier != KnownBaseConceptSpecifiers.None;
+
+            bool matchingTargetContext =
+                (targetContexts != null && targetContexts.Contains(source.Concept)) ||
+                (sourceContexts != null && sourceContexts.Contains(target.Concept));
+
+            if (!(matchingTopConcepts || matchingTargetContext)) return 0;
+
+            increment += matchingConceptContext ? 0.15 : 0;
+            increment += matchingSpecifiers ? 0.4 : 0;
+
+            var total = ComputeTotalWeight(source.Weight, target.Weight, increment);
+
+            if (_enableVerboseLogOnConsole) VerboseLog(source, target, sourceContexts, targetContexts, increment, total,
+                matchingTopConcepts, matchingConceptContext, matchingSpecifiers, matchingTargetContext);
+            return total;
         }
 
         private int GetScore(bool matchRoot, TermToConcept source, TermToConcept target,
@@ -191,6 +222,55 @@ namespace ManualMapping.MatchingRules
             return (int)result;
         }
 
+        private void VerboseLog(ModelPropertyNode source, ModelPropertyNode target)
+        {
+            var sourceContexts = source.Parent.CandidateConcepts;
+            var targetContexts = target.Parent.CandidateConcepts;
+
+            var srcctx = string.Join(",", sourceContexts.ToArray().Select(s => s.Name));
+            var tgtctx = string.Join(",", targetContexts.ToArray().Select(s => s.Name));
+
+            var props = $"{source.Parent.TypeName}[{srcctx}].{source.Property.Name} <==> {target.Parent.TypeName}[{tgtctx}].{target.Property.Name}";
+            //var ctx = $"{srcctx} <==> {tgtctx}";
+
+            Console.WriteLine($"** Property:      {props}");
+        }
+
+        private void VerboseLog(TermToConcept source, TermToConcept target,
+            IEnumerable<Concept> sourceContexts, IEnumerable<Concept> targetContexts,
+            double increment, int total, bool matchingTopConcepts, bool matchingConceptContext,
+            bool matchingSpecifiers, bool matchingTargetContext)
+        {
+            var srcctx = string.Join(",", sourceContexts.ToArray().Select(s => s.Name));
+            var tgtctx = string.Join(",", targetContexts.ToArray().Select(s => s.Name));
+
+            Console.WriteLine($" tot:{total} (inc:{increment})");
+            Console.WriteLine($"   Terms:         {source.Term.Name.PadRight(20)} <==> {target.Term.Name}");
+
+            var contextsContains =
+                ((targetContexts != null && targetContexts.Contains(source.Concept)) ? $"{tgtctx}.Contains({source.Concept.Name}) " : "") +
+                ((sourceContexts != null && sourceContexts.Contains(target.Concept)) ? $"{srcctx}.Contains({target.Concept.Name}) " : "");
+            Console.WriteLine($"   Contexts:    {B2S(matchingTargetContext)} {contextsContains}");
+            Console.WriteLine($"   Concepts:    {B2S(matchingTopConcepts)} {source.Concept.Name.PadRight(20)} <==> {target.Concept.Name}");
+            Console.WriteLine($"   CContexts:   {B2S(matchingConceptContext)} {source.ContextConcept.Name.PadRight(20)} <==> {target.ContextConcept.Name}");
+            Console.WriteLine($"   CSpecifiers: {B2S(matchingSpecifiers)} {source.ConceptSpecifier.Name.PadRight(20)} <==> {target.ConceptSpecifier.Name}");
+            Console.WriteLine();
+            // source.Term.Name
+            // target.Term.Name
+            // source.Concept.Name
+            // target.Concept.Name
+            // source.ContextConcept.Name
+            // target.ContextConcept.Name
+            // source.ConceptSpecifier.Name
+            // target.ConceptSpecifier.Name
+            // string.Join(",",sourceContexts.ToArray().Select(s => s.Name))
+            // string.Join(",",targetContexts.ToArray().Select(s => s.Name))
+            // increment
+            // total
+
+        }
+
+        private string B2S(bool value) => value ? "Y" : " ";
 
     }
 }

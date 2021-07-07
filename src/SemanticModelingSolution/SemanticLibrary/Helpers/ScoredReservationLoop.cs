@@ -44,9 +44,10 @@ namespace SemanticLibrary.Helpers
             // assign the score for all the permutations of the two lists
             // masterScoredList.Count will contain the number of the source elements
             // that received a score (potentially assigned to a target)
-            foreach (var sourceItem in source)
+            foreach (var targetItem in targetList)
             {
-                foreach (var targetItem in targetList)
+                if (targetItem.Name == "ZipCode") Debugger.Break();
+                foreach (var sourceItem in source)
                 {
                     var score = getScore(sourceItem, targetItem);
                     if (score > _minimumScore)

@@ -13,39 +13,72 @@ namespace ManualMapping
 {
     public class SemanticAnalysis
     {
-        private Domain _domain;
-        public SemanticAnalysis()
+        private DomainBase _domain;
+        //private List<string> _allTerms;
+        private List<string> _allComposedTerms;
+
+        public SemanticAnalysis(DomainBase domain)
         {
-            _domain = new Domain();
+            _domain = domain;
+            //_allTerms = domain.Links
+            //    .Select(ttc => ttc.Term.Name)
+            //    .Distinct()
+            //    .ToList();
+
+            _allComposedTerms = domain.Links
+                .Select(ttc => ttc.Term.Name)
+                .Where(t => t.ToCharArray().Where(c => char.IsUpper(c)).Count() > 1).ToList();
         }
 
-        public IList<TermToConcept> Analyze(string className)
+        public IList<TermToConcept> AnalyzeType(string className)
         {
-            var conceptsLinksClass = LexicalHelper.CamelPascalCaseExtract(className)
-                .Select(t => ConceptsLinksSelector(t, KnownConcepts.Any))
+            var conceptsLinksClass = LexicalHelper.CamelPascalCaseExtract(_allComposedTerms, className)
+                .Select(t => TypeConceptsLinksSelector(t))
                 .ToList();
             return conceptsLinksClass;
         }
 
-        public IList<TermToConcept> Analyze(IList<TermToConcept> classTermToConcepts, string propertyName, Type propertyType)
+        public IList<TermToConcept> AnalyzeProperty(IList<TermToConcept> classTermToConcepts, string propertyName, Type propertyType)
         {
-
-            var mainConcepts = classTermToConcepts.Select(c => c.Concept);
-
-            // the where condition removes the concepts that are equal to the class name
-            // example: class named Address and property named AddressCity
-            // the concept Address is removed from the property
-            IList<TermToConcept> conceptsLinksProperty = LexicalHelper.CamelPascalCaseExtract(propertyName)
-                .Select(t => ConceptsLinksSelector(t, mainConcepts))
-                //.Where(ttc => !mainConcepts.Contains(ttc.Concept))
+            //var pureConcepts = GetPureConcepts(classTermToConcepts);
+            var normalizedTermStrings = LexicalHelper.CamelPascalCaseExtract(_allComposedTerms, propertyName);
+            IList<TermToConcept> termToConcepts = normalizedTermStrings
+                .SelectMany(str => _domain.Links.Where(t => string.Compare(t.Term.Name, str, true) == 0))
                 .ToList();
 
-            // If there are multiple terms pointing to the same concept
-            // it is necessary to reduce the information because otherwise
-            // the scoring system will be higher when we will start the next phase
-            conceptsLinksProperty = FilterOutDuplicateConcepts(conceptsLinksProperty);
+            // For example a class named Address and a property named AddressCity
+            // we want to remove the "Address" TermToConcept unless the property name is just Address
+            // In this case we just get "City"
+            termToConcepts = termToConcepts.Except(classTermToConcepts).ToList();
+            //var redundants = termToConcepts.Except(classTermToConcepts).ToList();
+            //if (redundants.Count < termToConcepts.Count)
+            //{
+            //    foreach (var redundant in redundants)
+            //    {
+            //        termToConcepts.Remove(redundant);
+            //    }
+            //}
 
-            return conceptsLinksProperty;
+            if (termToConcepts.Count == 1) return termToConcepts;
+            termToConcepts = FilterOutDuplicateConcepts(termToConcepts);
+            // ConceptsLinksSelector
+            return termToConcepts;
+
+
+            //// the where condition removes the concepts that are equal to the class name
+            //// example: class named Address and property named AddressCity
+            //// the concept Address is removed from the property
+            //IList<TermToConcept> conceptsLinksProperty = LexicalHelper.CamelPascalCaseExtract(_allComposedTerms, propertyName)
+            //    .Select(t => ConceptsLinksSelector(t, mainConcepts))
+            //    //.Where(ttc => !mainConcepts.Contains(ttc.Concept))
+            //    .ToList();
+
+            //// If there are multiple terms pointing to the same concept
+            //// it is necessary to reduce the information because otherwise
+            //// the scoring system will be higher when we will start the next phase
+            //conceptsLinksProperty = FilterOutDuplicateConcepts(conceptsLinksProperty);
+
+            //return conceptsLinksProperty;
         }
 
         private IList<TermToConcept> FilterOutDuplicateConcepts(IEnumerable<TermToConcept> conceptsLinksProperty)
@@ -81,6 +114,46 @@ namespace ManualMapping
             return result;
         }
 
+        //private IList<TermToConcept> GetPureConcepts(IList<TermToConcept> classTermToConcepts)
+        //{
+        //    List<TermToConcept> result = new();
+        //    foreach (var ttc in classTermToConcepts)
+        //    {
+        //        result.Add(_domain.Links
+        //            .Single(l => 
+        //                l.Concept == ttc.Concept &&
+        //                l.Term.Name == ttc.Concept.Name &&
+        //                l.ConceptSpecifier == KnownBaseConceptSpecifiers.None));
+        //    }
+        //    return result;
+        //}
+
+        private TermToConcept TypeConceptsLinksSelector(string term)
+        {
+            term = term.Singularize(false);
+            var filtered = _domain.Links.Where(t => string.Compare(t.Term.Name, term, true) == 0).ToArray();
+            if (filtered.Length == 0)
+            {
+                return MakeUndefined(term);
+            }
+
+            if (filtered.Length == 1)
+            {
+                return filtered.Single();
+            }
+
+            return filtered.OrderByDescending(s => s.Weight).First();
+
+
+            //term = term.Singularize(false);
+            //var filtered = _domain.Links
+            //    .Where(t => string.Compare(t.Term.Name, term, true) == 0 && t.ConceptSpecifier == KnownBaseConceptSpecifiers.None)
+            //    .ToArray();
+            //Debug.Assert(filtered.Length == 1);
+            //return filtered.Single();
+        }
+
+        [Obsolete]
         private TermToConcept ConceptsLinksSelector(string term, IEnumerable<Concept> contexts)
         {
             var ttcs = contexts.Select(c => ConceptsLinksSelector(term, c)).ToArray();
