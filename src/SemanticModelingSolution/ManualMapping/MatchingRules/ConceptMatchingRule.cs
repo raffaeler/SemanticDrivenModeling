@@ -45,7 +45,7 @@ namespace ManualMapping.MatchingRules
             foreach (var candidateModelType in ordered.Where(o => o.score > _minimumScoreForTypes))
             {
                 var flattenedTargetProperties = candidateModelType.modelTypeNode.FlatHierarchyProperties();
-                var matcher = new ScoredReservationLoop<ModelPropertyNode>();
+                var matcher = new ScoredReservationLoop<ModelNavigationNode>();
                 var mappings = matcher.GetScoredMappings(flattenedSourceProperties, flattenedTargetProperties,
                     GetPropertyScore, onSelectEquallyScored);
 
@@ -60,8 +60,11 @@ namespace ManualMapping.MatchingRules
                 Console.WriteLine($"Mappings:");
                 foreach (var map in mappings)
                 {
-                    //var path = GetPropertyMap(map.Target);
-                    Console.WriteLine($"{map.Source.OwnerTypeName}.{map.Source.Name} => {map.Target.OwnerTypeName}.{map.Target.Name} [{map.Score}]");
+                    var sourcePath = GetPropertyMap(map.Source);
+                    var targetPath = GetPropertyMap(map.Target);
+                    Console.Write($"{sourcePath} => {targetPath}");
+                    //Console.Write($"{map.Source.ModelPropertyNode.OwnerTypeName}.{map.Source.Name} => {map.Target.ModelPropertyNode.OwnerTypeName}.{map.Target.Name}");
+                    Console.WriteLine($" [{map.Score}]");
                 }
                 Console.WriteLine();
             }
@@ -71,32 +74,32 @@ namespace ManualMapping.MatchingRules
             return ordered;
         }
 
-        private string GetPropertyMap(ModelPropertyNode propertyNode)
+        private string GetPropertyMap(ModelNavigationNode modelNavigationNode)
         {
+            var temp = modelNavigationNode;
             List<string> segments = new();
-            do
+            while (temp != null)
             {
-                segments.Add(propertyNode.Name);
-                var parent = propertyNode.Parent;
-                if (parent == null) break;
-                //parent.
+                var propertyNode = temp.ModelPropertyNode;
+                segments.Insert(0, propertyNode.Name);
+                temp = temp.Previous;
             }
-            while (true);
+
             return string.Join(".", segments);
         }
 
-        private ScoredMapping<ModelPropertyNode> onSelectEquallyScored(List<ScoredMapping<ModelPropertyNode>> mappings)
+        private ScoredMapping<ModelNavigationNode> onSelectEquallyScored(List<ScoredMapping<ModelNavigationNode>> mappings)
         {
             foreach (var mapping in mappings)
             {
-                var sourceTerms = mapping.Source.TermToConcepts.Select(ttc => ttc.Term);
-                var targetTerms = mapping.Target.TermToConcepts.Select(ttc => ttc.Term);
+                var sourceTerms = mapping.Source.ModelPropertyNode.TermToConcepts.Select(ttc => ttc.Term);
+                var targetTerms = mapping.Target.ModelPropertyNode.TermToConcepts.Select(ttc => ttc.Term);
 
                 var intersection = sourceTerms.Intersect(targetTerms);
                 var firstMatch = intersection.FirstOrDefault();
                 if (firstMatch != null)
                 {
-                    return mappings.First(m => m.Source.TermToConcepts.Select(ttc => ttc.Term).Contains(firstMatch));
+                    return mappings.First(m => m.Source.ModelPropertyNode.TermToConcepts.Select(ttc => ttc.Term).Contains(firstMatch));
                 }
             }
 
@@ -110,14 +113,17 @@ namespace ManualMapping.MatchingRules
             {
                 foreach (var targetTtc in target.TermToConcepts)
                 {
-                    score += GetTypeScore(sourceTtc, targetTtc);
+                    score += GetTypeScore(
+                        source.TermToConcepts.Count,
+                        target.TermToConcepts.Count,
+                        sourceTtc, targetTtc);
                 }
             }
 
             return score;
         }
 
-        private int GetTypeScore(TermToConcept source, TermToConcept target)
+        private int GetTypeScore(int numSourceTerms, int numTargetTerms, TermToConcept source, TermToConcept target)
         {
             // when matching a type, concepts must be the same
             if (source.Concept != target.Concept)
@@ -139,109 +145,150 @@ namespace ManualMapping.MatchingRules
                 return 0;
             }
 
-            var score = ComputeTotalWeight(source.Weight, target.Weight, increment);
+            var score = ComputeTotalWeight(numSourceTerms, numTargetTerms, source.Weight, target.Weight, increment);
 
             return score;
         }
 
-
-        private int GetPropertyScore(ModelPropertyNode source, ModelPropertyNode target)
+        private bool ValidateContexts(ModelNavigationNode source, ModelNavigationNode target)
         {
-            if (_enableVerboseLogOnConsole) VerboseLog(source, target);
-            var sourceContexts = source.Parent.CandidateConcepts;
-            var targetContexts = target.Parent.CandidateConcepts;
-            int score = 0;
-            foreach (var targetTtc in target.TermToConcepts)
+            bool result = true;
+            var tempTarget = target;
+            while (tempTarget != null)
             {
-                foreach (var sourceTtc in source.TermToConcepts)
+                var tempSource = source;
+                while (tempSource != null)
+                {
+                    result &= source.ModelPropertyNode.Parent.CandidateConcepts
+                        .Intersect(tempTarget.ModelPropertyNode.Parent.CandidateConcepts)
+                        .Any();
+
+                    tempSource = tempSource.Previous;
+                }
+
+                tempTarget = tempTarget.Previous;
+            }
+
+            return result;
+        }
+
+        private int GetPropertyScore(ModelNavigationNode source, ModelNavigationNode target)
+        {
+            var sourceContexts = source.ModelPropertyNode.Parent.CandidateConcepts;
+            var targetContexts = target.ModelPropertyNode.Parent.CandidateConcepts;
+            var isValidated = ValidateContexts(source, target);
+
+            if (_enableVerboseLogOnConsole) VerboseLog(source.ModelPropertyNode, target.ModelPropertyNode, isValidated);
+            int score = 0;
+            foreach (var targetTtc in target.ModelPropertyNode.TermToConcepts)
+            {
+                foreach (var sourceTtc in source.ModelPropertyNode.TermToConcepts)
                 {
                     //score += GetScore(false, sourceTtc, targetTtc, sourceContexts, targetContexts);
-                    score += GetPropertyScore(sourceTtc, targetTtc, sourceContexts, targetContexts);
+                    score += GetPropertyScore(
+                        source.ModelPropertyNode.TermToConcepts.Count,
+                        target.ModelPropertyNode.TermToConcepts.Count,
+                        sourceTtc, targetTtc, sourceContexts, targetContexts);
                 }
             }
 
             return score;
         }
 
-        private int GetPropertyScore(TermToConcept source, TermToConcept target,
+        private int GetPropertyScore(int numSourceTerms, int numTargetTerms, TermToConcept source, TermToConcept target,
             IEnumerable<Concept> sourceContexts = null, IEnumerable<Concept> targetContexts = null)
         {
             double increment = 0.0;
-            bool matchingTopConcepts = target.Concept == source.Concept &&
-                (source.Concept != KnownBaseConcepts.Any || source.Concept != KnownBaseConcepts.Undefined);
+            bool? matchingTopConcepts;
+            if (source.Concept == KnownBaseConcepts.Any || source.Concept == KnownBaseConcepts.Undefined)
+                matchingTopConcepts = null;
+            else if (target.Concept == source.Concept)
+                matchingTopConcepts = true;
+            else
+                matchingTopConcepts = false;
 
-            bool matchingConceptContext = target.ContextConcept == source.Concept &&
-                (source.Concept != KnownBaseConcepts.Any || source.Concept != KnownBaseConcepts.Undefined); //change weight
+            bool? matchingConceptContext;
+            if (target.ContextConcept == KnownBaseConcepts.Any || target.ContextConcept == KnownBaseConcepts.Undefined)
+                matchingConceptContext = null;
+            else if (target.ContextConcept == source.Concept)
+                matchingConceptContext = true;
+            else
+                matchingConceptContext = false;
 
-            bool matchingSpecifiers = target.ConceptSpecifier == source.ConceptSpecifier &&
-                source.ConceptSpecifier != KnownBaseConceptSpecifiers.None;
+            bool? matchingSpecifiers;
+            if (source.ConceptSpecifier == KnownBaseConceptSpecifiers.None)
+                matchingSpecifiers = null;
+            else if (target.ConceptSpecifier == source.ConceptSpecifier)
+                matchingSpecifiers = true;
+            else
+                matchingSpecifiers = false;
 
             bool matchingTargetContext =
                 (targetContexts != null && targetContexts.Contains(source.Concept)) ||
                 (sourceContexts != null && sourceContexts.Contains(target.Concept));
 
+            if (matchingTopConcepts == false && matchingTargetContext == false) return 0;
             if (source.Concept == KnownBaseConcepts.UniqueIdentity && target.Concept != source.Concept) return 0;
             if (target.Concept == KnownBaseConcepts.UniqueIdentity && target.Concept != source.Concept) return 0;
-            if (!(matchingTopConcepts || matchingTargetContext)) return 0;
 
-            increment += matchingConceptContext ? 0.15 : 0;
-            increment += matchingSpecifiers ? 0.4 : 0;
+            if(matchingConceptContext.HasValue) increment += matchingConceptContext.Value ? 0.3 : -0.3;
+            if(matchingSpecifiers.HasValue) increment += matchingSpecifiers.Value ? 0.6 : -0.6;
 
-            var total = ComputeTotalWeight(source.Weight, target.Weight, increment);
+            var total = ComputeTotalWeight(numSourceTerms, numTargetTerms, source.Weight, target.Weight, increment);
 
             if (_enableVerboseLogOnConsole) VerboseLog(source, target, sourceContexts, targetContexts, increment, total,
                 matchingTopConcepts, matchingConceptContext, matchingSpecifiers, matchingTargetContext);
             return total;
         }
 
-        private int GetScore(bool matchRoot, TermToConcept source, TermToConcept target,
-            IEnumerable<Concept> sourceContexts = null, IEnumerable<Concept> targetContexts = null)
+        //private int GetScore(bool matchRoot, TermToConcept source, TermToConcept target,
+        //    IEnumerable<Concept> sourceContexts = null, IEnumerable<Concept> targetContexts = null)
+        //{
+        //    if (matchRoot && source.Concept != target.Concept)
+        //    {
+        //        return 0;
+        //    }
+
+        //    double increment = 0.0;
+
+        //    if (targetContexts != null)
+        //    {
+        //        //if (targetContexts.Contains(source.ContextConcept)
+        //        //    || targetContexts.Contains(source.Concept)
+        //        //    || sourceContexts.Intersect(targetContexts).Any()
+        //        //    //|| contexts.Contains(source.Term)
+        //        //    )
+        //        if (source.Concept == target.Concept)
+        //        {
+        //            // context match, increase the match score
+        //            increment = 0.2;
+        //        }
+        //        else
+        //        {
+        //            // context does not match, decrease the match score
+        //            //increment = -0.20;
+        //            return 0;
+        //        }
+        //    }
+
+        //    // concept specifiers
+        //    if (source.ConceptSpecifier.Name == target.Term.Name)
+        //    {
+        //        increment += 0.2;
+        //    }
+
+        //    return ComputeTotalWeight(source.Weight, target.Weight, increment);
+        //}
+
+        private int ComputeTotalWeight(int numSourceTerms, int numTargetTerms, int sourceWeight, int targetWeight, double increment)
         {
-            if (matchRoot && source.Concept != target.Concept)
-            {
-                return 0;
-            }
-
-            double increment = 0.0;
-
-            if (targetContexts != null)
-            {
-                //if (targetContexts.Contains(source.ContextConcept)
-                //    || targetContexts.Contains(source.Concept)
-                //    || sourceContexts.Intersect(targetContexts).Any()
-                //    //|| contexts.Contains(source.Term)
-                //    )
-                if (source.Concept == target.Concept)
-                {
-                    // context match, increase the match score
-                    increment = 0.2;
-                }
-                else
-                {
-                    // context does not match, decrease the match score
-                    //increment = -0.20;
-                    return 0;
-                }
-            }
-
-            // concept specifiers
-            if (source.ConceptSpecifier.Name == target.Term.Name)
-            {
-                increment += 0.2;
-            }
-
-            return ComputeTotalWeight(source.Weight, target.Weight, increment);
-        }
-
-        private int ComputeTotalWeight(int sourceWeight, int targetWeight, double increment)
-        {
-            double result = (sourceWeight + targetWeight) / 2.0;
+            double result = ((double)sourceWeight / numSourceTerms + (double)targetWeight / numTargetTerms) / 2.0;
             result += (result * increment);
 
             return (int)result;
         }
 
-        private void VerboseLog(ModelPropertyNode source, ModelPropertyNode target)
+        private void VerboseLog(ModelPropertyNode source, ModelPropertyNode target, bool isValidated)
         {
             var sourceContexts = source.Parent.CandidateConcepts;
             var targetContexts = target.Parent.CandidateConcepts;
@@ -249,30 +296,34 @@ namespace ManualMapping.MatchingRules
             var srcctx = string.Join(",", sourceContexts.ToArray().Select(s => s.Name));
             var tgtctx = string.Join(",", targetContexts.ToArray().Select(s => s.Name));
 
-            var props = $"{source.Parent.TypeName}[{srcctx}].{source.Property.Name} <==> {target.Parent.TypeName}[{tgtctx}].{target.Property.Name}";
-            //var ctx = $"{srcctx} <==> {tgtctx}";
+            var props = $"{source.Parent.TypeName}[{srcctx}].{source.Property.Name} ==> {target.Parent.TypeName}[{tgtctx}].{target.Property.Name}";
+            //var ctx = $"{srcctx} ==> {tgtctx}";
 
-            Console.WriteLine($"** Property:      {props}");
+            WriteEx($"** Property:      {props}");
+            if (!isValidated)
+                WriteLineEx($" No", ConsoleColor.Red);
+            else
+                WriteLineEx($" Y", ConsoleColor.Green);
         }
 
         private void VerboseLog(TermToConcept source, TermToConcept target,
             IEnumerable<Concept> sourceContexts, IEnumerable<Concept> targetContexts,
-            double increment, int total, bool matchingTopConcepts, bool matchingConceptContext,
-            bool matchingSpecifiers, bool matchingTargetContext)
+            double increment, int total, bool? matchingTopConcepts, bool? matchingConceptContext,
+            bool? matchingSpecifiers, bool? matchingTargetContext)
         {
             var srcctx = string.Join(",", sourceContexts.ToArray().Select(s => s.Name));
             var tgtctx = string.Join(",", targetContexts.ToArray().Select(s => s.Name));
 
-            Console.WriteLine($" tot:{total} (inc:{increment})");
-            Console.WriteLine($"   Terms:         {source.Term.Name.PadRight(20)} <==> {target.Term.Name}");
+            WriteLineEx($" tot:{total} (inc:{increment})", total != 100 ? ConsoleColor.Green : ConsoleColor.White);
+            WriteLineEx($"   Terms:         {source.Term.Name.PadRight(20)} ==> {target.Term.Name}");
 
             var contextsContains =
                 ((targetContexts != null && targetContexts.Contains(source.Concept)) ? $"{tgtctx}.Contains({source.Concept.Name}) " : "") +
                 ((sourceContexts != null && sourceContexts.Contains(target.Concept)) ? $"{srcctx}.Contains({target.Concept.Name}) " : "");
-            Console.WriteLine($"   Contexts:    {B2S(matchingTargetContext)} {contextsContains}");
-            Console.WriteLine($"   Concepts:    {B2S(matchingTopConcepts)} {source.Concept.Name.PadRight(20)} <==> {target.Concept.Name}");
-            Console.WriteLine($"   CContexts:   {B2S(matchingConceptContext)} {source.ContextConcept.Name.PadRight(20)} <==> {target.ContextConcept.Name}");
-            Console.WriteLine($"   CSpecifiers: {B2S(matchingSpecifiers)} {source.ConceptSpecifier.Name.PadRight(20)} <==> {target.ConceptSpecifier.Name}");
+            WriteLineEx($"   Contexts:    {B2S(matchingTargetContext)} {contextsContains}");
+            WriteLineEx($"   Concepts:    {B2S(matchingTopConcepts)} {source.Concept.Name.PadRight(20)} ==> {target.Concept.Name}");
+            WriteLineEx($"   CContexts:   {B2S(matchingConceptContext)} {source.ContextConcept.Name.PadRight(20)} ==> {target.ContextConcept.Name}");
+            WriteLineEx($"   CSpecifiers: {B2S(matchingSpecifiers)} {source.ConceptSpecifier.Name.PadRight(20)} ==> {target.ConceptSpecifier.Name}");
             Console.WriteLine();
             // source.Term.Name
             // target.Term.Name
@@ -289,7 +340,23 @@ namespace ManualMapping.MatchingRules
 
         }
 
-        private string B2S(bool value) => value ? "Y" : " ";
+        private string B2S(bool? value)
+        {
+            if (!value.HasValue) return " ";
+            if (value.Value) return "Y";
+            return "N";
+        }
+
+        private void WriteLineEx(string line, ConsoleColor color = ConsoleColor.White)
+        {
+            Console.ForegroundColor = color;
+            Console.WriteLine(line);
+        }
+        private void WriteEx(string line, ConsoleColor color = ConsoleColor.White)
+        {
+            Console.ForegroundColor = color;
+            Console.Write(line);
+        }
 
     }
 }

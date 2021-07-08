@@ -46,7 +46,7 @@ namespace SemanticLibrary.Helpers
             // that received a score (potentially assigned to a target)
             foreach (var targetItem in targetList)
             {
-                if (targetItem.Name == "ZipCode") Debugger.Break();
+                if (targetItem.Name == "ShipCity") Debugger.Break();
                 foreach (var sourceItem in source)
                 {
                     var score = getScore(sourceItem, targetItem);

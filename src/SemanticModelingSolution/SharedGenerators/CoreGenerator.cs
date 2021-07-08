@@ -71,10 +71,13 @@ namespace SemanticGlossaryGenerator
             Domain.Usings.Add("System.Collections.Generic");
             Domain.Usings.Add("SemanticLibrary");
 
-            Domain.Members.Add(Domain.CreatePropertyWithInitializer(
+            //Domain.Members.Add(Domain.CreatePropertyWithInitializer(
+            //    new[] { TermToConceptPropertyComment, },
+            //    Domain.MakeListOfT(TermToConceptClassName), TermToConceptPropertyName,
+            //    Domain.CreateInitializerWithCollection(TermToConceptClassName), true));
+            Domain.Members.Add(Domain.CreatePropertyWithArrowCallingBase(
                 new[] { TermToConceptPropertyComment, },
-                Domain.MakeListOfT(TermToConceptClassName), TermToConceptPropertyName,
-                Domain.CreateInitializerWithCollection(TermToConceptClassName), true));
+                Domain.MakeListOfT(TermToConceptClassName), TermToConceptPropertyName, true));
         }
 
         public ClassGenerator Terms { get; }

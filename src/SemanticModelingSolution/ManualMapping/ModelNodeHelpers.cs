@@ -12,26 +12,28 @@ namespace ManualMapping
     /// </summary>
     public static class ModelNodeHelpers
     {
-        public static IEnumerable<ModelPropertyNode> FlatHierarchyProperties(this ModelTypeNode node)
+        public static IEnumerable<ModelNavigationNode> FlatHierarchyProperties(this ModelTypeNode node)
         {
             Dictionary<string, ModelTypeNode> visited = new();
-            return FlatHierarchyPropertiesInternal(node, visited);
+            return FlatHierarchyPropertiesInternal(node, null, visited);
         }
 
-        private static IEnumerable<ModelPropertyNode> FlatHierarchyPropertiesInternal(ModelTypeNode node, Dictionary<string, ModelTypeNode> visited)
+        private static IEnumerable<ModelNavigationNode> FlatHierarchyPropertiesInternal(ModelTypeNode node, ModelNavigationNode previous,
+            Dictionary<string, ModelTypeNode> visited)
         {
             if (!visited.TryGetValue(node.Type.AssemblyQualifiedName, out _))
             {
                 visited[node.Type.AssemblyQualifiedName] = node;
                 foreach (var propertyNode in node.PropertyNodes)
                 {
+                    var navigation = new ModelNavigationNode(propertyNode, previous);
                     if (propertyNode.NavigationNode == null)
                     {
-                        yield return propertyNode;
+                        yield return navigation;
                         continue;
                     }
 
-                    foreach(var sub in FlatHierarchyPropertiesInternal(propertyNode.NavigationNode, visited))
+                    foreach(var sub in FlatHierarchyPropertiesInternal(propertyNode.NavigationNode, navigation, visited))
                     {
                         yield return sub;
                     }

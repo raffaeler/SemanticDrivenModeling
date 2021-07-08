@@ -258,6 +258,47 @@ namespace SemanticGlossaryGenerator.Helpers
             return propertyDeclaration.NormalizeWhitespace();
         }
 
+        internal PropertyDeclarationSyntax CreatePropertyWithArrowCallingBase(string[] commentLines,
+            NameSyntax typeName, string propertyName, bool isOverride = false)
+        {
+            SyntaxTrivia comment = CreateXmlComment(true, commentLines);
+
+            //var type2 = SyntaxFactory.IdentifierName(
+            //    SyntaxFactory.Identifier(
+            //        SyntaxFactory.TriviaList(comment),
+            //            "int", SyntaxFactory.TriviaList()));
+
+            //typeName = typeName.(comment);
+
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(typeName,
+                SyntaxFactory.Identifier(propertyName))
+                ;
+
+            var modifiers = new List<SyntaxToken>();
+            modifiers.Add(SyntaxFactory.Token(
+                        SyntaxFactory.TriviaList(comment),
+                        SyntaxKind.PublicKeyword,
+                        SyntaxFactory.TriviaList()));
+            if (isOverride) modifiers.Add(SyntaxFactory.Token(SyntaxKind.OverrideKeyword));
+
+            //  => base.Links;
+            ArrowExpressionClauseSyntax arrowClause = 
+                SyntaxFactory.ArrowExpressionClause(
+                    SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.BaseExpression(),
+                        SyntaxFactory.IdentifierName(propertyName)));
+
+            propertyDeclaration = propertyDeclaration
+                .WithModifiers(SyntaxFactory.TokenList(modifiers))
+                .WithExpressionBody(arrowClause)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+            //propertyDeclaration = propertyDeclaration
+            //    .WithLeadingTrivia(comment);
+
+            return propertyDeclaration.NormalizeWhitespace();
+        }
         public ConstructorDeclarationSyntax CreateConstructor(string[] commentLines,
             params StatementSyntax[] statements)
         {

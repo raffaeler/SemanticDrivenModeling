@@ -110,16 +110,30 @@ namespace MappingConsole
 
             //var models1 = Visit(_domainTypes1, new[] { typeof(ERP_Model.Models.Supplier) });
 
-            //VisitCompare1();
-            VisitCompare2a();
+            VisitCompare1();
+            //VisitCompare2a();
+            //VisitCompare2b();
+            //VisitCompare2c();
         }
 
         static void VisitCompare2a()
         {
             var domain = new GeneratedCode.Domain();
+            var modelsDomain1 = Visit(domain, _domainTypes1);
+
+            var modelsNW = Visit(domain, _domainTypesNW, new[] { typeof(NorthwindDataLayer.Models.Supplier) });
+            var modelNW = modelsNW.Single();
+
+            var matcher = new ConceptMatchingRule(true);
+            var winner = matcher.FindMatch(modelNW, modelsDomain1);
+        }
+
+        static void VisitCompare2b()
+        {
+            var domain = new GeneratedCode.Domain();
             var modelsDomain1 = Visit(domain, _domainTypesNW);
 
-            var modelsNW = Visit(domain, _domainTypes1, new[] { typeof(ERP_Model.Models.Order) });
+            var modelsNW = Visit(domain, _domainTypes1, new[] { typeof(ERP_Model.Models.OrderItem) });
             var modelNW = modelsNW.Single();
 
             var matcher = new ConceptMatchingRule(true);
@@ -128,7 +142,7 @@ namespace MappingConsole
 
         }
 
-        static void VisitCompare2b()
+        static void VisitCompare2c()
         {
             var domain = new GeneratedCode.Domain();
             var modelsDomain1 = Visit(domain, _domainTypes1);
@@ -151,12 +165,8 @@ namespace MappingConsole
             Debug.Assert(models2.Count == 1);
             var model2 = models2.Single();
 
-            var modelsNW = Visit(domain, _domainTypesNW, new[] { typeof(NorthwindDataLayer.Models.Supplier) });
-            var modelNW = modelsNW.Single();
-
             var matcher = new ConceptMatchingRule(true);
-            //var winner = matcher.FindMatch(model2, modelsDomain1);
-            var winner = matcher.FindMatch(modelNW, modelsDomain1);
+            var winner = matcher.FindMatch(model2, modelsDomain1);
 
             var list = matcher.FindOrderedMatches(model2, modelsDomain1)
                 .ToList();

@@ -103,9 +103,17 @@ namespace SemanticStructuresTests
 
         private class MyDomain : DomainBase
         {
-            public override List<TermToConcept> Links => AllTerms
-                .Select(t => new TermToConcept(null, null, null, new Term(t), 0))
-                .ToList();
+            //public override List<TermToConcept> Links => AllTerms
+            //    .Select(t => new TermToConcept(null, null, null, new Term(t), 0))
+            //    .ToList();
+
+            public MyDomain()
+            {
+                Links.AddRange(AllTerms
+                    .Select(t => new TermToConcept(null, null, null, new Term(t), 0)));
+            }
+
+            public override List<TermToConcept> Links => base.Links;
 
             public List<string> AllTerms => new()
             {

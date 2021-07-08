@@ -35,5 +35,13 @@ namespace ManualMapping
         {
             return ModelPropertyNode.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            if(Previous == null)
+                return $"{ModelPropertyNode.OwnerTypeName}.{ModelPropertyNode.Name}";
+
+            return $"{ModelPropertyNode.OwnerTypeName}.{ModelPropertyNode.Name} (from: {Previous?.ToString()})";
+        }
     }
 }
