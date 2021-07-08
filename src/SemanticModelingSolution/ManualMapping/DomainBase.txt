@@ -13,27 +13,34 @@
 # 
 
 
-// Unique identifier
-$ Unique identifier also known as key
-UniqueIdentity
-    :Id: 100: The unique identifier
-    :Guid: 100: The unique identifier
-    :NaturalId: 100: A human-readable unique identifier
+#   // Unique identifier
+#   $ Unique identifier also known as key
+#   UniqueIdentity
+#       :Id: 100: The unique identifier
+#       :Guid: 100: The unique identifier
+#       :NaturalId: 100: A human-readable unique identifier
+#   
+#   // The non unique identity of an entity
+#   $ Not necessarily an item identifier. Name, Tag, etc.
+#   Identity
+#       :Name : 100: The name of the entity
+#       Person:First : 100: 
+#       Person:Last : 100: 
+#       Person:Middle: 100: 
+#       Person:Mid: 100: 
+#       :Title: 80
+#       :Code : 100
+#       :Image : 80
+#       :Picture : 80
+#       :Barcode
+#       :Tag : 50
 
-// The non unique identity of an entity
-$ Not necessarily an item identifier. Name, Tag, etc.
-Identity
-    :Name : 100: The name of the entity
-    Person:First : 100: 
-    Person:Last : 100: 
-    Person:Middle: 100: 
-    Person:Mid: 100: 
-    :Title: 80
-    :Code : 100
-    :Image : 80
-    :Picture : 80
-    :Barcode
-    :Tag : 50
+# Person
+#     :Human: 80
+#     :Employee : 100
+#     :Contact:100
+#     :Owner:50
+#     :Operator: 90
 
 
 Product
@@ -84,13 +91,6 @@ Sales
 
 Delivery
 
-
-Person
-    :Human: 80
-    :Employee : 100
-    :Contact:100
-    :Owner:50
-    :Operator: 90
 
 Workflow
     :Policy
@@ -299,7 +299,6 @@ Place
 
 ZTooGeneric
     :Subject
-    :Owner
 
 $ address
 Address

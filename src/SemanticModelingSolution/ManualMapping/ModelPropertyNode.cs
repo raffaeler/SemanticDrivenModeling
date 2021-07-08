@@ -38,14 +38,14 @@ namespace ManualMapping
             if (_navigationNode == null) return;
         }
 
-        /// <summary>
-        /// This collection contains the list of propertis of the One-To-One 
-        /// or One-To-Many relationships of the direct child type (CoreType)
-        /// If the Proeprty type is a BasicType this is null
-        /// It will be used to map the concepts between graphs. Thanks to the Parent it
-        /// is then possible re-create the hierarachy when generating code
-        /// </summary>
-        public IList<ModelPropertyNode> FlattenedSubProperties => _navigationNode?.PropertyNodes;
+        ///// <summary>
+        ///// This collection contains the list of propertis of the One-To-One 
+        ///// or One-To-Many relationships of the direct child type (CoreType)
+        ///// If the Proeprty type is a BasicType this is null
+        ///// It will be used to map the concepts between graphs. Thanks to the Parent it
+        ///// is then possible re-create the hierarachy when generating code
+        ///// </summary>
+        //public IList<ModelPropertyNode> FlattenedSubProperties => _navigationNode?.PropertyNodes;
 
         /// <summary>
         /// The type of the property extracted from the collection.

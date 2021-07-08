@@ -11,6 +11,11 @@ using ManualMapping.MatchingRules;
 
 using SemanticLibrary;
 
+// Rules to enforce:
+// UniqueIdentity must match only on 1st level and equal concepts (cannot be a child)
+// UniqueIdentity on the child targets must be at the same level or created as new
+// The target type must be >= the source one. If the destination is a boolean, it can't fit
+
 namespace MappingConsole
 {
     class Program
@@ -67,6 +72,35 @@ namespace MappingConsole
             typeof(coderush.Models.Warehouse          ),
         };
 
+        static Type[] _domainTypesNW = new Type[]
+        {
+            typeof(NorthwindDataLayer.Models.Alphabetical_list_of_product        ),
+            typeof(NorthwindDataLayer.Models.Category                            ),
+            typeof(NorthwindDataLayer.Models.Category_Sales_for_1997             ),
+            typeof(NorthwindDataLayer.Models.Current_Product_List                ),
+            typeof(NorthwindDataLayer.Models.Customer                            ),
+            typeof(NorthwindDataLayer.Models.Customer_and_Suppliers_by_City      ),
+            typeof(NorthwindDataLayer.Models.CustomerDemographic                 ),
+            typeof(NorthwindDataLayer.Models.Employee                            ),
+            typeof(NorthwindDataLayer.Models.Invoice                             ),
+            typeof(NorthwindDataLayer.Models.Order                               ),
+            typeof(NorthwindDataLayer.Models.Order_Detail                        ),
+            typeof(NorthwindDataLayer.Models.Order_Details_Extended              ),
+            typeof(NorthwindDataLayer.Models.Order_Subtotal                      ),
+            typeof(NorthwindDataLayer.Models.Orders_Qry                          ),
+            typeof(NorthwindDataLayer.Models.Product                             ),
+            typeof(NorthwindDataLayer.Models.Product_Sales_for_1997              ),
+            typeof(NorthwindDataLayer.Models.Products_Above_Average_Price        ),
+            typeof(NorthwindDataLayer.Models.Products_by_Category                ),
+            typeof(NorthwindDataLayer.Models.Region                              ),
+            typeof(NorthwindDataLayer.Models.Sales_by_Category                   ),
+            typeof(NorthwindDataLayer.Models.Sales_Totals_by_Amount              ),
+            typeof(NorthwindDataLayer.Models.Shipper                             ),
+            typeof(NorthwindDataLayer.Models.Summary_of_Sales_by_Quarter         ),
+            typeof(NorthwindDataLayer.Models.Summary_of_Sales_by_Year            ),
+            typeof(NorthwindDataLayer.Models.Supplier                            ),
+            typeof(NorthwindDataLayer.Models.Territory                           ),
+        };
 
         static void Main(string[] args)
         {
@@ -76,10 +110,39 @@ namespace MappingConsole
 
             //var models1 = Visit(_domainTypes1, new[] { typeof(ERP_Model.Models.Supplier) });
 
-            VisitCompare();
+            //VisitCompare1();
+            VisitCompare2a();
         }
 
-        static void VisitCompare()
+        static void VisitCompare2a()
+        {
+            var domain = new GeneratedCode.Domain();
+            var modelsDomain1 = Visit(domain, _domainTypesNW);
+
+            var modelsNW = Visit(domain, _domainTypes1, new[] { typeof(ERP_Model.Models.Order) });
+            var modelNW = modelsNW.Single();
+
+            var matcher = new ConceptMatchingRule(true);
+            //var winner = matcher.FindMatch(model2, modelsDomain1);
+            var winner = matcher.FindMatch(modelNW, modelsDomain1);
+
+        }
+
+        static void VisitCompare2b()
+        {
+            var domain = new GeneratedCode.Domain();
+            var modelsDomain1 = Visit(domain, _domainTypes1);
+
+            var modelsNW = Visit(domain, _domainTypesNW, new[] { typeof(NorthwindDataLayer.Models.Order) });
+            var modelNW = modelsNW.Single();
+
+            var matcher = new ConceptMatchingRule(true);
+            //var winner = matcher.FindMatch(model2, modelsDomain1);
+            var winner = matcher.FindMatch(modelNW, modelsDomain1);
+
+        }
+
+        static void VisitCompare1()
         {
             var domain = new GeneratedCode.Domain();
             var modelsDomain1 = Visit(domain, _domainTypes1);
@@ -88,9 +151,12 @@ namespace MappingConsole
             Debug.Assert(models2.Count == 1);
             var model2 = models2.Single();
 
-            var matcher = new ConceptMatchingRule(true);
+            var modelsNW = Visit(domain, _domainTypesNW, new[] { typeof(NorthwindDataLayer.Models.Supplier) });
+            var modelNW = modelsNW.Single();
 
-            var winner = matcher.FindMatch(model2, modelsDomain1);
+            var matcher = new ConceptMatchingRule(true);
+            //var winner = matcher.FindMatch(model2, modelsDomain1);
+            var winner = matcher.FindMatch(modelNW, modelsDomain1);
 
             var list = matcher.FindOrderedMatches(model2, modelsDomain1)
                 .ToList();

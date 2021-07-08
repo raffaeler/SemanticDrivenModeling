@@ -54,10 +54,13 @@ namespace ManualMapping.MatchingRules
                     .Sum();
                 propertiesScore.Add((candidateModelType.modelTypeNode, totalScore));
 
-                Console.WriteLine($"Candidate type: {candidateModelType.modelTypeNode.TypeName} (Type score: {candidateModelType.score}) Prop score: {totalScore}");
+                Console.Write($"Source type: {source.Type.Namespace}.{candidateModelType.modelTypeNode.TypeName} => ");
+                Console.Write($"Candidate type: {candidateModelType.modelTypeNode.Type.Namespace}.{candidateModelType.modelTypeNode.TypeName}");
+                Console.WriteLine($" (Type score: {candidateModelType.score}) Prop score: {totalScore}");
                 Console.WriteLine($"Mappings:");
                 foreach (var map in mappings)
                 {
+                    //var path = GetPropertyMap(map.Target);
                     Console.WriteLine($"{map.Source.OwnerTypeName}.{map.Source.Name} => {map.Target.OwnerTypeName}.{map.Target.Name} [{map.Score}]");
                 }
                 Console.WriteLine();
@@ -66,6 +69,20 @@ namespace ManualMapping.MatchingRules
             var orderedPropertiesScope = propertiesScore.OrderByDescending(p => p.Item2).ToList();
 
             return ordered;
+        }
+
+        private string GetPropertyMap(ModelPropertyNode propertyNode)
+        {
+            List<string> segments = new();
+            do
+            {
+                segments.Add(propertyNode.Name);
+                var parent = propertyNode.Parent;
+                if (parent == null) break;
+                //parent.
+            }
+            while (true);
+            return string.Join(".", segments);
         }
 
         private ScoredMapping<ModelPropertyNode> onSelectEquallyScored(List<ScoredMapping<ModelPropertyNode>> mappings)
@@ -163,6 +180,8 @@ namespace ManualMapping.MatchingRules
                 (targetContexts != null && targetContexts.Contains(source.Concept)) ||
                 (sourceContexts != null && sourceContexts.Contains(target.Concept));
 
+            if (source.Concept == KnownBaseConcepts.UniqueIdentity && target.Concept != source.Concept) return 0;
+            if (target.Concept == KnownBaseConcepts.UniqueIdentity && target.Concept != source.Concept) return 0;
             if (!(matchingTopConcepts || matchingTargetContext)) return 0;
 
             increment += matchingConceptContext ? 0.15 : 0;
