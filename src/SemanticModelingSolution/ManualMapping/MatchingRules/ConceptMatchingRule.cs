@@ -215,6 +215,8 @@ namespace ManualMapping.MatchingRules
             else
                 matchingConceptContext = false;
 
+            if(matchingConceptContext.HasValue) increment += matchingConceptContext.Value ? 0.3 : -0.3;
+
             bool? matchingSpecifiers;
             if (source.ConceptSpecifier == KnownBaseConceptSpecifiers.None)
                 matchingSpecifiers = null;
@@ -223,18 +225,18 @@ namespace ManualMapping.MatchingRules
             else
                 matchingSpecifiers = false;
 
+            if(matchingSpecifiers.HasValue) increment += matchingSpecifiers.Value ? 0.6 : -0.6;
+
             bool matchingTargetContext =
                 (targetContexts != null && targetContexts.Contains(source.Concept)) ||
                 (sourceContexts != null && sourceContexts.Contains(target.Concept));
 
-            if (matchingTopConcepts == false && matchingTargetContext == false) return 0;
-            if (source.Concept == KnownBaseConcepts.UniqueIdentity && target.Concept != source.Concept) return 0;
-            if (target.Concept == KnownBaseConcepts.UniqueIdentity && target.Concept != source.Concept) return 0;
+            bool isFailed = false;
+            if (matchingTopConcepts == false && matchingTargetContext == false) isFailed = true;
+            if (source.Concept == KnownBaseConcepts.UniqueIdentity && target.Concept != source.Concept) isFailed = true;
+            if (target.Concept == KnownBaseConcepts.UniqueIdentity && target.Concept != source.Concept) isFailed = true;
 
-            if(matchingConceptContext.HasValue) increment += matchingConceptContext.Value ? 0.3 : -0.3;
-            if(matchingSpecifiers.HasValue) increment += matchingSpecifiers.Value ? 0.6 : -0.6;
-
-            var total = ComputeTotalWeight(numSourceTerms, numTargetTerms, source.Weight, target.Weight, increment);
+            var total = isFailed ? 0 : ComputeTotalWeight(numSourceTerms, numTargetTerms, source.Weight, target.Weight, increment);
 
             if (_enableVerboseLogOnConsole) VerboseLog(source, target, sourceContexts, targetContexts, increment, total,
                 matchingTopConcepts, matchingConceptContext, matchingSpecifiers, matchingTargetContext);

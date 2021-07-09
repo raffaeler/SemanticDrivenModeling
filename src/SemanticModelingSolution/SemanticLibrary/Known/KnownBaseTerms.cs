@@ -42,7 +42,7 @@ namespace SemanticLibrary
 
         /// <summary>
         /// </summary>
-        public static Term FirstName = new Term("First", "");
+        public static Term FirstName = new Term("FirstName", "");
 
         /// <summary>
         /// </summary>
@@ -50,7 +50,7 @@ namespace SemanticLibrary
 
         /// <summary>
         /// </summary>
-        public static Term LastName = new Term("First", "");
+        public static Term LastName = new Term("LastName", "");
 
         /// <summary>
         /// </summary>
@@ -58,7 +58,7 @@ namespace SemanticLibrary
 
         /// <summary>
         /// </summary>
-        public static Term MiddleName = new Term("First", "");
+        public static Term MiddleName = new Term("MiddleName", "");
 
         /// <summary>
         /// </summary>
@@ -66,15 +66,15 @@ namespace SemanticLibrary
 
         /// <summary>
         /// </summary>
-        public static Term MidName = new Term("First", "");
+        public static Term MidName = new Term("MidName", "");
 
         /// <summary>
         /// </summary>
-        public static Term Nick = new Term("Mid", "");
+        public static Term Nick = new Term("Nick", "");
 
         /// <summary>
         /// </summary>
-        public static Term NickName = new Term("First", "");
+        public static Term NickName = new Term("NickName", "");
 
         /// <summary>
         /// </summary>
