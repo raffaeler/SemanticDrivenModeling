@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SemanticLibrary;
 using SemanticLibrary.Helpers;
 
-namespace ManualMapping.MatchingRules
+namespace SemanticLibrary
 {
-    public class ConceptMatchingRule : IConceptMatchingRule
+    public class ConceptMatchingRule
     {
-        private const int _minimumScoreForTypes = 50;
+        public const int MinimumScoreForTypes = 50;
         private readonly bool _enableVerboseLogOnConsole;
 
         public ConceptMatchingRule(bool enableVerboseLogOnConsole)
@@ -19,59 +18,52 @@ namespace ManualMapping.MatchingRules
             _enableVerboseLogOnConsole = enableVerboseLogOnConsole;
         }
 
-        public ModelTypeNode FindMatch(ModelTypeNode source, IEnumerable<ModelTypeNode> targets, IEnumerable<Concept> contexts = null)
+        public IReadOnlyCollection<ScoredTypeMapping> CandidateTypes { get; private set; }
+
+        public void ComputeMappings(ModelTypeNode source, IEnumerable<ModelTypeNode> targets,
+            int minimumScore = MinimumScoreForTypes)
         {
-            var top = FindOrderedMatches(source, targets, contexts).First();
-            return top.modelTypeNode;
-        }
+            var candidateTypes = new List<ScoredTypeMapping>(targets
+                .Select(modelTypeNode => new ScoredTypeMapping(source, modelTypeNode, GetTypeScore(source, modelTypeNode)))
+                .OrderByDescending(t => t.TypeScore)
+                .Where(o => o.TypeScore > MinimumScoreForTypes));
 
-        public IEnumerable<(ModelTypeNode modelTypeNode, int score)> FindOrderedMatches(
-            ModelTypeNode source, IEnumerable<ModelTypeNode> targets, IEnumerable<Concept> contexts = null)
-        {
-            var ordered = targets
-                .Select(modelTypeNode => (modelTypeNode, score: GetTypeScore(source, modelTypeNode)))
-                .OrderByDescending(t => t.score);
-
-            // evaluate properties foreach mapping that is worth
-
-            Console.WriteLine($"The source type is {source.TypeName} whose properties are:");
             var flattenedSourceProperties = source.FlatHierarchyProperties().ToList();
-            foreach (var p in flattenedSourceProperties)
-                Console.WriteLine($"\t{p.ToString()}");
-            Console.WriteLine();
 
-            List<(ModelTypeNode, int)> propertiesScore = new();
-            // all the types which I got before, but only over a given score
-            foreach (var candidateModelType in ordered.Where(o => o.score > _minimumScoreForTypes))
+            foreach (var candidateModelType in candidateTypes)
             {
-                var flattenedTargetProperties = candidateModelType.modelTypeNode.FlatHierarchyProperties();
+                var flattenedTargetProperties = candidateModelType.TargetModelTypeNode.FlatHierarchyProperties();
                 var matcher = new ScoredReservationLoop<ModelNavigationNode>();
                 var mappings = matcher.GetScoredMappings(flattenedSourceProperties, flattenedTargetProperties,
                     GetPropertyScore, onSelectEquallyScored);
 
-                var totalScore = mappings
-                    .Select(m => m.Score)
-                    .Sum();
-                propertiesScore.Add((candidateModelType.modelTypeNode, totalScore));
+                candidateModelType.PropertyMappings = mappings;
 
-                Console.Write($"Source type: {source.Type.Namespace}.{candidateModelType.modelTypeNode.TypeName} => ");
-                Console.Write($"Candidate type: {candidateModelType.modelTypeNode.Type.Namespace}.{candidateModelType.modelTypeNode.TypeName}");
-                Console.WriteLine($" (Type score: {candidateModelType.score}) Prop score: {totalScore}");
-                Console.WriteLine($"Mappings:");
-                foreach (var map in mappings)
-                {
-                    var sourcePath = GetPropertyMap(map.Source);
-                    var targetPath = GetPropertyMap(map.Target);
-                    Console.Write($"{sourcePath} => {targetPath}");
-                    //Console.Write($"{map.Source.ModelPropertyNode.OwnerTypeName}.{map.Source.Name} => {map.Target.ModelPropertyNode.OwnerTypeName}.{map.Target.Name}");
-                    Console.WriteLine($" [{map.Score}]");
-                }
-                Console.WriteLine();
+                Console.WriteLine(DumpMappings(candidateModelType));
             }
 
-            var orderedPropertiesScope = propertiesScore.OrderByDescending(p => p.Item2).ToList();
+            this.CandidateTypes = candidateTypes;
+        }
 
-            return ordered;
+        internal string DumpMappings(ScoredTypeMapping candidateModelType)
+        {
+            var sb = new StringBuilder();
+            var source = candidateModelType.SourceModelTypeNode;
+            var target = candidateModelType.TargetModelTypeNode;
+            sb.Append($"Source type: {candidateModelType.SourceModelTypeNode.Type.Namespace}.{target.TypeName} => ");
+            sb.Append($"Candidate type: {target.Type.Namespace}.{target.TypeName}");
+            sb.AppendLine($" (Type score: {candidateModelType.TypeScore}) Prop score: {candidateModelType.PropertiesScore}");
+            sb.AppendLine($"Mappings:");
+            foreach (var map in candidateModelType.PropertyMappings)
+            {
+                var sourcePath = GetPropertyMap(map.Source);
+                var targetPath = GetPropertyMap(map.Target);
+                sb.Append($"{sourcePath} => {targetPath}");
+                //sb.Append($"{map.Source.ModelPropertyNode.OwnerTypeName}.{map.Source.Name} => {map.Target.ModelPropertyNode.OwnerTypeName}.{map.Target.Name}");
+                sb.AppendLine($" [{map.Score}]");
+            }
+            sb.AppendLine();
+            return sb.ToString();
         }
 
         private string GetPropertyMap(ModelNavigationNode modelNavigationNode)
@@ -88,7 +80,7 @@ namespace ManualMapping.MatchingRules
             return string.Join(".", segments);
         }
 
-        private ScoredMapping<ModelNavigationNode> onSelectEquallyScored(List<ScoredMapping<ModelNavigationNode>> mappings)
+        private ScoredPropertyMapping<ModelNavigationNode> onSelectEquallyScored(List<ScoredPropertyMapping<ModelNavigationNode>> mappings)
         {
             foreach (var mapping in mappings)
             {
@@ -242,45 +234,6 @@ namespace ManualMapping.MatchingRules
                 matchingTopConcepts, matchingConceptContext, matchingSpecifiers, matchingTargetContext);
             return total;
         }
-
-        //private int GetScore(bool matchRoot, TermToConcept source, TermToConcept target,
-        //    IEnumerable<Concept> sourceContexts = null, IEnumerable<Concept> targetContexts = null)
-        //{
-        //    if (matchRoot && source.Concept != target.Concept)
-        //    {
-        //        return 0;
-        //    }
-
-        //    double increment = 0.0;
-
-        //    if (targetContexts != null)
-        //    {
-        //        //if (targetContexts.Contains(source.ContextConcept)
-        //        //    || targetContexts.Contains(source.Concept)
-        //        //    || sourceContexts.Intersect(targetContexts).Any()
-        //        //    //|| contexts.Contains(source.Term)
-        //        //    )
-        //        if (source.Concept == target.Concept)
-        //        {
-        //            // context match, increase the match score
-        //            increment = 0.2;
-        //        }
-        //        else
-        //        {
-        //            // context does not match, decrease the match score
-        //            //increment = -0.20;
-        //            return 0;
-        //        }
-        //    }
-
-        //    // concept specifiers
-        //    if (source.ConceptSpecifier.Name == target.Term.Name)
-        //    {
-        //        increment += 0.2;
-        //    }
-
-        //    return ComputeTotalWeight(source.Weight, target.Weight, increment);
-        //}
 
         private int ComputeTotalWeight(int numSourceTerms, int numTargetTerms, int sourceWeight, int targetWeight, double increment)
         {

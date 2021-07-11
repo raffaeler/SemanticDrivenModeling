@@ -4,11 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-using LegacyModels;
-
-using ManualMapping;
-using ManualMapping.MatchingRules;
-
 using SemanticLibrary;
 
 // Rules to enforce:
@@ -123,9 +118,11 @@ namespace MappingConsole
 
             var modelsNW = Visit(domain, _domainTypesNW, new[] { typeof(NorthwindDataLayer.Models.Supplier) });
             var modelNW = modelsNW.Single();
+            DumpType(modelNW, "source");
 
             var matcher = new ConceptMatchingRule(true);
-            var winner = matcher.FindMatch(modelNW, modelsDomain1);
+            matcher.ComputeMappings(modelNW, modelsDomain1);
+            
         }
 
         static void VisitCompare2b()
@@ -135,11 +132,12 @@ namespace MappingConsole
 
             var modelsNW = Visit(domain, _domainTypes1, new[] { typeof(ERP_Model.Models.OrderItem) });
             var modelNW = modelsNW.Single();
+            DumpType(modelNW, "source");
 
             var matcher = new ConceptMatchingRule(true);
-            //var winner = matcher.FindMatch(model2, modelsDomain1);
-            var winner = matcher.FindMatch(modelNW, modelsDomain1);
-
+            //matcher.ComputeMappings(model2, modelsDomain1);
+            matcher.ComputeMappings(modelNW, modelsDomain1);
+            
         }
 
         static void VisitCompare2c()
@@ -149,10 +147,11 @@ namespace MappingConsole
 
             var modelsNW = Visit(domain, _domainTypesNW, new[] { typeof(NorthwindDataLayer.Models.Order) });
             var modelNW = modelsNW.Single();
+            DumpType(modelNW, "source");
 
             var matcher = new ConceptMatchingRule(true);
-            //var winner = matcher.FindMatch(model2, modelsDomain1);
-            var winner = matcher.FindMatch(modelNW, modelsDomain1);
+            //matcher.ComputeMappings(model2, modelsDomain1);
+            matcher.ComputeMappings(modelNW, modelsDomain1);
 
         }
 
@@ -164,13 +163,24 @@ namespace MappingConsole
             var models2 = Visit(domain, _domainTypes2, new[] { typeof(coderush.Models.Vendor) });
             Debug.Assert(models2.Count == 1);
             var model2 = models2.Single();
+            DumpType(model2, "source");
 
             var matcher = new ConceptMatchingRule(true);
-            var winner = matcher.FindMatch(model2, modelsDomain1);
+            matcher.ComputeMappings(model2, modelsDomain1);
 
-            var list = matcher.FindOrderedMatches(model2, modelsDomain1)
-                .ToList();
+        }
 
+        // DumpType(..., "source");
+        // DumpType(..., "target");
+        private static void DumpType(ModelTypeNode type, string typeCategory, string scoring = null)
+        {
+            if(string.IsNullOrEmpty(scoring))
+                Console.WriteLine($"The {typeCategory} type is {type.TypeName} whose properties are:");
+            else
+                Console.WriteLine($"The {typeCategory} type is {type.TypeName} [{scoring}] whose properties are:");
+            foreach (var p in type.FlatHierarchyProperties())
+                Console.WriteLine($"\t{p.ToString()}");
+            Console.WriteLine();
         }
 
         static IList<ModelTypeNode> Visit(DomainBase domain, Type[] domainTypes, Type[] visitOnlyTheseTypes = null)

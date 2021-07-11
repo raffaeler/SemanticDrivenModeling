@@ -27,6 +27,7 @@ namespace SemanticLibrary
 
         public ModelPropertyNode ModelPropertyNode { get; }
         public ModelNavigationNode Previous { get; }
+        public int Score { get; internal set; }
         public string Name => ModelPropertyNode.Name;
 
         public bool Equals(ModelNavigationNode x, ModelNavigationNode y)

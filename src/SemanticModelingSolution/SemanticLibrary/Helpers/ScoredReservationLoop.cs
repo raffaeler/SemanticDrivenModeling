@@ -33,13 +33,13 @@ namespace SemanticLibrary.Helpers
         /// <param name="target"></param>
         /// <param name="getScore"></param>
         /// <param name="onSelectEquallyScored"></param>
-        public IList<ScoredMapping<T>> GetScoredMappings(IEnumerable<T> source, IEnumerable<T> target,
+        public IList<ScoredPropertyMapping<T>> GetScoredMappings(IEnumerable<T> source, IEnumerable<T> target,
             Func<T, T, int> getScore,
-            Func<List<ScoredMapping<T>>, ScoredMapping<T>> onSelectEquallyScored)
+            Func<List<ScoredPropertyMapping<T>>, ScoredPropertyMapping<T>> onSelectEquallyScored)
         {
             var targetList = target.ToList();
-            List<List<ScoredMapping<T>>> masterScoredList = new();
-            List<ScoredMapping<T>> scoredList = new();
+            List<List<ScoredPropertyMapping<T>>> masterScoredList = new();
+            List<ScoredPropertyMapping<T>> scoredList = new();
 
             // assign the score for all the permutations of the two lists
             // masterScoredList.Count will contain the number of the source elements
@@ -69,7 +69,7 @@ namespace SemanticLibrary.Helpers
             // Instead it may happen that a single source property may be mapped to multiple targets
             // In general this is legit, but we may want to avoid it setting allowOneSourceToMultipleTargets to false
 
-            List<ScoredMapping<T>> finalMap = new();
+            List<ScoredPropertyMapping<T>> finalMap = new();
             HashSet<T> _excludedSources = new();
             foreach (var targetItem in targetList)
             {
@@ -101,5 +101,4 @@ namespace SemanticLibrary.Helpers
 
     }
 
-    public record ScoredMapping<T>(T Source, T Target, int Score) where T : IEqualityComparer<T>;
 }

@@ -15,27 +15,24 @@ namespace SemanticLibrary
     public class DomainTypesGraphVisitor
     {
         private BindingFlags _flags = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance;
-        //private HashSet<string> _visited = new();
         private Dictionary<string, ModelTypeNode> _visited = new();
         private Type[] _types;
-        //Action<string> _onType;
-        //Action<string, PropertyInfo, PropertyKind, Type> _onProperty;
 
         Action<ModelTypeNode> _onTypeNode;
         Action<ModelPropertyNode> _onPropertyNode;
         SemanticAnalysis _analysis;
-        private List<Term> _allTerms;
         private DomainBase _domain;
-
 
         public DomainTypesGraphVisitor(DomainBase domain, params Type[] domainTypes)
         {
             _domain = domain;
-
             _types = domainTypes;
         }
 
-        public virtual IList<ModelTypeNode> Visit(Action<ModelTypeNode> onTypeNode, Action<ModelPropertyNode> onPropertyNode, Type[] visitOnlyTypes = null)
+        public virtual IList<ModelTypeNode> Visit(
+            Action<ModelTypeNode> onTypeNode,
+            Action<ModelPropertyNode> onPropertyNode,
+            Type[] visitOnlyTypes = null)
         {
             _analysis = new SemanticAnalysis(_domain);
             _onTypeNode = onTypeNode;
@@ -52,38 +49,11 @@ namespace SemanticLibrary
             return result;
         }
 
-        //public virtual void VisitOnly(Action<string> onType, Action<string, PropertyInfo, PropertyKind, Type> onProperty,
-        //    params Type[] types)
-        //{
-        //    _analysis = new SemanticAnalysis();
-        //    _onType = onType;
-        //    _onProperty = onProperty;
-
-        //    foreach (var type in types)
-        //    {
-        //        VisitType(type);
-        //    }
-        //}
-
-        //public virtual void VisitAll(Action<string> onType, Action<string, PropertyInfo, PropertyKind, Type> onProperty)
-        //{
-        //    _analysis = new SemanticAnalysis();
-        //    _onType = onType;
-        //    _onProperty = onProperty;
-
-        //    foreach (var type in _types)
-        //    {
-        //        VisitType(type);
-        //    }
-        //}
-
         private ModelTypeNode VisitType(Type type)
         {
             ModelTypeNode modelTypeNode;
             if (_visited.TryGetValue(type.AssemblyQualifiedName, out modelTypeNode)) return modelTypeNode;
 
-
-            //_onType?.Invoke(type.Name);
             var classTermToConcepts = _analysis.AnalyzeType(type.Name);
             modelTypeNode = new ModelTypeNode()
             {
@@ -134,7 +104,6 @@ namespace SemanticLibrary
             PropertyInfo propertyInfo, PropertyKind classification, Type coreType)
         {
             //Console.WriteLine($"{type.Name} - {propertyInfo.Name} - {propertyInfo.PropertyType.Name} - {classification} - {coreType?.Name}");
-            //_onProperty?.Invoke(type.Name, propertyInfo, classification, coreType);
             var propertyTermToConcepts = _analysis.AnalyzeProperty(modelTypeNode.TermToConcepts, propertyInfo.Name, coreType);
             var modelPropertyNode = new ModelPropertyNode()
             {

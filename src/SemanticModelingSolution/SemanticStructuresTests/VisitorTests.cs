@@ -6,14 +6,9 @@ using System.Linq;
 
 using Humanizer;
 
-using ManualMapping;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using SemanticGlossaryGenerator;
-
 using SemanticLibrary;
-using SemanticLibrary.Helpers;
 
 namespace SemanticStructuresTests
 {
