@@ -13,8 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
         <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />
-        <ProjectReference Include="..\ManualMapping\ManualMapping.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="xcopy /y $(SolutionDir)ManualMapping\DomainBase.txt $(TargetDir)" />
+        <Exec Command="xcopy /y $(SolutionDir)ErpDomain\DomainBase.txt $(TargetDir)" />
     </Target>
 
 </Project>

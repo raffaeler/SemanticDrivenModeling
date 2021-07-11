@@ -12,7 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />
         <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
     </ItemGroup>
 
@@ -34,12 +33,6 @@
         <AdditionalFiles Include="Cars.csv" CsvLoadType="OnDemand" CacheObjects="true" />
         <AdditionalFiles Include="Geometry.math" />
         <AdditionalFiles Include="MainSettings.xmlsettings" CopyToOutputDirectory="PreserveNewest" />-->
-    </ItemGroup>
-
-
-    <ItemGroup>
-        <PackageReference Include="FuzzySharp" Version="2.0.2" />
-        <PackageReference Include="Humanizer" Version="2.11.10" />
     </ItemGroup>
 
 </Project>

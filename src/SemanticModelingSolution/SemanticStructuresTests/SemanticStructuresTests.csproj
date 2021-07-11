@@ -23,7 +23,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ManualMapping\ManualMapping.csproj" />
+        <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
+        <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />
         <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
     </ItemGroup>
 
