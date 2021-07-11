@@ -24,9 +24,9 @@
 
     <ItemGroup>
         <AdditionalFiles Include="DomainBase.txt" />
-        <AdditionalFiles Include="ZConceptsBase.txt" />
-        <AdditionalFiles Include="ZConceptsPharma.txt" />
-        <AdditionalFiles Include="ZTermsBase.txt" />
+        <AdditionalFiles Include="Obsolete\ZConceptsBase.txt" />
+        <AdditionalFiles Include="Obsolete\ZConceptsPharma.txt" />
+        <AdditionalFiles Include="Obsolete\ZTermsBase.txt" />
         <!--<CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CsvLoadType" />
         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CacheObject" />
 

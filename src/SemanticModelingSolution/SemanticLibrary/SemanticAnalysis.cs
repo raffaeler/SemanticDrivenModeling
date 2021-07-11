@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
-using SemanticLibrary;
-using SemanticLibrary.Helpers;
-using GeneratedCode;
 using System.Linq;
 using System.Diagnostics;
+
 using Humanizer;
 
-namespace ManualMapping
+using SemanticLibrary.Helpers;
+
+namespace SemanticLibrary
 {
     public class SemanticAnalysis
     {
@@ -30,6 +29,11 @@ namespace ManualMapping
                 .Where(t => t.ToCharArray().Where(c => char.IsUpper(c)).Count() > 1).ToList();
         }
 
+        /// <summary>
+        /// Given a type name, it returns the list of its TermToConcept filtered appropriately
+        /// </summary>
+        /// <param name="className"></param>
+        /// <returns></returns>
         public IList<TermToConcept> AnalyzeType(string className)
         {
             var conceptsLinksClass = LexicalHelper.CamelPascalCaseExtract(_allComposedTerms, className)
@@ -38,6 +42,14 @@ namespace ManualMapping
             return conceptsLinksClass;
         }
 
+        /// <summary>
+        /// Given the list of classtoterm elements of a class and a property name/type
+        /// it returns the list of its TermToConcept filtered appropriately
+        /// </summary>
+        /// <param name="classTermToConcepts"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="propertyType"></param>
+        /// <returns></returns>
         public IList<TermToConcept> AnalyzeProperty(IList<TermToConcept> classTermToConcepts, string propertyName, Type propertyType)
         {
             //var pureConcepts = GetPureConcepts(classTermToConcepts);
@@ -101,7 +113,7 @@ namespace ManualMapping
                         continue;
                     }
 
-                    if(item.ConceptSpecifier != KnownConceptSpecifiers.None && selected.ConceptSpecifier == KnownConceptSpecifiers.None)
+                    if(item.ConceptSpecifier != KnownBaseConceptSpecifiers.None && selected.ConceptSpecifier == KnownBaseConceptSpecifiers.None)
                     {
                         selected = item;
                         continue;
@@ -199,7 +211,7 @@ namespace ManualMapping
 
         private TermToConcept MakeUndefined(string term)
         {
-            return new TermToConcept(KnownConcepts.Undefined, KnownConcepts.Any, KnownConceptSpecifiers.None,
+            return new TermToConcept(KnownBaseConcepts.Undefined, KnownBaseConcepts.Any, KnownBaseConceptSpecifiers.None,
                 new Term(term, string.Empty, true), 100);
         }
     }

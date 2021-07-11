@@ -5,6 +5,7 @@ using System.Text;
 
 namespace SemanticLibrary
 {
+    [Obsolete]
     public record Scope
     {
         public Scope(Concept concept, params Imply[] implies)

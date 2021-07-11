@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SemanticLibrary;
-
-namespace ManualMapping
+namespace SemanticLibrary
 {
     public class ModelTypeNode : IModelNode
     {

@@ -5,10 +5,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-using SemanticLibrary;
 using SemanticLibrary.Helpers;
 
-namespace ManualMapping
+namespace SemanticLibrary
 {
     /// <summary>
     /// A class navigating a model composed by all the specified types

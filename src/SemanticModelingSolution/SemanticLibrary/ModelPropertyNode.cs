@@ -6,10 +6,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-using SemanticLibrary;
 using SemanticLibrary.Helpers;
 
-namespace ManualMapping
+namespace SemanticLibrary
 {
     public class ModelPropertyNode : IModelNode, IEqualityComparer<ModelPropertyNode>, IName
     {
@@ -85,7 +84,7 @@ namespace ManualMapping
             return x.UniqueString.Equals(y.UniqueString);
         }
 
-        public int GetHashCode([DisallowNull] ModelPropertyNode obj)
+        public int GetHashCode(ModelPropertyNode obj)
         {
             return obj.UniqueString.GetHashCode();
         }

@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SemanticLibrary;
-
-namespace ManualMapping
+namespace SemanticLibrary
 {
     /// <summary>
     /// Classes derived from this interface represent nodes of the original Model
