@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace SemanticLibrary
             foreach (var candidateModelType in candidateTypes)
             {
                 var flattenedTargetProperties = candidateModelType.TargetModelTypeNode.FlatHierarchyProperties();
-                var matcher = new ScoredReservationLoop<ModelNavigationNode>();
+                var matcher = new ScoredReservationLoop<ModelNavigationNode>(0, true);
                 var mappings = matcher.GetScoredMappings(flattenedSourceProperties, flattenedTargetProperties,
                     GetPropertyScore, onSelectEquallyScored);
 
@@ -56,28 +57,14 @@ namespace SemanticLibrary
             sb.AppendLine($"Mappings:");
             foreach (var map in candidateModelType.PropertyMappings)
             {
-                var sourcePath = GetPropertyMap(map.Source);
-                var targetPath = GetPropertyMap(map.Target);
+                var sourcePath = map.Source.GetMapPath();
+                var targetPath = map.Target.GetMapPath();
                 sb.Append($"{sourcePath} => {targetPath}");
                 //sb.Append($"{map.Source.ModelPropertyNode.OwnerTypeName}.{map.Source.Name} => {map.Target.ModelPropertyNode.OwnerTypeName}.{map.Target.Name}");
                 sb.AppendLine($" [{map.Score}]");
             }
             sb.AppendLine();
             return sb.ToString();
-        }
-
-        private string GetPropertyMap(ModelNavigationNode modelNavigationNode)
-        {
-            var temp = modelNavigationNode;
-            List<string> segments = new();
-            while (temp != null)
-            {
-                var propertyNode = temp.ModelPropertyNode;
-                segments.Insert(0, propertyNode.Name);
-                temp = temp.Previous;
-            }
-
-            return string.Join(".", segments);
         }
 
         private ScoredPropertyMapping<ModelNavigationNode> onSelectEquallyScored(List<ScoredPropertyMapping<ModelNavigationNode>> mappings)
@@ -98,79 +85,13 @@ namespace SemanticLibrary
             return mappings.First();
         }
 
-        private int GetTypeScore(ModelTypeNode source, ModelTypeNode target)
-        {
-            int score = 0;
-            foreach (var sourceTtc in source.TermToConcepts)
-            {
-                foreach (var targetTtc in target.TermToConcepts)
-                {
-                    score += GetTypeScore(
-                        source.TermToConcepts.Count,
-                        target.TermToConcepts.Count,
-                        sourceTtc, targetTtc);
-                }
-            }
-
-            return score;
-        }
-
-        private int GetTypeScore(int numSourceTerms, int numTargetTerms, TermToConcept source, TermToConcept target)
-        {
-            // when matching a type, concepts must be the same
-            if (source.Concept != target.Concept)
-            {
-                return 0;
-            }
-
-            int increment = 0;
-
-            // even if the concept are the same, they still may need disambiguation
-            // therefore, if the ConceptSpecifier of the target exists, it must match the one specified in the source
-            // todo: consider avoiding the comparison if the source.ConceptSpecifier is == None
-            // todo: consider changing increment instead of returning 0
-            if (target.ConceptSpecifier != KnownBaseConceptSpecifiers.None && source.ConceptSpecifier != target.ConceptSpecifier)
-            {
-                // the typical case when enters here is:
-                // source=Vendor, target=Customer
-                // they are both companies but with totally different specifiers
-                return 0;
-            }
-
-            var score = ComputeTotalWeight(numSourceTerms, numTargetTerms, source.Weight, target.Weight, increment);
-
-            return score;
-        }
-
-        private bool ValidateContexts(ModelNavigationNode source, ModelNavigationNode target)
-        {
-            bool result = true;
-            var tempTarget = target;
-            while (tempTarget != null)
-            {
-                var tempSource = source;
-                while (tempSource != null)
-                {
-                    result &= source.ModelPropertyNode.Parent.CandidateConcepts
-                        .Intersect(tempTarget.ModelPropertyNode.Parent.CandidateConcepts)
-                        .Any();
-
-                    tempSource = tempSource.Previous;
-                }
-
-                tempTarget = tempTarget.Previous;
-            }
-
-            return result;
-        }
-
         private int GetPropertyScore(ModelNavigationNode source, ModelNavigationNode target)
         {
             var sourceContexts = source.ModelPropertyNode.Parent.CandidateConcepts;
             var targetContexts = target.ModelPropertyNode.Parent.CandidateConcepts;
             var isValidated = ValidateContexts(source, target);
 
-            if (_enableVerboseLogOnConsole) VerboseLog(source.ModelPropertyNode, target.ModelPropertyNode, isValidated);
+            if (_enableVerboseLogOnConsole) VerboseLog(source, target, isValidated);
             int score = 0;
             foreach (var targetTtc in target.ModelPropertyNode.TermToConcepts)
             {
@@ -184,6 +105,7 @@ namespace SemanticLibrary
                 }
             }
 
+            if (isValidated) score = 1234;
             return score;
         }
 
@@ -243,22 +165,146 @@ namespace SemanticLibrary
             return (int)result;
         }
 
-        private void VerboseLog(ModelPropertyNode source, ModelPropertyNode target, bool isValidated)
+        private int GetTypeScore(ModelTypeNode source, ModelTypeNode target)
         {
-            var sourceContexts = source.Parent.CandidateConcepts;
-            var targetContexts = target.Parent.CandidateConcepts;
+            int score = 0;
+            foreach (var sourceTtc in source.TermToConcepts)
+            {
+                foreach (var targetTtc in target.TermToConcepts)
+                {
+                    score += GetTypeScore(
+                        source.TermToConcepts.Count,
+                        target.TermToConcepts.Count,
+                        sourceTtc, targetTtc);
+                }
+            }
 
-            var srcctx = string.Join(",", sourceContexts.ToArray().Select(s => s.Name));
-            var tgtctx = string.Join(",", targetContexts.ToArray().Select(s => s.Name));
+            return score;
+        }
 
-            var props = $"{source.Parent.TypeName}[{srcctx}].{source.Property.Name} ==> {target.Parent.TypeName}[{tgtctx}].{target.Property.Name}";
-            //var ctx = $"{srcctx} ==> {tgtctx}";
+        private int GetTypeScore(int numSourceTerms, int numTargetTerms, TermToConcept source, TermToConcept target)
+        {
+            // when matching a type, concepts must be the same
+            if (source.Concept != target.Concept)
+            {
+                return 0;
+            }
 
-            WriteEx($"** Property:      {props}");
+            int increment = 0;
+
+            // even if the concept are the same, they still may need disambiguation
+            // therefore, if the ConceptSpecifier of the target exists, it must match the one specified in the source
+            // todo: consider avoiding the comparison if the source.ConceptSpecifier is == None
+            // todo: consider changing increment instead of returning 0
+            if (target.ConceptSpecifier != KnownBaseConceptSpecifiers.None && source.ConceptSpecifier != target.ConceptSpecifier)
+            {
+                // the typical case when enters here is:
+                // source=Vendor, target=Customer
+                // they are both companies but with totally different specifiers
+                return 0;
+            }
+
+            var score = ComputeTotalWeight(numSourceTerms, numTargetTerms, source.Weight, target.Weight, increment);
+
+            return score;
+        }
+
+        // all the concepts for the target segments must share something in common with the anything of the source entire path
+        private bool ValidateContexts(ModelNavigationNode source, ModelNavigationNode target)
+        {
+            //if (source.Name == "Email") Debugger.Break();
+            var sourceTtcs = source.GetAllConceptsFromPath().ToList();
+            bool result = true;
+            var tempTarget = target;
+            while (tempTarget != null)
+            {
+                var matchesSource = false;
+                foreach (var targetTtc in tempTarget.ModelPropertyNode.TermToConcepts)
+                {
+                    // verify whether any of the sources matches the current target
+                    foreach (var sourceTtc in sourceTtcs)
+                    {
+                        matchesSource |= IsMatch(sourceTtc, targetTtc);
+
+                        if (matchesSource) break;
+                    }
+
+                }
+
+                result &= matchesSource;
+                if (!result) break;
+
+                tempTarget = tempTarget.Previous;
+            }
+
+            return result;
+        }
+
+        private bool IsMatch(TermToConcept sourceTtc, TermToConcept targetTtc)
+        {
+            // there is a match when
+            // - the concept is the same but it is not Any or Undefined
+            var conceptsMatch = sourceTtc.Concept == targetTtc.Concept &&
+                sourceTtc.Concept != KnownBaseConcepts.Any &&
+                sourceTtc.Concept != KnownBaseConcepts.Undefined;
+
+            // there is a match when:
+            // - the specifier is the same
+            // - the destination specifier is "larger" (not specified ==> none)
+            var specifiersMatch =
+                (sourceTtc.ConceptSpecifier == targetTtc.ConceptSpecifier) ||
+                (targetTtc.ConceptSpecifier == KnownBaseConceptSpecifiers.None);
+
+            return conceptsMatch && specifiersMatch;
+        }
+
+        private bool ValidateContexts_old1(ModelNavigationNode source, ModelNavigationNode target)
+        {
+            bool result = true;
+            var tempTarget = target;
+            while (tempTarget != null)
+            {
+                var tempSource = source;
+                while (result && tempSource != null)
+                {
+                    var intersection = source.ModelPropertyNode.Parent.CandidateConcepts
+                        .Intersect(tempTarget.ModelPropertyNode.Parent.CandidateConcepts);
+                    result &= intersection.Any();
+
+                    tempSource = tempSource.Previous;
+                }
+
+                tempTarget = tempTarget.Previous;
+            }
+
+            return result;
+        }
+
+        private void VerboseLog(ModelNavigationNode source, ModelNavigationNode target, bool isValidated)
+        {
+            //var sourceContexts = source.Parent.CandidateConcepts;
+            //var targetContexts = target.Parent.CandidateConcepts;
+
+            //var srcctx = string.Join(",", sourceContexts.ToArray().Select(s => s.Name));
+            //var tgtctx = string.Join(",", targetContexts.ToArray().Select(s => s.Name));
+
+            //var props = $"{source.Parent.TypeName}[{srcctx}].{source.Property.Name} ==> {target.Parent.TypeName}[{tgtctx}].{target.Property.Name}";
+            ////var ctx = $"{srcctx} ==> {tgtctx}";
+            int padding = 60;
+            var props = $"{source.ModelPropertyNode.ToStringNoConceptual().PadRight(padding - 5)} ==> {target.ModelPropertyNode.ToStringNoConceptual().PadRight(padding)}";
+
+            var sourceConceptualPath = source.GetConceptualMapPath("Source: ", padding);
+            var targetConceptualPath = target.GetConceptualMapPath("Target: ", padding);
+
+            WriteEx("Map:    ", ConsoleColor.Blue);
+            WriteEx(props);
             if (!isValidated)
-                WriteLineEx($" No", ConsoleColor.Red);
+                WriteLineEx($"Not validated", ConsoleColor.Red);
             else
-                WriteLineEx($" Y", ConsoleColor.Green);
+                WriteLineEx($"Validated", ConsoleColor.Green);
+
+            WriteLineEx(sourceConceptualPath);
+            WriteLineEx(targetConceptualPath);
         }
 
         private void VerboseLog(TermToConcept source, TermToConcept target,

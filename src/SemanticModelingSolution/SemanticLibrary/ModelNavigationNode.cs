@@ -19,6 +19,7 @@ namespace SemanticLibrary
     /// </summary>
     public class ModelNavigationNode : IEqualityComparer<ModelNavigationNode>, IName
     {
+        private const string _dotPathSeparator = ".";
         public ModelNavigationNode(ModelPropertyNode modelPropertyNode, ModelNavigationNode previous)
         {
             ModelPropertyNode = modelPropertyNode;
@@ -29,6 +30,93 @@ namespace SemanticLibrary
         public ModelNavigationNode Previous { get; }
         public int Score { get; internal set; }
         public string Name => ModelPropertyNode.Name;
+
+        public string GetMapPath(string separator = _dotPathSeparator, bool insertStartType = true, bool insertStartNamespace = false)
+        {
+            var temp = this;
+            List<string> segments = new();
+            ModelTypeNode rootType = null;
+            while (temp != null)
+            {
+                var propertyNode = temp.ModelPropertyNode;
+                segments.Insert(0, propertyNode.Name);
+                rootType = temp.ModelPropertyNode.Parent;
+                temp = temp.Previous;
+            }
+
+            if (insertStartType)
+            {
+                if (insertStartNamespace)
+                    segments.Insert(0, $"{rootType.Type.Namespace}.{rootType.TypeName}");
+                else
+                    segments.Insert(0, rootType.TypeName);
+            }
+
+            return string.Join(separator, segments);
+        }
+
+        public string GetConceptualMapPath(string labelFirstLine, int firstPadding, string separator = "\r\n")
+        {
+            string spaces = "        ";
+            var label = labelFirstLine.PadRight(spaces.Length);
+            var temp = this;
+            List<string> segments = new();
+            while (temp != null)
+            {
+                var propertyNode = temp.ModelPropertyNode;
+
+                var ttcParent = $"Type:{string.Join(",", propertyNode.Parent.TermToConcepts)}".PadRight(firstPadding);
+                var ttcProperty = $"Property:{string.Join(",", propertyNode.TermToConcepts)}";
+
+                var prefix = temp.Previous == null ? label : spaces;
+                segments.Insert(0, $"{prefix}{ttcParent}{ttcProperty}");
+                temp = temp.Previous;
+            }
+
+            return string.Join(separator, segments);
+        }
+
+        public IEnumerable<TermToConcept> GetAllConceptsFromPath()
+        {
+            var temp = this;
+            HashSet<string> uniqueness = new();
+            while (temp != null)
+            {
+                foreach (var ttc in temp.ModelPropertyNode.TermToConcepts)
+                {
+                    var unique = $"{ttc.Concept.Name}{ttc.ConceptSpecifier.Name}";
+                    if (uniqueness.Contains(unique)) continue;
+                    uniqueness.Add(unique);
+
+                    yield return ttc;
+                }
+
+                foreach (var ttc in temp.ModelPropertyNode.Parent.TermToConcepts)
+                {
+                    var unique = $"";
+                    if (uniqueness.Contains(unique)) continue;
+                    uniqueness.Add(unique);
+
+                    yield return ttc;
+                }
+
+                temp = temp.Previous;
+            }
+        }
+
+        //public IList<TermToConcept> GetAllConceptsFromPath()
+        //{
+        //    var temp = this;
+        //    List<TermToConcept> ttcs = new();
+        //    while (temp != null)
+        //    {
+        //        ttcs.AddRange(temp.ModelPropertyNode.TermToConcepts);
+        //        ttcs.AddRange(temp.ModelPropertyNode.Parent.TermToConcepts);
+        //        temp = temp.Previous;
+        //    }
+
+        //    return ttcs;
+        //}
 
         public bool Equals(ModelNavigationNode x, ModelNavigationNode y)
         {
@@ -47,7 +135,7 @@ namespace SemanticLibrary
 
         public override string ToString()
         {
-            if(Previous == null)
+            if (Previous == null)
                 return $"{ModelPropertyNode.OwnerTypeName}.{ModelPropertyNode.Name}";
 
             return $"{ModelPropertyNode.OwnerTypeName}.{ModelPropertyNode.Name} (from: {Previous?.ToString()})";

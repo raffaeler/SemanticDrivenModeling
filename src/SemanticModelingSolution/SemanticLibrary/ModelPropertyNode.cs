@@ -58,6 +58,14 @@ namespace SemanticLibrary
         public IEnumerable<string> CandidateConceptNames => TermToConcepts.Select(c => c.Concept.Name);
         public IEnumerable<string> CandidateConceptSpecifierNames => TermToConcepts.Select(c => c.ConceptSpecifier.Name);
 
+        //public IEnumerable<TermToConcept> EnrichedTermToConcepts
+        //{
+        //    get
+        //    {
+        //        if(PropertyKind == PropertyKind.BasicType)
+        //    }
+        //}
+
         private string UniqueString => $"{Parent?.Type?.FullName}.{Property?.Name}";
 
         public override bool Equals(object obj)
@@ -75,8 +83,13 @@ namespace SemanticLibrary
 
         public override string ToString()
         {
-            var concepts = string.Join(", ", CandidateConceptNames);
-            return $"{OwnerTypeName}.{Name} ({PropertyKind}) [{concepts}]";
+            var ttcs = string.Join(", ", TermToConcepts);
+            return $"{ToStringNoConceptual()} <{ttcs}>";
+        }
+
+        public string ToStringNoConceptual()
+        {
+            return $"{OwnerTypeName}.{Name} ({PropertyKind})";
         }
 
         public bool Equals(ModelPropertyNode x, ModelPropertyNode y)

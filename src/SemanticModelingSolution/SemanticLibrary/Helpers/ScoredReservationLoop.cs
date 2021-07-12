@@ -16,6 +16,7 @@ namespace SemanticLibrary.Helpers
     {
         private int _minimumScore;
         private bool _allowOneSourceToMultipleTargets;
+
         public ScoredReservationLoop(int minimumScore = 0, bool allowOneSourceToMultipleTargets = true)
         {
             _minimumScore = minimumScore;

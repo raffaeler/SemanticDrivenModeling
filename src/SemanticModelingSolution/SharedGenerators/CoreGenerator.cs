@@ -120,6 +120,7 @@ namespace SemanticGlossaryGenerator
                     }
 
                     List<string> specifiers = new();
+                    specifiers.Add(NoneConceptSpecifier);
 
                     foreach (var aliases in aliasesList)
                     {
