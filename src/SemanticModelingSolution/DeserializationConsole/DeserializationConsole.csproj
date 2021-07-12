@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeGenerationLibrary\CodeGenerationLibrary.csproj" />
+    <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />
+    <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
+  </ItemGroup>
+
+</Project>
