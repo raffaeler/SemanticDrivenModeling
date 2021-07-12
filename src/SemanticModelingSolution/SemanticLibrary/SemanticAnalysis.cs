@@ -54,27 +54,59 @@ namespace SemanticLibrary
         {
             //var pureConcepts = GetPureConcepts(classTermToConcepts);
             var normalizedTermStrings = LexicalHelper.CamelPascalCaseExtract(_allComposedTerms, propertyName);
-            IList<TermToConcept> termToConcepts = normalizedTermStrings
-                .SelectMany(str => _domain.Links.Where(t => string.Compare(t.Term.Name, str, true) == 0))
-                .ToList();
 
+            List<TermToConcept> termToConcepts = new();
+            foreach (var str in normalizedTermStrings)
+            {
+                // look for all the TermToConcept having the given (normalized) term
+                var ttcs = _domain.Links.Where(t => string.Compare(t.Term.Name, str, true) == 0).ToList();
+                if (ttcs.Count == 0) continue;
+                if (ttcs.Count == 1) { termToConcepts.Add(ttcs[0]); continue; }
+
+                // if there are more than 1, it means the same term is associated to more than one concept
+                bool found = false;
+                foreach (var ttc in ttcs)
+                {
+                    // look for the TermToConcept whose context matches with the TermToConcepts obtained from the class name
+                    // for example the term Mid in a class named Employee (which is a Person concept) will match the Identity concept
+                    var conceptMatchingContext = classTermToConcepts.FirstOrDefault(c => c.Concept == ttc.ContextConcept);
+                    if (conceptMatchingContext != null)
+                    {
+                        found = true;
+                        termToConcepts.Add(ttc);
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    // when there is no context concept associated with a term, we get the first "generic"
+                    // generally this means the domain has an ambiguity
+                    var selectedTtcs = ttcs.Where(t => t.ContextConcept == KnownBaseConcepts.Any).ToArray();
+                    if (selectedTtcs.Length > 1)
+                    {
+                        var ambiguousTerms = string.Join(", ", ttcs);
+                        Console.WriteLine($"Ambiguous Term {str} was discarged because it is specified multiple times in the domain: {ambiguousTerms}");
+                        continue;
+                    }
+
+                    if (selectedTtcs.Length == 0)
+                        termToConcepts.Add(ttcs.First());
+                }
+            }
+
+
+            // Now we remove the redundant TermToConcept elements
             // For example a class named Address and a property named AddressCity
             // we want to remove the "Address" TermToConcept unless the property name is just Address
             // In this case we just get "City"
             termToConcepts = termToConcepts.Except(classTermToConcepts).ToList();
-            //var redundants = termToConcepts.Except(classTermToConcepts).ToList();
-            //if (redundants.Count < termToConcepts.Count)
-            //{
-            //    foreach (var redundant in redundants)
-            //    {
-            //        termToConcepts.Remove(redundant);
-            //    }
-            //}
-
             if (termToConcepts.Count == 1) return termToConcepts;
-            termToConcepts = FilterOutDuplicateConcepts(termToConcepts);
-            // ConceptsLinksSelector
-            return termToConcepts;
+
+            // Remove duplicate concepts (different Terms pointing to the same Concept)
+            var finalTermToConcepts = FilterOutDuplicateConcepts(termToConcepts);
+            //if (finalTermToConcepts.Count != termToConcepts.Count) Debugger.Break();
+            return finalTermToConcepts;
 
 
             //// the where condition removes the concepts that are equal to the class name
@@ -93,7 +125,7 @@ namespace SemanticLibrary
             //return conceptsLinksProperty;
         }
 
-        private IList<TermToConcept> FilterOutDuplicateConcepts(IEnumerable<TermToConcept> conceptsLinksProperty)
+        private List<TermToConcept> FilterOutDuplicateConcepts(IEnumerable<TermToConcept> conceptsLinksProperty)
         {
             List<TermToConcept> result = new();
             var grouped = conceptsLinksProperty
@@ -113,7 +145,7 @@ namespace SemanticLibrary
                         continue;
                     }
 
-                    if(item.ConceptSpecifier != KnownBaseConceptSpecifiers.None && selected.ConceptSpecifier == KnownBaseConceptSpecifiers.None)
+                    if (item.ConceptSpecifier != KnownBaseConceptSpecifiers.None && selected.ConceptSpecifier == KnownBaseConceptSpecifiers.None)
                     {
                         selected = item;
                         continue;

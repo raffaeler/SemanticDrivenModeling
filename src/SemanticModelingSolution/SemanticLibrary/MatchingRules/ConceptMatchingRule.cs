@@ -212,10 +212,21 @@ namespace SemanticLibrary
         // all the concepts for the target segments must share something in common with the anything of the source entire path
         private bool ValidateContexts(ModelNavigationNode source, ModelNavigationNode target)
         {
+            // unique identity must be on both or nothing
+            var ttcSourceUniqueIdentity = source.ModelPropertyNode.TermToConcepts.Any(t => t.Concept == KnownBaseConcepts.UniqueIdentity);
+            var ttcTargetUniqueIdentity = target.ModelPropertyNode.TermToConcepts.Any(t => t.Concept == KnownBaseConcepts.UniqueIdentity);
+            if (ttcSourceUniqueIdentity != ttcTargetUniqueIdentity)
+            {
+                return false;
+            }
+
             //if (source.Name == "Email") Debugger.Break();
+            // get the navigation path **including** the 1-1 or 1-many
             var sourceTtcs = source.GetAllConceptsFromPath().ToList();
             bool result = true;
             var tempTarget = target;
+
+            // navigate the target path **without** the properties that are 1-1 or 1-many
             while (tempTarget != null)
             {
                 var matchesSource = false;

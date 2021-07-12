@@ -17,7 +17,7 @@ namespace SemanticLibrary
         /// <summary>
         /// Domain wide context
         /// </summary>
-        public static Concept Any = new Concept("Undefined", "Used when some term or context is valid domain-wide");
+        public static Concept Any = new Concept("Any", "Used when some term or context is valid domain-wide");
 
                 /// <summary>
         /// Unique identifier
