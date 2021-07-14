@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json;
+
+using SemanticLibrary;
 
 namespace DeserializationConsole
 {
@@ -95,14 +98,14 @@ namespace DeserializationConsole
             WriteIndented = true,
         };
 
-        JsonSerializerOptions _settingsCustom = new JsonSerializerOptions()
-        {
-            WriteIndented = true,
-            Converters =
-            {
-                new CodeGenerationLibrary.Serialization.TesterConverterFactory(),
-            },
-        };
+        //JsonSerializerOptions _settingsCustom = new JsonSerializerOptions()
+        //{
+        //    WriteIndented = true,
+        //    Converters =
+        //    {
+        //        new CodeGenerationLibrary.Serialization.TesterConverterFactory(),
+        //    },
+        //};
 
         static void Main(string[] args)
         {
@@ -111,9 +114,25 @@ namespace DeserializationConsole
 
         private void Start()
         {
+            var mapping = GetMapping();
+            var settings = new JsonSerializerOptions()
+            {
+                WriteIndented = true,
+                Converters =
+                {
+                    new CodeGenerationLibrary.Serialization.TesterConverterFactory(mapping),
+                },
+            };
+
+            // vendor => supplier
             var v1 = GetVendors1();
-            var json1 = GetJson(v1);
-            var s1 = FromJson(json1);
+            var jv1 = GetJson(v1);
+            var vd1 = FromJson(jv1, settings);
+
+
+            var s1 = GetSupplier1();
+            var js1 = GetJson(s1);
+            var sd1 = FromJson(js1, settings);
         }
 
         public coderush.Models.Vendor[] GetVendors1() => new coderush.Models.Vendor[]
@@ -146,8 +165,74 @@ namespace DeserializationConsole
             },
         };
 
-        public string GetJson(coderush.Models.Vendor[] vendor) => JsonSerializer.Serialize(vendor, _settingsVanilla);
+        public ERP_Model.Models.Supplier[] GetSupplier1() => new ERP_Model.Models.Supplier[]
+        {
+            new ERP_Model.Models.Supplier
+            {
+                SupplierGuid= Guid.NewGuid(),
+                SupplierCompany = "Company1",
+                SupplierAddress= new ERP_Model.Models.Address()
+                {
+                    AddressGuid = Guid.NewGuid(),
+                    AddressCity = "AddressCity1",
+                    AddressCompany = "AddressCompany1",
+                    AddressCountry = "AddressCountry1",
+                    AddressDeleted = false,
+                    AddressDescription = "AddressDescription1",
+                    AddressEmail = "AddressEmail1",
+                    AddressForName = "AddressForName1",
+                    AddressLastName = "AddressLastName1",
+                    AddressPhone = 1,
+                    AddressStreet = "AddressStreet1",
+                    AddressZipCode = "AddressZipCode1",
+                },
+                SupplierDeleted = false,
+                SupplierForName= "ForeName1",
+                SupplierLastName= "LastName1",
+            },
+            new ERP_Model.Models.Supplier
+            {
+                SupplierGuid= Guid.NewGuid(),
+                SupplierCompany = "Company2",
+                SupplierAddress= new ERP_Model.Models.Address()
+                {
+                    AddressGuid = Guid.NewGuid(),
+                    AddressCity = "AddressCity2",
+                    AddressCompany = "AddressCompany2",
+                    AddressCountry = "AddressCountry2",
+                    AddressDeleted = false,
+                    AddressDescription = "AddressDescription2",
+                    AddressEmail = "AddressEmail2",
+                    AddressForName = "AddressForName2",
+                    AddressLastName = "AddressLastName2",
+                    AddressPhone = 2,
+                    AddressStreet = "AddressStreet2",
+                    AddressZipCode = "AddressZipCode2",
+                },
+                SupplierDeleted = false,
+                SupplierForName= "ForeName2",
+                SupplierLastName= "LastName2",
+            },
+        };
 
-        public object FromJson(string json) => JsonSerializer.Deserialize(json, _typeSupplier, _settingsCustom);
+        public string GetJson<T>(T[] item) => JsonSerializer.Serialize(item, _settingsVanilla);
+
+        public object FromJson(string json, JsonSerializerOptions options) => JsonSerializer.Deserialize(json, _typeSupplier, options);
+
+        public ScoredTypeMapping GetMapping()
+        {
+            var domain = new GeneratedCode.Domain();
+            var visitor1 = new DomainTypesGraphVisitor(domain, _domainTypes1);
+            var modelsDomain1 = visitor1.Visit(null, null, null);
+
+
+            var visitor2 = new DomainTypesGraphVisitor(domain, _domainTypes2);
+            var models2 = visitor2.Visit(null, null, new[] { typeof(coderush.Models.Vendor) });
+            var model2 = models2.Single();
+
+            var matcher = new ConceptMatchingRule(true);
+            matcher.ComputeMappings(model2, modelsDomain1);
+            return matcher.CandidateTypes.First();
+        }
     }
 }
