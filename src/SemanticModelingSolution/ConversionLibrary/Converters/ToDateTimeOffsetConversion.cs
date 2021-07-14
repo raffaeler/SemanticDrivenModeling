@@ -28,6 +28,10 @@ namespace ConversionLibrary.Converters
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
+        public virtual DateTimeOffset From(string value)
+            => DateTimeOffset.TryParseExact(value, GetDateFormats(), GetFormatProvider(), GetDateTimeStyles(), out DateTimeOffset res)
+                ? res : (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
+
         public virtual DateTimeOffset From(bool value) => (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTimeOffset From(Guid value) => (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTimeOffset From(byte value) => (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
@@ -38,9 +42,6 @@ namespace ConversionLibrary.Converters
         public virtual DateTimeOffset From(decimal value) => (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTimeOffset From(double value) => (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTimeOffset From(float value) => (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
-        public virtual DateTimeOffset From(string value)
-            => DateTimeOffset.TryParseExact(value, GetDateFormats(), GetFormatProvider(), GetDateTimeStyles(), out DateTimeOffset res)
-                ? res : (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTimeOffset From(Int16 value) => new DateTimeOffset(DateTime.FromBinary(value), TimeSpan.Zero);
         public virtual DateTimeOffset From(Int32 value) => new DateTimeOffset(DateTime.FromBinary(value), TimeSpan.Zero);
         public virtual DateTimeOffset From(Int64 value) => new DateTimeOffset(DateTime.FromBinary(value), TimeSpan.Zero);

@@ -29,6 +29,10 @@ namespace ConversionLibrary.Converters
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
+        public virtual DateTime From(string value)
+            => DateTime.TryParseExact(value, GetDateFormats(), GetFormatProvider(), GetDateTimeStyles(), out DateTime res)
+                ? res : (DateTime)_conversionContext?.OnNotSupported?.Invoke(this, value);
+
         public virtual DateTime From(bool value) => (DateTime)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTime From(Guid value) => (DateTime)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTime From(byte value) => (DateTime)_conversionContext?.OnNotSupported?.Invoke(this, value);
@@ -39,9 +43,6 @@ namespace ConversionLibrary.Converters
         public virtual DateTime From(decimal value) => (DateTime)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTime From(double value) => (DateTime)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTime From(float value) => (DateTime)_conversionContext?.OnNotSupported?.Invoke(this, value);
-        public virtual DateTime From(string value)
-            => DateTime.TryParseExact(value, GetDateFormats(), GetFormatProvider(), GetDateTimeStyles(), out DateTime res)
-                ? res : (DateTime)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTime From(Int16 value) => DateTime.FromBinary(value);
         public virtual DateTime From(Int32 value) => DateTime.FromBinary(value);
         public virtual DateTime From(Int64 value) => DateTime.FromBinary(value);

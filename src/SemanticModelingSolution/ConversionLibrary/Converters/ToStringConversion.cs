@@ -12,6 +12,8 @@ namespace ConversionLibrary.Converters
 
         public virtual bool CanConvertFrom(Type type) => BasicTypes.Contains(type);
 
+        public virtual string From(string value) => value;
+
         public virtual string From(bool value) => value.ToString(GetFormatProvider());
         public virtual string From(Guid value) => value.ToString(GetGuidFormat(), GetFormatProvider());
         public virtual string From(byte value) => value.ToString(GetFormatProvider());
@@ -22,7 +24,6 @@ namespace ConversionLibrary.Converters
         public virtual string From(decimal value) => value.ToString(GetNumericFormat(), GetFormatProvider());
         public virtual string From(double value) => value.ToString(GetNumericFormat(), GetFormatProvider());
         public virtual string From(float value) => value.ToString(GetNumericFormat(), GetFormatProvider());
-        public virtual string From(string value) => value;
         public virtual string From(Int16 value) => value.ToString(GetNumericFormat(), GetFormatProvider());
         public virtual string From(Int32 value) => value.ToString(GetNumericFormat(), GetFormatProvider());
         public virtual string From(Int64 value) => value.ToString(GetNumericFormat(), GetFormatProvider());

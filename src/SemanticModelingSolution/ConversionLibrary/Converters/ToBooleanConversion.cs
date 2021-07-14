@@ -30,6 +30,9 @@ namespace ConversionLibrary.Converters
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
+        public virtual bool From(string value)
+            => bool.TryParse(value, out bool res) ? res : (bool)_conversionContext?.OnNotSupported?.Invoke(this, value);
+
         public virtual bool From(bool value) => value;
         public virtual bool From(Guid value) => (bool)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual bool From(byte value) => value != 0;
@@ -40,8 +43,6 @@ namespace ConversionLibrary.Converters
         public virtual bool From(decimal value) => (bool)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual bool From(double value) => (bool)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual bool From(float value) => (bool)_conversionContext?.OnNotSupported?.Invoke(this, value);
-        public virtual bool From(string value)
-            => bool.TryParse(value, out bool res) ? res : (bool)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual bool From(Int16 value) => value != 0;
         public virtual bool From(Int32 value) => value != 0;
         public virtual bool From(Int64 value) => value != 0;

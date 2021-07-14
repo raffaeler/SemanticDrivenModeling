@@ -30,6 +30,10 @@ namespace ConversionLibrary.Converters
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
+        public virtual float From(string value)
+            => float.TryParse(value, GetNumberStyles(), GetFormatProvider(), out float res)
+                ? res : (float)_conversionContext?.OnNotSupported?.Invoke(this, value);
+
         public virtual float From(bool value) => (float)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual float From(Guid value) => (float)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual float From(byte value) => value;
@@ -40,9 +44,6 @@ namespace ConversionLibrary.Converters
         public virtual float From(decimal value) => (float)value;
         public virtual float From(double value) => (float)value;
         public virtual float From(float value) => value;
-        public virtual float From(string value)
-            => float.TryParse(value, GetNumberStyles(), GetFormatProvider(), out float res)
-                ? res : (float)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual float From(Int16 value) => value;
         public virtual float From(Int32 value) => value;
         public virtual float From(Int64 value) => value;

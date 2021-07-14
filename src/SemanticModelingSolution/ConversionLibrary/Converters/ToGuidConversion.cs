@@ -30,6 +30,10 @@ namespace ConversionLibrary.Converters
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
+        public virtual Guid From(string value)
+            => Guid.TryParseExact(value, GetGuidFormat(), out Guid res)
+                ? res : (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
+
         public virtual Guid From(bool value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual Guid From(Guid value) => value;
         public virtual Guid From(byte value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
@@ -40,8 +44,6 @@ namespace ConversionLibrary.Converters
         public virtual Guid From(decimal value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual Guid From(double value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual Guid From(float value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
-        public virtual Guid From(string value)
-            => Guid.TryParseExact(value, GetGuidFormat(), out Guid res) ? res : (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual Guid From(Int16 value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual Guid From(Int32 value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual Guid From(Int64 value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
