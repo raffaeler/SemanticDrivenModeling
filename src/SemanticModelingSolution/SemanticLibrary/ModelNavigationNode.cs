@@ -31,11 +31,17 @@ namespace SemanticLibrary
         public int Score { get; internal set; }
         public string Name => ModelPropertyNode.Name;
 
-        public string GetMapPath(string separator = _dotPathSeparator, bool insertStartType = true, bool insertStartNamespace = false)
+        public string GetMapPath(string separator = _dotPathSeparator, bool skipCurrentProperty = false,
+            bool insertStartType = true, bool insertStartNamespace = false)
         {
             var temp = this;
             List<string> segments = new();
-            ModelTypeNode rootType = null;
+            ModelTypeNode rootType = this.ModelPropertyNode.Parent;
+            if (skipCurrentProperty && temp != null)
+            {
+                temp = temp.Previous;
+            }
+
             while (temp != null)
             {
                 var propertyNode = temp.ModelPropertyNode;
@@ -54,6 +60,20 @@ namespace SemanticLibrary
 
             return string.Join(separator, segments);
         }
+
+        //public List<(string, )> GetTypeMapPath()
+        //{
+        //    var temp = this;
+        //    List<string> segments = new();
+        //    while (temp != null)
+        //    {
+        //        var typeName = temp.ModelPropertyNode.Parent.Type.Name;
+        //        segments.Insert(0, typeName);
+        //        temp = temp.Previous;
+        //    }
+
+        //    return string.Join(".", segments);
+        //}
 
         public string GetConceptualMapPath(string labelFirstLine, int firstPadding, string separator = "\r\n")
         {

@@ -92,6 +92,8 @@ namespace DeserializationConsole
 
         static Type _typeVendor = typeof(coderush.Models.Vendor);
         static Type _typeSupplier = typeof(ERP_Model.Models.Supplier);
+        static Type _typeVendorArray = typeof(coderush.Models.Vendor[]);
+        static Type _typeSupplierArray = typeof(ERP_Model.Models.Supplier[]);
 
         JsonSerializerOptions _settingsVanilla = new JsonSerializerOptions()
         {
@@ -127,12 +129,13 @@ namespace DeserializationConsole
             // vendor => supplier
             var v1 = GetVendors1();
             var jv1 = GetJson(v1);
-            var vd1 = FromJson(jv1, settings);
+            var v2 = JsonSerializer.Deserialize(jv1, _typeVendorArray);
+            var vd1 = FromJson(jv1, _typeSupplierArray, settings);
 
 
             var s1 = GetSupplier1();
             var js1 = GetJson(s1);
-            var sd1 = FromJson(js1, settings);
+            var sd1 = FromJson(js1, _typeVendorArray, settings);
         }
 
         public coderush.Models.Vendor[] GetVendors1() => new coderush.Models.Vendor[]
@@ -217,7 +220,7 @@ namespace DeserializationConsole
 
         public string GetJson<T>(T[] item) => JsonSerializer.Serialize(item, _settingsVanilla);
 
-        public object FromJson(string json, JsonSerializerOptions options) => JsonSerializer.Deserialize(json, _typeSupplier, options);
+        public object FromJson(string json, Type type, JsonSerializerOptions options) => JsonSerializer.Deserialize(json, type, options);
 
         public ScoredTypeMapping GetMapping()
         {
