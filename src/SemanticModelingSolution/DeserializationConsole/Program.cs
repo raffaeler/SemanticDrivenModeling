@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
@@ -90,152 +91,61 @@ namespace DeserializationConsole
             typeof(NorthwindDataLayer.Models.Territory                           ),
         };
 
-        static Type _typeVendor = typeof(coderush.Models.Vendor);
-        static Type _typeSupplier = typeof(ERP_Model.Models.Supplier);
-        static Type _typeVendorArray = typeof(coderush.Models.Vendor[]);
-        static Type _typeSupplierArray = typeof(ERP_Model.Models.Supplier[]);
-
         JsonSerializerOptions _settingsVanilla = new JsonSerializerOptions()
         {
             WriteIndented = true,
         };
 
-        //JsonSerializerOptions _settingsCustom = new JsonSerializerOptions()
-        //{
-        //    WriteIndented = true,
-        //    Converters =
-        //    {
-        //        new CodeGenerationLibrary.Serialization.TesterConverterFactory(),
-        //    },
-        //};
-
         static void Main(string[] args)
         {
-            new Program().Start();
+            var p = new Program();
+            p.Analyzer = new Analyzer();
+            var erp = p.Analyzer.Prepare("ERP", _domainTypes1);
+            var coderush = p.Analyzer.Prepare("coderush", _domainTypes2);
+            var northwind = p.Analyzer.Prepare("Northwind", _domainTypesNW);
+
+            p.VendorToSupplier(erp, coderush, northwind);
+            //p.SupplierToVendor(erp, coderush, northwind);
         }
 
-        private void Start()
-        {
-            var mapping = GetMapping();
-            var settings = new JsonSerializerOptions()
-            {
-                WriteIndented = true,
-                Converters =
-                {
-                    new CodeGenerationLibrary.Serialization.TesterConverterFactory(mapping),
-                },
-            };
-
-            // vendor => supplier
-            var v1 = GetVendors1();
-            var jv1 = GetJson(v1);
-            var v2 = JsonSerializer.Deserialize(jv1, _typeVendorArray);
-            var vd1 = FromJson(jv1, _typeSupplierArray, settings);
-
-
-            var s1 = GetSupplier1();
-            var js1 = GetJson(s1);
-            var sd1 = FromJson(js1, _typeVendorArray, settings);
-        }
-
-        public coderush.Models.Vendor[] GetVendors1() => new coderush.Models.Vendor[]
-        {
-            new ()
-            {
-                VendorId = 1,
-                Address = "Address1",
-                City = "City1",
-                ContactPerson = "ContactPerson1",
-                Email = "Email1",
-                Phone = "Phone1",
-                State = "State1",
-                VendorName = "VendorName1",
-                VendorTypeId = 991,
-                ZipCode = "ZipCode1",
-            },
-            new ()
-            {
-                VendorId = 2,
-                Address = "Address2",
-                City = "City2",
-                ContactPerson = "ContactPerson2",
-                Email = "Email2",
-                Phone = "Phone2",
-                State = "State2",
-                VendorName = "VendorName2",
-                VendorTypeId = 992,
-                ZipCode = "ZipCode2",
-            },
-        };
-
-        public ERP_Model.Models.Supplier[] GetSupplier1() => new ERP_Model.Models.Supplier[]
-        {
-            new ERP_Model.Models.Supplier
-            {
-                SupplierGuid= Guid.NewGuid(),
-                SupplierCompany = "Company1",
-                SupplierAddress= new ERP_Model.Models.Address()
-                {
-                    AddressGuid = Guid.NewGuid(),
-                    AddressCity = "AddressCity1",
-                    AddressCompany = "AddressCompany1",
-                    AddressCountry = "AddressCountry1",
-                    AddressDeleted = false,
-                    AddressDescription = "AddressDescription1",
-                    AddressEmail = "AddressEmail1",
-                    AddressForName = "AddressForName1",
-                    AddressLastName = "AddressLastName1",
-                    AddressPhone = 1,
-                    AddressStreet = "AddressStreet1",
-                    AddressZipCode = "AddressZipCode1",
-                },
-                SupplierDeleted = false,
-                SupplierForName= "ForeName1",
-                SupplierLastName= "LastName1",
-            },
-            new ERP_Model.Models.Supplier
-            {
-                SupplierGuid= Guid.NewGuid(),
-                SupplierCompany = "Company2",
-                SupplierAddress= new ERP_Model.Models.Address()
-                {
-                    AddressGuid = Guid.NewGuid(),
-                    AddressCity = "AddressCity2",
-                    AddressCompany = "AddressCompany2",
-                    AddressCountry = "AddressCountry2",
-                    AddressDeleted = false,
-                    AddressDescription = "AddressDescription2",
-                    AddressEmail = "AddressEmail2",
-                    AddressForName = "AddressForName2",
-                    AddressLastName = "AddressLastName2",
-                    AddressPhone = 2,
-                    AddressStreet = "AddressStreet2",
-                    AddressZipCode = "AddressZipCode2",
-                },
-                SupplierDeleted = false,
-                SupplierForName= "ForeName2",
-                SupplierLastName= "LastName2",
-            },
-        };
+        public Analyzer Analyzer { get; set; }
 
         public string GetJson<T>(T[] item) => JsonSerializer.Serialize(item, _settingsVanilla);
 
         public object FromJson(string json, Type type, JsonSerializerOptions options) => JsonSerializer.Deserialize(json, type, options);
 
-        public ScoredTypeMapping GetMapping()
+        public JsonSerializerOptions CreateSettings(ScoredTypeMapping scoredTypeMapping)
+            => new JsonSerializerOptions()
+            {
+                WriteIndented = true,
+                Converters =
+                {
+                    new CodeGenerationLibrary.Serialization.TesterConverterFactory(scoredTypeMapping),
+                },
+            };
+
+        public void VendorToSupplier(IList<ModelTypeNode> erp, IList<ModelTypeNode> coderush, IList<ModelTypeNode> northwind)
         {
-            var domain = new GeneratedCode.Domain();
-            var visitor1 = new DomainTypesGraphVisitor(domain, _domainTypes1);
-            var modelsDomain1 = visitor1.Visit(null, null, null);
+            var vendor = coderush.First(t => t.TypeName == "Vendor");
+            var mapping = Analyzer.CreateMappingsFor(vendor, erp);
+            var settings = CreateSettings(mapping);
 
-
-            var visitor2 = new DomainTypesGraphVisitor(domain, _domainTypes2);
-            var models2 = visitor2.Visit(null, null, new[] { typeof(coderush.Models.Vendor) });
-            var model2 = models2.Single();
-
-            var matcher = new ConceptMatchingRule(true);
-            matcher.ComputeMappings(model2, modelsDomain1);
-            return matcher.CandidateTypes.First();
+            var sourceObjects = Samples.GetVendors1();
+            var json = GetJson(sourceObjects);
+            var clone = JsonSerializer.Deserialize(json, typeof(coderush.Models.Vendor[]));
+            var targetObjects = FromJson(json, typeof(ERP_Model.Models.Supplier[]), settings);
         }
+
+        public void SupplierToVendor(IList<ModelTypeNode> erp, IList<ModelTypeNode> coderush, IList<ModelTypeNode> northwind)
+        {
+            var supplier = erp.First(t => t.TypeName == "Supplier");
+            var mapping = Analyzer.CreateMappingsFor(supplier, coderush);
+            var settings = CreateSettings(mapping);
+
+            var sourceObjects = Samples.GetSupplier1();
+            var json = GetJson(sourceObjects);
+            var targetObjects = FromJson(json, typeof(coderush.Models.Vendor[]), settings);
+        }
+
     }
 }

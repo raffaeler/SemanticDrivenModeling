@@ -23,10 +23,14 @@ namespace CodeGenerationLibrary.Serialization
 
         public override bool CanConvert(Type typeToConvert)
         {
-            Console.WriteLine($"TestConverterFactory.CanConvert> {typeToConvert.Name}");
+            Console.Write($"TestConverterFactory.CanConvert> {typeToConvert.Name} ");
             if (Map == null || typeToConvert != Map.TargetModelTypeNode.Type)
+            {
+                Console.WriteLine("No");
                 return false;
+            }
 
+            Console.WriteLine("Yes");
             return true;
         }
 
