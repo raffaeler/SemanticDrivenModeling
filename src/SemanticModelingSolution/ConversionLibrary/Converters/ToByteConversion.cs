@@ -49,5 +49,6 @@ namespace ConversionLibrary.Converters
         public virtual byte From(UInt16 value) => (byte)value;
         public virtual byte From(UInt32 value) => (byte)value;
         public virtual byte From(UInt64 value) => (byte)value;
+        public virtual byte FromNull() => default(byte);
     }
 }

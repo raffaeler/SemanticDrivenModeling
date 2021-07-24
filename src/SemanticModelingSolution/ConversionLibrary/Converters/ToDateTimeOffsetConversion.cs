@@ -48,5 +48,6 @@ namespace ConversionLibrary.Converters
         public virtual DateTimeOffset From(UInt16 value) => new DateTimeOffset(DateTime.FromBinary(value), TimeSpan.Zero);
         public virtual DateTimeOffset From(UInt32 value) => new DateTimeOffset(DateTime.FromBinary(value), TimeSpan.Zero);
         public virtual DateTimeOffset From(UInt64 value) => new DateTimeOffset(DateTime.FromBinary((Int64)value), TimeSpan.Zero);
+        public virtual DateTimeOffset FromNull() => default(DateTimeOffset);
     }
 }

@@ -54,6 +54,7 @@ namespace ConversionLibrary.Converters
         public virtual UInt16 From(UInt16 value) => value;
         public virtual UInt16 From(UInt32 value) => (UInt16)value;
         public virtual UInt16 From(UInt64 value) => (UInt16)value;
+        public virtual UInt16 FromNull() => default(UInt16);
 
     }
 }

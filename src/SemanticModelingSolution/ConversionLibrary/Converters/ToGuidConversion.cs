@@ -50,6 +50,7 @@ namespace ConversionLibrary.Converters
         public virtual Guid From(UInt16 value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual Guid From(UInt32 value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual Guid From(UInt64 value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        public virtual Guid FromNull() => default(Guid);
 
     }
 }

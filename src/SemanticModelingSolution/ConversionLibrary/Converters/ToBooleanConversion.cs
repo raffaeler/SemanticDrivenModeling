@@ -49,6 +49,6 @@ namespace ConversionLibrary.Converters
         public virtual bool From(UInt16 value) => value != 0;
         public virtual bool From(UInt32 value) => value != 0;
         public virtual bool From(UInt64 value) => value != 0;
-
+        public virtual bool FromNull() => default(bool);
     }
 }

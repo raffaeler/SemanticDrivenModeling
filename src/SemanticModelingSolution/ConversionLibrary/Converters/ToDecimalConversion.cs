@@ -50,5 +50,6 @@ namespace ConversionLibrary.Converters
         public virtual decimal From(UInt16 value) => value;
         public virtual decimal From(UInt32 value) => value;
         public virtual decimal From(UInt64 value) => value;
+        public virtual decimal FromNull() => default(decimal);
     }
 }

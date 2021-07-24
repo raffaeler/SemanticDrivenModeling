@@ -48,5 +48,6 @@ namespace ConversionLibrary.Converters
         public virtual TimeSpan From(UInt16 value) => TimeSpan.FromSeconds(value);
         public virtual TimeSpan From(UInt32 value) => TimeSpan.FromSeconds(value);
         public virtual TimeSpan From(UInt64 value) => TimeSpan.FromTicks((Int64)value);
+        public virtual TimeSpan FromNull() => default(TimeSpan);
     }
 }

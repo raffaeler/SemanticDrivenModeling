@@ -53,6 +53,7 @@ namespace ConversionLibrary.Converters
         public virtual Int32 From(UInt16 value) => (Int32)value;
         public virtual Int32 From(UInt32 value) => (Int32)value;
         public virtual Int32 From(UInt64 value) => (Int32)value;
+        public virtual Int32 FromNull() => default(Int32);
 
     }
 }

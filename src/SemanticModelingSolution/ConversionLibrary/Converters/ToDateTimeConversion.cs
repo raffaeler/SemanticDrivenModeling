@@ -49,6 +49,7 @@ namespace ConversionLibrary.Converters
         public virtual DateTime From(UInt16 value) => DateTime.FromBinary(value);
         public virtual DateTime From(UInt32 value) => DateTime.FromBinary(value);
         public virtual DateTime From(UInt64 value) => DateTime.FromBinary((Int64)value);
+        public virtual DateTime FromNull() => default(DateTime);
 
     }
 }

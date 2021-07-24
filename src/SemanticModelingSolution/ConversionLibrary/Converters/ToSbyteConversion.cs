@@ -50,6 +50,7 @@ namespace ConversionLibrary.Converters
         public virtual sbyte From(UInt16 value) => (sbyte)value;
         public virtual sbyte From(UInt32 value) => (sbyte)value;
         public virtual sbyte From(UInt64 value) => (sbyte)value;
+        public virtual sbyte FromNull() => default(sbyte);
 
     }
 }

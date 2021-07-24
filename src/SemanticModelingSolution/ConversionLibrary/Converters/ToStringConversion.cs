@@ -30,5 +30,6 @@ namespace ConversionLibrary.Converters
         public virtual string From(UInt16 value) => value.ToString(GetNumericFormat(), GetFormatProvider());
         public virtual string From(UInt32 value) => value.ToString(GetNumericFormat(), GetFormatProvider());
         public virtual string From(UInt64 value) => value.ToString(GetNumericFormat(), GetFormatProvider());
+        public virtual string FromNull() => default(string);
     }
 }

@@ -50,6 +50,7 @@ namespace ConversionLibrary.Converters
         public virtual float From(UInt16 value) => value;
         public virtual float From(UInt32 value) => value;
         public virtual float From(UInt64 value) => value;
+        public virtual float FromNull() => default(float);
 
     }
 }
