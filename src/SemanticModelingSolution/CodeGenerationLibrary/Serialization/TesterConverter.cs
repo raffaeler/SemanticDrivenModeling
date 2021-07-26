@@ -141,7 +141,17 @@ namespace CodeGenerationLibrary.Serialization
                             var currentProperty = _currentMapping.Target.ModelPropertyNode.Property;
                             // conversion goes here
                             if (currentProperty.PropertyType == _currentMapping.Source.ModelPropertyNode.Property.PropertyType)
-                                currentProperty.SetMethod.Invoke(currentInstance.Instance, new object[] { value });
+                            {
+                                if(currentProperty.PropertyType == typeof(Guid))
+                                {
+                                    var g = Guid.Parse(value);
+                                    currentProperty.SetMethod.Invoke(currentInstance.Instance, new object[] { g });
+                                }
+                                else
+                                {
+                                    currentProperty.SetMethod.Invoke(currentInstance.Instance, new object[] { value });
+                                }
+                            }
                             Log(ref reader, value);
                             break;
                         }
