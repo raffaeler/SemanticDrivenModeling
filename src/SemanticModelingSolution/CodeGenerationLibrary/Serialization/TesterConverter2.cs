@@ -11,8 +11,10 @@ using SemanticLibrary;
 
 namespace CodeGenerationLibrary.Serialization
 {
-    public class TesterConverter<T> : JsonConverter<T>
+    public class TesterConverter2<T> : JsonConverter<T>
     {
+        private Stack<string> _sourcePath = new Stack<string>();
+
         private Dictionary<string, CurrentInstance> _objects = new Dictionary<string, CurrentInstance>();
         private Stack<MappingInfo> _collectionStack = new Stack<MappingInfo>();
         private Stack<MappingInfo> _objectsStack = new Stack<MappingInfo>();
@@ -25,7 +27,7 @@ namespace CodeGenerationLibrary.Serialization
         private int _rootLevel;
         private string _rootKey;
 
-        public TesterConverter(ScoredTypeMapping map)
+        public TesterConverter2(ScoredTypeMapping map)
         {
             _map = map;
             // root = _map.TargetModelTypeNode.TypeName
@@ -42,6 +44,8 @@ namespace CodeGenerationLibrary.Serialization
                 switch (reader.TokenType)
                 {
                     case JsonTokenType.StartArray:
+                        _sourcePath.Push("[]");
+
                         Console.WriteLine($"-- Start Array D:{reader.CurrentDepth} --");
                         _collectionStack.Push(new MappingInfo()
                         {
@@ -57,10 +61,20 @@ namespace CodeGenerationLibrary.Serialization
                             // they have already been filled
                             var path = _currentMapping.Target.GetMapPath(".", true);
                         }
+                        _sourcePath.Pop();
                         break;
 
                     case JsonTokenType.StartObject:
-                        Console.WriteLine($"---- Start Object D:{reader.CurrentDepth} ----");
+                        if (_sourcePath.Count == 0)
+                        {
+                            _sourcePath.Push(typeToConvert.Name);
+                        }
+                        else
+                        {
+                            _sourcePath.Push("o");
+                        }
+
+                        Console.WriteLine($"---- Start Object {StackToPath(_sourcePath)} D:{reader.CurrentDepth} ----");
                         _objectsStack.Push(new MappingInfo());
                         _stack.Push(_currentProperty);
 
@@ -70,17 +84,18 @@ namespace CodeGenerationLibrary.Serialization
                         }
                         break;
                     case JsonTokenType.EndObject:
-                        Console.WriteLine($"---- End Object D:{reader.CurrentDepth} ----");
+                        Console.WriteLine($"---- End Object {StackToPath(_sourcePath)} D:{reader.CurrentDepth} ----");
                         {
                             var info = _objectsStack.Pop();
                             var path = info.Mapping.Target.GetMapPath(".", true);   // unique string to the type of this property
                             var current = _objects[path];
                             if (_objectsStack.Count == 0)
                             {
+                                _sourcePath.Pop();
                                 return (T)current.Instance;
                             }
 
-                            if(current.Collection != null)
+                            if (current.Collection != null)
                             {
                                 // the object was inside the collection
                                 // now that we have removed all the objects, we have to put the collection back
@@ -91,6 +106,8 @@ namespace CodeGenerationLibrary.Serialization
                             }
                         }
 
+                        _sourcePath.Pop();
+
                         if (_stack.Count == 0) return default(T);
                         _stack.Pop();
                         break;
@@ -98,11 +115,13 @@ namespace CodeGenerationLibrary.Serialization
 
                     case JsonTokenType.PropertyName:
                         _currentProperty = reader.GetString();
+                        _sourcePath.Push(_currentProperty);
+
                         // todo: full path comparison as multiple properties may have the same PropertyName (belonging to different objects)
                         _currentMapping = _map.PropertyMappings.FirstOrDefault(p => p.Source.Name == _currentProperty);
                         {
                             var info = _objectsStack.Peek();
-                            if(info.Mapping == null)
+                            if (info.Mapping == null)
                             {
                                 info.PropertyName = _currentProperty;
                                 info.Mapping = _currentMapping;
@@ -128,6 +147,7 @@ namespace CodeGenerationLibrary.Serialization
                             {
                                 // no mapping, skipping this property
                                 Log(ref reader, value);
+                                _sourcePath.Pop();
                                 break;
                             }
 
@@ -143,7 +163,7 @@ namespace CodeGenerationLibrary.Serialization
                             // conversion goes here
                             if (currentProperty.PropertyType == _currentMapping.Source.ModelPropertyNode.Property.PropertyType)
                             {
-                                if(currentProperty.PropertyType == typeof(Guid))
+                                if (currentProperty.PropertyType == typeof(Guid))
                                 {
                                     var g = Guid.Parse(value);
                                     currentProperty.SetMethod.Invoke(currentInstance.Instance, new object[] { g });
@@ -153,25 +173,30 @@ namespace CodeGenerationLibrary.Serialization
                                     currentProperty.SetMethod.Invoke(currentInstance.Instance, new object[] { value });
                                 }
                             }
+                            _sourcePath.Pop();
                             Log(ref reader, value);
                             break;
                         }
                     case JsonTokenType.Number:
                         {
                             var value = reader.GetInt32();
+                            _sourcePath.Pop();
                             Log(ref reader, value);
                             break;
                         }
                     case JsonTokenType.Null:
                         //reader.Skip();
+                        _sourcePath.Pop();
                         Log(ref reader, "null  ");
                         break;
                     case JsonTokenType.True:
                         //reader.Skip();
+                        _sourcePath.Pop();
                         Log(ref reader, "true  ");
                         break;
                     case JsonTokenType.False:
                         //reader.Skip();
+                        _sourcePath.Pop();
                         Log(ref reader, "false ");
                         break;
 
@@ -263,7 +288,7 @@ namespace CodeGenerationLibrary.Serialization
                 //if (dk == path)
                 //    _objects[dk].Instance = null;
                 //else
-                    _objects.Remove(dk);
+                _objects.Remove(dk);
             }
         }
 
@@ -292,6 +317,11 @@ namespace CodeGenerationLibrary.Serialization
 
             var json = $"C:{reader.BytesConsumed,4} D:{reader.CurrentDepth} {reader.TokenType}".PadRight(25);
             Console.WriteLine($"{json}{from.PadRight(40)}=> {targetType.PadRight(20)} {to} {message}");
+        }
+
+        private string StackToPath(Stack<string> stack)
+        {
+            return string.Join(".", stack);
         }
 
 

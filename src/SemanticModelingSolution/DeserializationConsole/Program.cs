@@ -91,6 +91,23 @@ namespace DeserializationConsole
             typeof(NorthwindDataLayer.Models.Territory                           ),
         };
 
+        static Type[] _domain1 = new Type[]
+        {
+            typeof(SimpleDomain1.Order),
+            typeof(SimpleDomain1.OrderItem),
+            typeof(SimpleDomain1.Product),
+            typeof(SimpleDomain1.Company),
+            typeof(SimpleDomain1.Address),
+        };
+
+        static Type[] _domain2 = new Type[]
+        {
+            typeof(SimpleDomain2.OnlineOrder),
+            typeof(SimpleDomain2.OrderLine),
+        };
+
+
+
         JsonSerializerOptions _settingsVanilla = new JsonSerializerOptions()
         {
             WriteIndented = true,
@@ -106,6 +123,13 @@ namespace DeserializationConsole
 
             p.VendorToSupplier(erp, coderush, northwind);
             //p.SupplierToVendor(erp, coderush, northwind);
+        }
+
+        static void Main1(string[] args)
+        {
+            var p = new Program();
+            //p.MappingOrderToOnlineOrder();
+            p.MappingOnlineOrderToOrder();
         }
 
         public Analyzer Analyzer { get; set; }
@@ -147,6 +171,36 @@ namespace DeserializationConsole
             var targetObjects = FromJson(json, typeof(coderush.Models.Vendor[]), settings);
         }
 
+
+
+
+
+        public void MappingOrderToOnlineOrder()
+        {
+            var utilities = new MappingUtilities();
+            var domain = new GeneratedCode.Domain();
+            var analyzer = new Analyzer();
+            var m1 = analyzer.Prepare("SimpleDomain1", _domain1);
+            var m2 = analyzer.Prepare("SimpleDomain2", _domain2);
+
+            var sourceObjects = SimpleDomain1.Samples.GetOrders();
+            var targetObjects = utilities.OrderToOnlineOrder(m1, m2, sourceObjects);
+
+        }
+
+
+        public void MappingOnlineOrderToOrder()
+        {
+            var utilities = new MappingUtilities();
+            var domain = new GeneratedCode.Domain();
+            var analyzer = new Analyzer();
+            var m1 = analyzer.Prepare("SimpleDomain1", _domain1);
+            var m2 = analyzer.Prepare("SimpleDomain2", _domain2);
+
+            var sourceObjects = SimpleDomain2.Samples.GetOrders();
+            var targetObjects = utilities.OnlineOrderToOrder(m2, m1, sourceObjects);
+
+        }
     }
 }
 

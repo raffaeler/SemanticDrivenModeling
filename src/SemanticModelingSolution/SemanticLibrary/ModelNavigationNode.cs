@@ -31,8 +31,53 @@ namespace SemanticLibrary
         public int Score { get; internal set; }
         public string Name => ModelPropertyNode.Name;
 
-        public string GetMapPath(string separator = _dotPathSeparator, bool skipCurrentProperty = false,
-            bool insertStartType = true, bool insertStartNamespace = false)
+        public string GetObjectMapPath()
+        {
+            string separator = _dotPathSeparator;
+            string arrayElementPlaceholder = "$";
+            bool insertStartType = true;
+            bool insertStartNamespace = false;
+
+            var temp = this;
+            List<string> segments = new();
+            ModelTypeNode rootType = this.ModelPropertyNode.Parent;
+            var skipCurrentProperty = ModelPropertyNode.PropertyKind != PropertyKind.OneToManyToDomain &&
+                ModelPropertyNode.PropertyKind != PropertyKind.OneToManyToUnknown;
+
+            if (skipCurrentProperty && temp != null)
+            {
+                temp = temp.Previous;
+            }
+
+            while (temp != null)
+            {
+                var propertyNode = temp.ModelPropertyNode;
+                if (skipCurrentProperty &&
+                    (temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain ||
+                    temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToUnknown))
+                {
+                    segments.Insert(0, arrayElementPlaceholder);
+                }
+
+                segments.Insert(0, propertyNode.Name);
+                rootType = temp.ModelPropertyNode.Parent;
+                temp = temp.Previous;
+            }
+
+            if (insertStartType)
+            {
+                if (insertStartNamespace)
+                    segments.Insert(0, $"{rootType.Type.Namespace}.{rootType.TypeName}");
+                else
+                    segments.Insert(0, rootType.TypeName);
+            }
+
+            return string.Join(separator, segments);
+        }
+
+
+        public string GetMapPath(string separator = _dotPathSeparator, bool skipCurrentProperty = false, 
+            string arrayElementPlaceholder = "$", bool insertStartType = true, bool insertStartNamespace = false)
         {
             var temp = this;
             List<string> segments = new();
@@ -45,6 +90,12 @@ namespace SemanticLibrary
             while (temp != null)
             {
                 var propertyNode = temp.ModelPropertyNode;
+                if(temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain ||
+                    temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToUnknown)
+                {
+                    segments.Insert(0, arrayElementPlaceholder);
+                }
+
                 segments.Insert(0, propertyNode.Name);
                 rootType = temp.ModelPropertyNode.Parent;
                 temp = temp.Previous;

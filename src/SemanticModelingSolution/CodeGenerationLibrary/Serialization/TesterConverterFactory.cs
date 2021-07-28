@@ -37,7 +37,9 @@ namespace CodeGenerationLibrary.Serialization
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
             Console.WriteLine($"TestConverterFactory.CreateConverter> {typeToConvert.Name}");
-            var converterType = typeof(TesterConverter<>).MakeGenericType(typeToConvert);
+            //var converterType = typeof(TesterConverter<>).MakeGenericType(typeToConvert);
+            //var converterType = typeof(TesterConverter2<>).MakeGenericType(typeToConvert);
+            var converterType = typeof(BaseConverter2<>).MakeGenericType(typeToConvert);
             var converter = Activator.CreateInstance(converterType, new object[] { Map }) as JsonConverter;
             return converter;
         }
