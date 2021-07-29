@@ -10,9 +10,9 @@ using SemanticLibrary;
 
 namespace CodeGenerationLibrary.Serialization
 {
-    public class TesterConverterFactory : JsonConverterFactory
+    public class SemanticConverterFactory : JsonConverterFactory
     {
-        public TesterConverterFactory(ScoredTypeMapping map)
+        public SemanticConverterFactory(ScoredTypeMapping map)
         {
             if(map == null) throw new ArgumentNullException(nameof(map));
 
@@ -23,7 +23,7 @@ namespace CodeGenerationLibrary.Serialization
 
         public override bool CanConvert(Type typeToConvert)
         {
-            Console.Write($"TestConverterFactory.CanConvert> {typeToConvert.Name} ");
+            Console.Write($"SemanticConverterFactory.CanConvert> {typeToConvert.Name} ");
             if (Map == null || typeToConvert != Map.TargetModelTypeNode.Type)
             {
                 Console.WriteLine("No");
@@ -36,10 +36,10 @@ namespace CodeGenerationLibrary.Serialization
 
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
-            Console.WriteLine($"TestConverterFactory.CreateConverter> {typeToConvert.Name}");
+            Console.WriteLine($"SemanticConverterFactory.CreateConverter> {typeToConvert.Name}");
             //var converterType = typeof(TesterConverter<>).MakeGenericType(typeToConvert);
             //var converterType = typeof(TesterConverter2<>).MakeGenericType(typeToConvert);
-            var converterType = typeof(BaseConverter2<>).MakeGenericType(typeToConvert);
+            var converterType = typeof(SemanticConverterBase<>).MakeGenericType(typeToConvert);
             var converter = Activator.CreateInstance(converterType, new object[] { Map }) as JsonConverter;
             return converter;
         }

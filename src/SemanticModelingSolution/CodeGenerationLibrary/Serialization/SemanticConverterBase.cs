@@ -11,8 +11,10 @@ using SemanticLibrary;
 
 namespace CodeGenerationLibrary.Serialization
 {
-    public class BaseConverter2<T> : JsonConverter<T>
+    public class SemanticConverterBase<T> : JsonConverter<T>
     {
+        private const string _arrayItemPlaceholder = "$";
+
         private Stack<string> _collectionElementStack;
         private Stack<JsonSegment> _sourcePath;
         private Dictionary<string, CurrentInstance> _objects;
@@ -24,7 +26,7 @@ namespace CodeGenerationLibrary.Serialization
         /// Important note: the instance of the JsonConverter is recycled during the same deserialization
         /// therefore anything that should not be recycled must be re-initialized in the Read/Write method
         /// </summary>
-        public BaseConverter2(ScoredTypeMapping map)
+        public SemanticConverterBase(ScoredTypeMapping map)
         {
             _map = map;
             foreach (var propertyMapping in _map.PropertyMappings)
@@ -44,12 +46,6 @@ namespace CodeGenerationLibrary.Serialization
             _collectionElementStack = new();
             _sourcePath = new();
             _objects = new();
-
-            //_result = CreateObject();
-            //_objects[typeof(T).Name] = new CurrentInstance()
-            //{
-            //    Instance = _result,
-            //};
 
             do
             {
@@ -89,7 +85,7 @@ namespace CodeGenerationLibrary.Serialization
                             else if (seg.IsArray)
                             {
                                 // element of a many-to-many
-                                _sourcePath.Push(new JsonSegment("$", true));
+                                _sourcePath.Push(new JsonSegment(_arrayItemPlaceholder, true));
                             }
                             else
                             {
@@ -271,17 +267,10 @@ namespace CodeGenerationLibrary.Serialization
 
         private (string sourcePath, ScoredPropertyMapping<ModelNavigationNode> nodeMapping) GetSourcePathAndMapping()
         {
-            var sourcePath = GetPath();
+            var sourcePath = string.Join(".", _sourcePath.Reverse().Select(s => s.Name));
             _lookup.TryGetValue(sourcePath, out var node);
             return (sourcePath, node);
         }
-
-        protected virtual string GetPath()
-        {
-            return string.Join(".", _sourcePath.Reverse().Select(s => s.Name));
-        }
-
-        protected virtual T CreateObject() => Activator.CreateInstance<T>();
 
         public object Materialize(ScoredPropertyMapping<ModelNavigationNode> scoredPropertyMapping)
         {
@@ -290,7 +279,6 @@ namespace CodeGenerationLibrary.Serialization
             //Console.WriteLine();
             //Console.WriteLine($"Source: {sourcePath}");
             //Console.WriteLine($"Target: {targetPath}");
-
 
             var temp = scoredPropertyMapping.Target;
             bool isFirst = true;
@@ -307,7 +295,7 @@ namespace CodeGenerationLibrary.Serialization
                 if (_objects.TryGetValue(path, out CurrentInstance cached))
                 {
                     var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
-                    if (sourcePath.Contains("$"))
+                    if (sourcePath.Contains(_arrayItemPlaceholder))
                     {
                         cached.SourceCollectionElementPath = sourcePath;
                     }
@@ -322,21 +310,14 @@ namespace CodeGenerationLibrary.Serialization
                         temp.ModelPropertyNode.Property.SetValue(instance, lastCreatedInstance);
                     }
 
-                    if (isFirst)
-                    {
-                        return instance;
-                    }
-                    else
-                    {
-                        return result;
-                    }
+                    return isFirst ? instance : result;
                 }
 
                 if (isCollection)
                 {
                     var property = temp.ModelPropertyNode.Property;
                     var collectionType = property.PropertyType;
-                    instance = Activator.CreateInstance(collectionType);
+                    instance = CreateInstance(collectionType);
                     var addMethod = collectionType.GetMethod("Add");
                     addMethod.Invoke(instance, new object[] { lastCreatedInstance });
                     _objects[path] = new CurrentInstance
@@ -360,7 +341,7 @@ namespace CodeGenerationLibrary.Serialization
                         }
                         else
                         {
-                            rootInstance = Activator.CreateInstance(rootType);
+                            rootInstance = CreateInstance(rootType);
                             _objects[rootType.Name] = new CurrentInstance
                             {
                                 Instance = rootInstance,
@@ -375,14 +356,14 @@ namespace CodeGenerationLibrary.Serialization
                 else
                 {
                     var parentType = temp.ModelPropertyNode.Parent.Type;
-                    instance = Activator.CreateInstance(parentType);
+                    instance = CreateInstance(parentType);
                     var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
 
                     _objects[path] = new CurrentInstance
                     {
                         Instance = instance,
                         IsCollection = false,
-                        SourceCollectionElementPath = sourcePath.Contains("$") ? sourcePath : string.Empty,
+                        SourceCollectionElementPath = sourcePath.Contains(_arrayItemPlaceholder) ? sourcePath : string.Empty,
                     };
 
                     if (!isFirst)
@@ -404,90 +385,13 @@ namespace CodeGenerationLibrary.Serialization
                 lastCreatedInstance = instance;
             }
 
-
-
             return result;
         }
-/*
-        private CurrentInstance GetOrCreateTree(ModelNavigationNode modelNavigationNode)
-        {
-            var pathToType = modelNavigationNode.GetObjectMapPath();// GetMapPath(".", true);   // unique string to the type of this property
-            if (!_objects.TryGetValue(pathToType, out CurrentInstance current))
-            {
-                current = new CurrentInstance();
-                if (modelNavigationNode.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain)
-                {
-                    // instance is a collection
-                    var collectionType = modelNavigationNode.ModelPropertyNode.Property.PropertyType;
-                    current.Instance = CreateInstance(collectionType);
-                    current.IsCollection = true;
 
-                    //var collectionType = modelNavigationNode.ModelPropertyNode.Property.PropertyType;
-                    //current.Collection = CreateInstance(collectionType);
-                    //current.Instance = CreateInstance(modelNavigationNode.ModelPropertyNode.CoreType);
-                    //var addMethod = collectionType.GetMethod("Add");
-                    //addMethod.Invoke(current.Collection, new object[] { current.Instance });
-                }
-                else
-                {
-                    var ownerType = modelNavigationNode.ModelPropertyNode.Parent;
-                    current.Instance = CreateInstance(ownerType.Type);
-                }
-
-                _objects[pathToType] = current;
-
-
-                if (modelNavigationNode.Previous != null)
-                {
-                    var parentInstance = GetOrCreateTree(modelNavigationNode.Previous);
-                    if (parentInstance != null)
-                    {
-                        if (parentInstance.IsCollection)
-                        {
-                            var collectionType = modelNavigationNode.Previous.ModelPropertyNode.Property.PropertyType;
-                            var addMethod = collectionType.GetMethod("Add");
-                            addMethod.Invoke(parentInstance.Instance, new object[] { current.Instance });
-                        }
-                        else
-                        {
-                            //parentInstance.<property> = instance;
-                            var property = modelNavigationNode.Previous.ModelPropertyNode.Property;
-                            property.SetValue(parentInstance.Instance, current.Instance);
-                        }
-                    }
-                }
-                else if (modelNavigationNode.ModelPropertyNode.Parent != null)
-                {
-                    var parent = CreateInstance(modelNavigationNode.ModelPropertyNode.Parent.Type);
-                    modelNavigationNode.ModelPropertyNode.Property.SetValue(parent, current.Instance);
-                    _objects[modelNavigationNode.ModelPropertyNode.Parent.Type.Name] = new CurrentInstance()
-                    {
-                        Instance = parent,
-                        IsCollection = false,
-                    };
-                }
-            }
-
-            _collectionElementStack.TryPeek(out string currentCollectionElementPath);
-            current.SourceCollectionElementPath = currentCollectionElementPath ?? string.Empty;
-
-            if (current.Instance == null)
-            {
-                Debug.Assert(!current.IsCollection);
-                // this means it is a new object inside the collection
-                var ownerType = modelNavigationNode.ModelPropertyNode.Parent;
-                current.Instance = CreateInstance(modelNavigationNode.ModelPropertyNode.CoreType);
-                var addMethod = ownerType.Type.GetMethod("Add");
-                addMethod.Invoke(current, new object[] { current.Instance });
-            }
-
-            return current;
-        }
-*/
         private void RemoveObjectsWithPath(string path)
         {
             var deleteKeys = _objects
-                .Where(i =>  i.Value.SourceCollectionElementPath.StartsWith(path) && i.Key.Contains("$"))
+                .Where(i => i.Value.SourceCollectionElementPath.StartsWith(path) && i.Key.Contains(_arrayItemPlaceholder))
                 .Select(i => i.Key)
                 .ToArray();
 
@@ -501,10 +405,8 @@ namespace CodeGenerationLibrary.Serialization
             }
         }
 
-        private object CreateInstance(Type type)
-        {
-            return Activator.CreateInstance(type);
-        }
+        protected virtual K CreateObject<K>() => Activator.CreateInstance<K>();
+        private object CreateInstance(Type type) => Activator.CreateInstance(type);
 
         protected virtual void SetValue(ModelNavigationNode source, ModelNavigationNode target, object instance, string value)
         {
@@ -556,36 +458,34 @@ namespace CodeGenerationLibrary.Serialization
         }
 
 
-
-        public record CurrentInstance
+        private record CurrentInstance
         {
             public string SourceCollectionElementPath { get; set; } = string.Empty;
-            //public object Collection { get; set; }
             public bool IsCollection { get; set; }
             public object Instance { get; set; }
             public System.Reflection.MethodInfo AddCollectionMethod { get; set; }
         }
-    }
 
-    internal record JsonSegment()
-    {
-        public JsonSegment(string name, bool isArrayElement = false)
-            : this()
+        private record JsonSegment()
         {
-            this.Name = name;
-            this.IsObject = false;
-            this.IsArray = false;
-            this.IsArrayElement = isArrayElement;
+            public JsonSegment(string name, bool isArrayElement = false)
+                : this()
+            {
+                this.Name = name;
+                this.IsObject = false;
+                this.IsArray = false;
+                this.IsArrayElement = isArrayElement;
+            }
+
+            public static JsonSegment FromArray() => new JsonSegment()
+            {
+                IsArray = true,
+            };
+
+            public string Name { get; set; }
+            public bool IsObject { get; set; }
+            public bool IsArray { get; set; }
+            public bool IsArrayElement { get; set; }
         }
-
-        public static JsonSegment FromArray() => new JsonSegment()
-        {
-            IsArray = true,
-        };
-
-        public string Name { get; set; }
-        public bool IsObject { get; set; }
-        public bool IsArray { get; set; }
-        public bool IsArrayElement { get; set; }
     }
 }

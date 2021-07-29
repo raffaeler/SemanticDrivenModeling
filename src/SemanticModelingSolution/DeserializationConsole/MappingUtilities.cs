@@ -28,7 +28,7 @@ namespace DeserializationConsole
                 WriteIndented = true,
                 Converters =
                 {
-                    new CodeGenerationLibrary.Serialization.TesterConverterFactory(scoredTypeMapping),
+                    new CodeGenerationLibrary.Serialization.SemanticConverterFactory(scoredTypeMapping),
                 },
             };
 

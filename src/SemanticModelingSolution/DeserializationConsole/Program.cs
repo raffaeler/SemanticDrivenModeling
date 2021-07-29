@@ -91,7 +91,7 @@ namespace DeserializationConsole
             typeof(NorthwindDataLayer.Models.Territory                           ),
         };
 
-        static Type[] _domain1 = new Type[]
+        static Type[] _simpleDomain1 = new Type[]
         {
             typeof(SimpleDomain1.Order),
             typeof(SimpleDomain1.OrderItem),
@@ -100,121 +100,58 @@ namespace DeserializationConsole
             typeof(SimpleDomain1.Address),
         };
 
-        static Type[] _domain2 = new Type[]
+        static Type[] _simpleDomain2 = new Type[]
         {
             typeof(SimpleDomain2.OnlineOrder),
             typeof(SimpleDomain2.OrderLine),
         };
 
-
-
-        JsonSerializerOptions _settingsVanilla = new JsonSerializerOptions()
-        {
-            WriteIndented = true,
-        };
-
-        static void Main0(string[] args)
-        {
-            var p = new Program();
-            p.Analyzer = new Analyzer();
-            var erp = p.Analyzer.Prepare("ERP", _domainTypes1);
-            var coderush = p.Analyzer.Prepare("coderush", _domainTypes2);
-            var northwind = p.Analyzer.Prepare("Northwind", _domainTypesNW);
-
-            //p.VendorToSupplier(erp, coderush, northwind);
-            //p.SupplierToVendor(erp, coderush, northwind);
-        }
-
         static void Main(string[] args)
         {
             var p = new Program();
 
-            //p.VendorToSupplier();
-            p.SupplierToVendor();
+            //p.MappingVendorToSupplier();
+            p.MappingSupplierToVendor();
+
             //p.MappingOrderToOnlineOrder();
             //p.MappingOnlineOrderToOrder();
         }
 
-        public Analyzer Analyzer { get; set; }
-
-        public string GetJson<T>(T[] item) => JsonSerializer.Serialize(item, _settingsVanilla);
-
-        public object FromJson(string json, Type type, JsonSerializerOptions options) => JsonSerializer.Deserialize(json, type, options);
-
-        public JsonSerializerOptions CreateSettings(ScoredTypeMapping scoredTypeMapping)
-            => new JsonSerializerOptions()
-            {
-                WriteIndented = true,
-                Converters =
-                {
-                    new CodeGenerationLibrary.Serialization.TesterConverterFactory(scoredTypeMapping),
-                },
-            };
-
-        public void VendorToSupplier()
+        public void MappingVendorToSupplier()
         {
             var analyzer = new Analyzer();
             var erp = analyzer.Prepare("ERP", _domainTypes1);
             var coderush = analyzer.Prepare("coderush", _domainTypes2);
             var northwind = analyzer.Prepare("Northwind", _domainTypesNW);
 
-            TestMaterializer("Vendor", analyzer, coderush, erp);
+            //TestMaterializer("Vendor", analyzer, coderush, erp);
 
             var sourceObjects = Samples.GetVendors1();
             var utilities = new MappingUtilities();
             var targetObjects = utilities.Transform<coderush.Models.Vendor, ERP_Model.Models.Supplier>("Vendor", coderush, erp, sourceObjects);
         }
 
-        public void SupplierToVendor()
+        public void MappingSupplierToVendor()
         {
             var analyzer = new Analyzer();
             var erp = analyzer.Prepare("ERP", _domainTypes1);
             var coderush = analyzer.Prepare("coderush", _domainTypes2);
             var northwind = analyzer.Prepare("Northwind", _domainTypesNW);
 
-            TestMaterializer("Supplier", analyzer, erp, coderush);
+            //TestMaterializer("Supplier", analyzer, erp, coderush);
 
             var sourceObjects = Samples.GetSupplier1();
             var utilities = new MappingUtilities();
             var targetObjects = utilities.Transform<ERP_Model.Models.Supplier, coderush.Models.Vendor>("Supplier", erp, coderush, sourceObjects);
         }
 
-        public void VendorToSupplier(IList<ModelTypeNode> erp, IList<ModelTypeNode> coderush, IList<ModelTypeNode> northwind)
-        {
-            var vendor = coderush.First(t => t.TypeName == "Vendor");
-            var mapping = Analyzer.CreateMappingsFor(vendor, erp);
-            var settings = CreateSettings(mapping);
-
-            TestMaterializer("Vendor", Analyzer, coderush, erp);
-
-
-            var sourceObjects = Samples.GetVendors1();
-            var json = GetJson(sourceObjects);
-            var clone = JsonSerializer.Deserialize(json, typeof(coderush.Models.Vendor[]));
-            var targetObjects = FromJson(json, typeof(ERP_Model.Models.Supplier[]), settings);
-        }
-
-        public void SupplierToVendor(IList<ModelTypeNode> erp, IList<ModelTypeNode> coderush, IList<ModelTypeNode> northwind)
-        {
-            var supplier = erp.First(t => t.TypeName == "Supplier");
-            var mapping = Analyzer.CreateMappingsFor(supplier, coderush);
-            var settings = CreateSettings(mapping);
-
-            TestMaterializer("Supplier", Analyzer, erp, coderush);
-
-            var sourceObjects = Samples.GetSupplier1();
-            var json = GetJson(sourceObjects);
-            var targetObjects = FromJson(json, typeof(coderush.Models.Vendor[]), settings);
-        }
-
-
         public void MappingOrderToOnlineOrder()
         {
             var analyzer = new Analyzer();
-            var m1 = analyzer.Prepare("SimpleDomain1", _domain1);
-            var m2 = analyzer.Prepare("SimpleDomain2", _domain2);
+            var m1 = analyzer.Prepare("SimpleDomain1", _simpleDomain1);
+            var m2 = analyzer.Prepare("SimpleDomain2", _simpleDomain2);
 
-            TestMaterializer("Order", analyzer, m1, m2);
+            //TestMaterializer("Order", analyzer, m1, m2);
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
             var utilities = new MappingUtilities();
@@ -225,10 +162,10 @@ namespace DeserializationConsole
         public void MappingOnlineOrderToOrder()
         {
             var analyzer = new Analyzer();
-            var m1 = analyzer.Prepare("SimpleDomain1", _domain1);
-            var m2 = analyzer.Prepare("SimpleDomain2", _domain2);
+            var m1 = analyzer.Prepare("SimpleDomain1", _simpleDomain1);
+            var m2 = analyzer.Prepare("SimpleDomain2", _simpleDomain2);
 
-            TestMaterializer("OnlineOrder", analyzer, m2, m1);
+            //TestMaterializer("OnlineOrder", analyzer, m2, m1);
 
             var sourceObjects = SimpleDomain2.Samples.GetOrders();
             var utilities = new MappingUtilities();

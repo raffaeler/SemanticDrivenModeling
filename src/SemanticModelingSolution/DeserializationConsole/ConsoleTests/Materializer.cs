@@ -9,6 +9,8 @@ namespace DeserializationConsole
 {
     public class Materializer
     {
+        private const string _arrayItemPlaceholder = "$";
+
         public Materializer()
         {
         }
@@ -24,6 +26,7 @@ namespace DeserializationConsole
         }
 
         Dictionary<string, CurrentInstance> _objects = new();
+
         public object Materialize(ScoredPropertyMapping<ModelNavigationNode> scoredPropertyMapping)
         {
             //var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
@@ -32,37 +35,44 @@ namespace DeserializationConsole
             //Console.WriteLine($"Source: {sourcePath}");
             //Console.WriteLine($"Target: {targetPath}");
 
-
             var temp = scoredPropertyMapping.Target;
             bool isFirst = true;
             object result = null;
             object lastCreatedInstance = null;
             while (temp != null)
             {
+                var isCollection = temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain ||
+                    temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToUnknown;
+
                 object instance;
 
                 var path = temp.GetObjectMapPath();
-                if(_objects.TryGetValue(path, out CurrentInstance cached))
+                if (_objects.TryGetValue(path, out CurrentInstance cached))
                 {
-                    instance = cached.Instance;
-                    if (isFirst)
+                    var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
+                    if (sourcePath.Contains(_arrayItemPlaceholder))
                     {
-                        return instance;
+                        cached.SourceCollectionElementPath = sourcePath;
+                    }
+
+                    instance = cached.Instance;
+                    if (isCollection)
+                    {
+                        cached.AddCollectionMethod.Invoke(instance, new object[] { lastCreatedInstance });
                     }
                     else
                     {
-                        return result;
+                        temp.ModelPropertyNode.Property.SetValue(instance, lastCreatedInstance);
                     }
-                }
 
-                var isCollection = temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain ||
-                    temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToUnknown;
+                    return isFirst ? instance : result;
+                }
 
                 if (isCollection)
                 {
                     var property = temp.ModelPropertyNode.Property;
                     var collectionType = property.PropertyType;
-                    instance = Activator.CreateInstance(collectionType);
+                    instance = CreateInstance(collectionType);
                     var addMethod = collectionType.GetMethod("Add");
                     addMethod.Invoke(instance, new object[] { lastCreatedInstance });
                     _objects[path] = new CurrentInstance
@@ -70,6 +80,7 @@ namespace DeserializationConsole
                         Instance = instance,
                         IsCollection = true,
                         SourceCollectionElementPath = scoredPropertyMapping.Source.GetObjectMapPath(),
+                        AddCollectionMethod = addMethod,
                     };
 
                     // root object:
@@ -85,7 +96,7 @@ namespace DeserializationConsole
                         }
                         else
                         {
-                            rootInstance = Activator.CreateInstance(rootType);
+                            rootInstance = CreateInstance(rootType);
                             _objects[rootType.Name] = new CurrentInstance
                             {
                                 Instance = rootInstance,
@@ -100,12 +111,14 @@ namespace DeserializationConsole
                 else
                 {
                     var parentType = temp.ModelPropertyNode.Parent.Type;
-                    instance = Activator.CreateInstance(parentType);
+                    instance = CreateInstance(parentType);
+                    var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
+
                     _objects[path] = new CurrentInstance
                     {
                         Instance = instance,
                         IsCollection = false,
-                        SourceCollectionElementPath = string.Empty,
+                        SourceCollectionElementPath = sourcePath.Contains(_arrayItemPlaceholder) ? sourcePath : string.Empty,
                     };
 
                     if (!isFirst)
@@ -127,15 +140,13 @@ namespace DeserializationConsole
                 lastCreatedInstance = instance;
             }
 
-
-
             return result;
         }
 
-        public void RemoveObjectsWithPath(string path)
+        private void RemoveObjectsWithPath(string path)
         {
             var deleteKeys = _objects
-                .Where(i => i.Value.SourceCollectionElementPath.StartsWith(path) && i.Key.Contains("$"))
+                .Where(i => i.Value.SourceCollectionElementPath.StartsWith(path) && i.Key.Contains(_arrayItemPlaceholder))
                 .Select(i => i.Key)
                 .ToArray();
 
@@ -149,13 +160,15 @@ namespace DeserializationConsole
             }
         }
 
+        private object CreateInstance(Type type) => Activator.CreateInstance(type);
 
-        public record CurrentInstance
+
+        private record CurrentInstance
         {
             public string SourceCollectionElementPath { get; set; } = string.Empty;
-            //public object Collection { get; set; }
             public bool IsCollection { get; set; }
             public object Instance { get; set; }
+            public System.Reflection.MethodInfo AddCollectionMethod { get; set; }
         }
 
     }
