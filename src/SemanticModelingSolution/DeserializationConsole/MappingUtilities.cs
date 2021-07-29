@@ -60,5 +60,18 @@ namespace DeserializationConsole
         }
 
 
+        public IEnumerable<TTarget> Transform<TSource, TTarget>(string sourceTypeName, IList<ModelTypeNode> source, IList<ModelTypeNode> target,
+            IEnumerable<TSource> sourceObjects)
+        {
+            var sourceType = source.First(t => t.TypeName == sourceTypeName);  // i.e. "OnlineOrder"
+            var mapping = Analyzer.CreateMappingsFor(sourceType, target);
+            var settings = CreateSettings(mapping);
+
+            var json = GetJson(sourceObjects);
+            var clone = JsonSerializer.Deserialize<TSource[]>(json);
+            var targetObjects = (IEnumerable<TTarget>)FromJson(json, typeof(TTarget[]), settings);
+            return targetObjects;
+        }
+
     }
 }
