@@ -143,7 +143,8 @@ namespace CodeGenerationLibrary.Serialization
                             var value = reader.GetString();
                             if (nodeMapping != null)
                             {
-                                var instance = GetOrCreateTree(nodeMapping.Target);
+                                //var instance = GetOrCreateTree(nodeMapping.Target);
+                                var instance = Materialize(nodeMapping);
                                 SetValue(nodeMapping.Source, nodeMapping.Target, instance, value);
                             }
 
@@ -158,7 +159,8 @@ namespace CodeGenerationLibrary.Serialization
                             reader.Skip();
                             if (nodeMapping != null)
                             {
-                                var instance = GetOrCreateTree(nodeMapping.Target);
+                                //var instance = GetOrCreateTree(nodeMapping.Target);
+                                var instance = Materialize(nodeMapping);
                                 //SetValue(nodeMapping.Source, nodeMapping.Target, instance, ...);
                             }
 
@@ -174,7 +176,8 @@ namespace CodeGenerationLibrary.Serialization
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
                             if (nodeMapping != null)
                             {
-                                var instance = GetOrCreateTree(nodeMapping.Target);
+                                //var instance = GetOrCreateTree(nodeMapping.Target);
+                                var instance = Materialize(nodeMapping);
                                 SetNull(nodeMapping.Source, nodeMapping.Target, instance);
                             }
 
@@ -189,7 +192,8 @@ namespace CodeGenerationLibrary.Serialization
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
                             if (nodeMapping != null)
                             {
-                                var instance = GetOrCreateTree(nodeMapping.Target);
+                                //var instance = GetOrCreateTree(nodeMapping.Target);
+                                var instance = Materialize(nodeMapping);
                                 SetBoolean(nodeMapping.Source, nodeMapping.Target, instance, true);
                             }
 
@@ -204,7 +208,8 @@ namespace CodeGenerationLibrary.Serialization
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
                             if (nodeMapping != null)
                             {
-                                var instance = GetOrCreateTree(nodeMapping.Target);
+                                //var instance = GetOrCreateTree(nodeMapping.Target);
+                                var instance = Materialize(nodeMapping);
                                 SetBoolean(nodeMapping.Source, nodeMapping.Target, instance, false);
                             }
 
@@ -278,6 +283,132 @@ namespace CodeGenerationLibrary.Serialization
 
         protected virtual T CreateObject() => Activator.CreateInstance<T>();
 
+        public object Materialize(ScoredPropertyMapping<ModelNavigationNode> scoredPropertyMapping)
+        {
+            //var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
+            //var targetPath = scoredPropertyMapping.Target.GetObjectMapPath();
+            //Console.WriteLine();
+            //Console.WriteLine($"Source: {sourcePath}");
+            //Console.WriteLine($"Target: {targetPath}");
+
+
+            var temp = scoredPropertyMapping.Target;
+            bool isFirst = true;
+            object result = null;
+            object lastCreatedInstance = null;
+            while (temp != null)
+            {
+                var isCollection = temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain ||
+                    temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToUnknown;
+
+                object instance;
+
+                var path = temp.GetObjectMapPath();
+                if (_objects.TryGetValue(path, out CurrentInstance cached))
+                {
+                    var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
+                    if (sourcePath.Contains("$"))
+                    {
+                        cached.SourceCollectionElementPath = sourcePath;
+                    }
+
+                    instance = cached.Instance;
+                    if (isCollection)
+                    {
+                        cached.AddCollectionMethod.Invoke(instance, new object[] { lastCreatedInstance });
+                    }
+                    else
+                    {
+                        temp.ModelPropertyNode.Property.SetValue(instance, lastCreatedInstance);
+                    }
+
+                    if (isFirst)
+                    {
+                        return instance;
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+
+                if (isCollection)
+                {
+                    var property = temp.ModelPropertyNode.Property;
+                    var collectionType = property.PropertyType;
+                    instance = Activator.CreateInstance(collectionType);
+                    var addMethod = collectionType.GetMethod("Add");
+                    addMethod.Invoke(instance, new object[] { lastCreatedInstance });
+                    _objects[path] = new CurrentInstance
+                    {
+                        Instance = instance,
+                        IsCollection = true,
+                        SourceCollectionElementPath = scoredPropertyMapping.Source.GetObjectMapPath(),
+                        AddCollectionMethod = addMethod,
+                    };
+
+                    // root object:
+                    // the while(...) navigation never returns the root object because
+                    // the navigation relies on the properties, and there is no property pointing to the root
+                    if (temp.Previous == null)
+                    {
+                        var rootType = temp.ModelPropertyNode.Parent.Type;
+                        object rootInstance;
+                        if (_objects.TryGetValue(rootType.Name, out CurrentInstance cachedRoot))
+                        {
+                            rootInstance = cachedRoot.Instance;
+                        }
+                        else
+                        {
+                            rootInstance = Activator.CreateInstance(rootType);
+                            _objects[rootType.Name] = new CurrentInstance
+                            {
+                                Instance = rootInstance,
+                                IsCollection = false,
+                                SourceCollectionElementPath = string.Empty,
+                            };
+                        }
+
+                        property.SetValue(rootInstance, instance);
+                    }
+                }
+                else
+                {
+                    var parentType = temp.ModelPropertyNode.Parent.Type;
+                    instance = Activator.CreateInstance(parentType);
+                    var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
+
+                    _objects[path] = new CurrentInstance
+                    {
+                        Instance = instance,
+                        IsCollection = false,
+                        SourceCollectionElementPath = sourcePath.Contains("$") ? sourcePath : string.Empty,
+                    };
+
+                    if (!isFirst)
+                    {
+                        var property = temp.ModelPropertyNode.Property;
+                        property.SetValue(instance, lastCreatedInstance);
+                    }
+                }
+
+                //Console.WriteLine($"{parentType.Name}.{property.Name} (IsCollection: {isCollection})");
+
+                if (isFirst)
+                {
+                    result = instance;
+                    isFirst = false;
+                }
+
+                temp = temp.Previous;
+                lastCreatedInstance = instance;
+            }
+
+
+
+            return result;
+        }
+/*
         private CurrentInstance GetOrCreateTree(ModelNavigationNode modelNavigationNode)
         {
             var pathToType = modelNavigationNode.GetObjectMapPath();// GetMapPath(".", true);   // unique string to the type of this property
@@ -352,7 +483,7 @@ namespace CodeGenerationLibrary.Serialization
 
             return current;
         }
-
+*/
         private void RemoveObjectsWithPath(string path)
         {
             var deleteKeys = _objects
@@ -375,7 +506,7 @@ namespace CodeGenerationLibrary.Serialization
             return Activator.CreateInstance(type);
         }
 
-        protected virtual void SetValue(ModelNavigationNode source, ModelNavigationNode target, CurrentInstance instance, string value)
+        protected virtual void SetValue(ModelNavigationNode source, ModelNavigationNode target, object instance, string value)
         {
             var sourceProperty = source.ModelPropertyNode.Property;
             var targetProperty = target.ModelPropertyNode.Property;
@@ -386,11 +517,11 @@ namespace CodeGenerationLibrary.Serialization
 
             if (targetProperty.PropertyType == typeof(string))
             {
-                targetProperty.SetValue(instance.Instance, value);
+                targetProperty.SetValue(instance, value);
             }
             else if (targetProperty.PropertyType == typeof(Guid))
             {
-                targetProperty.SetValue(instance.Instance, Guid.Parse(value));
+                targetProperty.SetValue(instance, Guid.Parse(value));
             }
             else
             {
@@ -398,21 +529,21 @@ namespace CodeGenerationLibrary.Serialization
             }
         }
 
-        protected virtual void SetValue(ModelNavigationNode source, ModelNavigationNode target, CurrentInstance instance, int value)
+        protected virtual void SetValue(ModelNavigationNode source, ModelNavigationNode target, object instance, int value)
         {
             var sourceProperty = source.ModelPropertyNode.Property;
             var targetProperty = target.ModelPropertyNode.Property;
         }
 
-        protected virtual void SetNull(ModelNavigationNode source, ModelNavigationNode target, CurrentInstance instance)
+        protected virtual void SetNull(ModelNavigationNode source, ModelNavigationNode target, object instance)
         {
             var sourceProperty = source.ModelPropertyNode.Property;
             var targetProperty = target.ModelPropertyNode.Property;
 
-            targetProperty.SetValue(instance.Instance, null);
+            targetProperty.SetValue(instance, null);
         }
 
-        protected virtual void SetBoolean(ModelNavigationNode source, ModelNavigationNode target, CurrentInstance instance, bool value)
+        protected virtual void SetBoolean(ModelNavigationNode source, ModelNavigationNode target, object instance, bool value)
         {
             var sourceProperty = source.ModelPropertyNode.Property;
             var targetProperty = target.ModelPropertyNode.Property;
@@ -421,7 +552,7 @@ namespace CodeGenerationLibrary.Serialization
                 throw new NotImplementedException($"Conversions not supported at this moment");
             }
 
-            targetProperty.SetValue(instance.Instance, value);
+            targetProperty.SetValue(instance, value);
         }
 
 
@@ -432,6 +563,7 @@ namespace CodeGenerationLibrary.Serialization
             //public object Collection { get; set; }
             public bool IsCollection { get; set; }
             public object Instance { get; set; }
+            public System.Reflection.MethodInfo AddCollectionMethod { get; set; }
         }
     }
 

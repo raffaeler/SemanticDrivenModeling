@@ -130,8 +130,8 @@ namespace DeserializationConsole
             var p = new Program();
 
             //p.VendorToSupplier();
-            //p.SupplierToVendor();
-            p.MappingOrderToOnlineOrder();
+            p.SupplierToVendor();
+            //p.MappingOrderToOnlineOrder();
             //p.MappingOnlineOrderToOrder();
         }
 
