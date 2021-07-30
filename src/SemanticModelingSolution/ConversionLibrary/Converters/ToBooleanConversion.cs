@@ -27,6 +27,7 @@ namespace ConversionLibrary.Converters
 
         public ToBooleanConversion(ConversionContext conversionContext) : base(conversionContext) { }
 
+        public override Type TargetType => typeof(bool);
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 

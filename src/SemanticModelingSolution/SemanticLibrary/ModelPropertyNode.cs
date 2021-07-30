@@ -16,6 +16,8 @@ namespace SemanticLibrary
         public ModelTypeNode Parent { get; set; }
         public string Name => Property?.Name;
         public PropertyInfo Property { get; set; }
+        public string PropertyName => Property.Name;
+        public string PropertyTypeName => Property.PropertyType.Name;
         public PropertyKind PropertyKind { get; set; }
 
         /// <summary>

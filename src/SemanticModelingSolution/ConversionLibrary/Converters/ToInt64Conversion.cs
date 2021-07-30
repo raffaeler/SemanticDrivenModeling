@@ -29,6 +29,7 @@ namespace ConversionLibrary.Converters
 
         public ToInt64Conversion(ConversionContext conversionContext) : base(conversionContext) { }
 
+        public override Type TargetType => typeof(Int64);
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 

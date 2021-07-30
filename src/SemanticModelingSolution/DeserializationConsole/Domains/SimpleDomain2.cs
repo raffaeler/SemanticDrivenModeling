@@ -23,6 +23,7 @@ namespace SimpleDomain2
                             Id = Guid.NewGuid(),
                             ProductName = "Pesto alla genovese",
                             ProductCode = "00AA0011",
+                            Expiry = DateTimeOffset.Now,
                             
                             CustomerId = Guid.NewGuid(),
                             CustomerName = "Helios",
@@ -40,7 +41,8 @@ namespace SimpleDomain2
                             Id = Guid.NewGuid(),
                             ProductName = "Basilico",
                             ProductCode = "00AA0012",
-                            
+                            Expiry = DateTimeOffset.Now,
+
                             CustomerId = Guid.NewGuid(),
                             CustomerName = "Astra",
                             Street = "Salita dei Capuccini",
@@ -114,6 +116,8 @@ namespace SimpleDomain2
         public Guid Id { get; set; }
         public string ProductName { get; set; }
         public string ProductCode { get; set; }
+        public DateTimeOffset Expiry { get; set; }
+
 
         public Guid CustomerId { get; set; }
         public string CustomerName { get; set; }

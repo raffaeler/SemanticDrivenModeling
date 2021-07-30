@@ -31,6 +31,7 @@ namespace ConversionLibrary.Converters
 
         public ToUInt32Conversion(ConversionContext conversionContext) : base(conversionContext) { }
 
+        public override Type TargetType => typeof(UInt32);
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 

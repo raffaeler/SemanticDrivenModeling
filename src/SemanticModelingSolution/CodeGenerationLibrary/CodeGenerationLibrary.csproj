@@ -12,6 +12,7 @@
 
 
     <ItemGroup>
+      <ProjectReference Include="..\ConversionLibrary\ConversionLibrary.csproj" />
       <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
     </ItemGroup>
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConversionLibrary.Converters
 {
-    public class ToFloatConversion : ConversionBase, IConversion
+    public class ToSingleConversion : ConversionBase, IConversion
     {
         private Type[] _allowed => new Type[]
         {
@@ -25,8 +25,9 @@ namespace ConversionLibrary.Converters
             typeof(UInt16)
         };
 
-        public ToFloatConversion(ConversionContext conversionContext) : base(conversionContext) { }
+        public ToSingleConversion(ConversionContext conversionContext) : base(conversionContext) { }
 
+        public override Type TargetType => typeof(float);
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 

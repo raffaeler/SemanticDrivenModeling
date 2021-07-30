@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConversionLibrary.Converters
 {
-    public class ConversionBase
+    public abstract class ConversionBase
     {
         protected readonly ConversionContext _conversionContext;
 
@@ -38,6 +38,7 @@ namespace ConversionLibrary.Converters
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
         };
 
+        public abstract Type TargetType { get; }
         public virtual Type[] LossyOrDangerous => Array.Empty<Type>();
 
         public virtual string GuidFormat { get; set; }
@@ -57,7 +58,5 @@ namespace ConversionLibrary.Converters
         protected virtual TimeSpanStyles GetTimeSpanStyles() => _conversionContext?.TimeSpanStyles?.Invoke(this) ?? TimeSpanStyles;
         protected virtual NumberStyles GetNumberStyles() => _conversionContext?.NumberStyles?.Invoke(this) ?? NumberStyles;
         protected virtual IFormatProvider GetFormatProvider() => _conversionContext?.FormatProvider?.Invoke(this) ?? FormatProvider;
-
-
     }
 }

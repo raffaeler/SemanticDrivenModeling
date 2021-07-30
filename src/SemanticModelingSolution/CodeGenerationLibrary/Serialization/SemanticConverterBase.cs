@@ -18,6 +18,7 @@ namespace CodeGenerationLibrary.Serialization
         private Stack<string> _collectionElementStack;
         private Stack<JsonSegment> _sourcePath;
         private Dictionary<string, CurrentInstance> _objects;
+        private ConversionGenerator _conversionGenerator;
 
         protected ScoredTypeMapping _map;
         protected Dictionary<string, ScoredPropertyMapping<ModelNavigationNode>> _lookup = new();
@@ -35,6 +36,17 @@ namespace CodeGenerationLibrary.Serialization
                 //var targetPath = propertyMapping.Target.GetMapPath();
                 _lookup[sourcePath] = propertyMapping;
             }
+
+            var context = new ConversionLibrary.ConversionContext()
+            {
+                OnNotSupported = (converter, value) =>
+                {
+                    Console.WriteLine($"Conversion of a value from {value} To {converter.TargetType.Name} is not supported");
+                    return converter.TargetType.IsValueType ? Activator.CreateInstance(converter.TargetType) : null;
+                },
+            };
+
+            _conversionGenerator = new(context);   // the new is here in order to recycle the generator cache
         }
 
         protected string SourceTypeName => _map.SourceModelTypeNode.TypeName;
@@ -136,15 +148,21 @@ namespace CodeGenerationLibrary.Serialization
                     case JsonTokenType.String:
                         {
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            var value = reader.GetString();
+                            //var value = reader.GetString();
                             if (nodeMapping != null)
                             {
                                 //var instance = GetOrCreateTree(nodeMapping.Target);
                                 var instance = Materialize(nodeMapping);
-                                SetValue(nodeMapping, instance, value);
+                                var converter = _conversionGenerator.GetConverter(nodeMapping);
+                                converter(ref reader, instance);
+                                //SetValue(nodeMapping, instance, value);
+                            }
+                            else
+                            {
+                                reader.Skip();
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, value);
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping);
                             _sourcePath.Pop();
                             break;
                         }
@@ -152,12 +170,18 @@ namespace CodeGenerationLibrary.Serialization
                     case JsonTokenType.Number:
                         {
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            reader.Skip();
+                            //reader.Skip();
                             if (nodeMapping != null)
                             {
                                 //var instance = GetOrCreateTree(nodeMapping.Target);
                                 var instance = Materialize(nodeMapping);
+                                var converter = _conversionGenerator.GetConverter(nodeMapping);
+                                converter(ref reader, instance);
                                 //SetValue(nodeMapping, instance, ...);
+                            }
+                            else
+                            {
+                                reader.Skip();
                             }
 
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "(number)");
@@ -176,6 +200,10 @@ namespace CodeGenerationLibrary.Serialization
                                 var instance = Materialize(nodeMapping);
                                 SetNull(nodeMapping, instance);
                             }
+                            //else
+                            //{
+                            //    reader.Skip();
+                            //}
 
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "null");
                             _sourcePath.Pop();
@@ -190,8 +218,14 @@ namespace CodeGenerationLibrary.Serialization
                             {
                                 //var instance = GetOrCreateTree(nodeMapping.Target);
                                 var instance = Materialize(nodeMapping);
-                                SetBoolean(nodeMapping, instance, true);
+                                var converter = _conversionGenerator.GetConverter(nodeMapping);
+                                converter(ref reader, instance);
+                                //SetBoolean(nodeMapping, instance, true);
                             }
+                            //else
+                            //{
+                            //    reader.Skip();
+                            //}
 
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "true");
                             _sourcePath.Pop();
@@ -206,8 +240,14 @@ namespace CodeGenerationLibrary.Serialization
                             {
                                 //var instance = GetOrCreateTree(nodeMapping.Target);
                                 var instance = Materialize(nodeMapping);
-                                SetBoolean(nodeMapping, instance, false);
+                                var converter = _conversionGenerator.GetConverter(nodeMapping);
+                                converter(ref reader, instance);
+                                //SetBoolean(nodeMapping, instance, false);
                             }
+                            //else
+                            //{
+                            //    reader.Skip();
+                            //}
 
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "false");
                             _sourcePath.Pop();

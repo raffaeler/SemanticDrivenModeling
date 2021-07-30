@@ -10,6 +10,7 @@ namespace ConversionLibrary.Converters
     {
         public ToStringConversion(ConversionContext conversionContext) : base(conversionContext) { }
 
+        public override Type TargetType => typeof(string);
         public virtual bool CanConvertFrom(Type type) => BasicTypes.Contains(type);
 
         public virtual string From(string value) => value;

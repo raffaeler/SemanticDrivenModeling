@@ -31,6 +31,7 @@ namespace ConversionLibrary.Converters
 
         public ToUInt16Conversion(ConversionContext conversionContext) : base(conversionContext) { }
 
+        public override Type TargetType => typeof(UInt16);
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 

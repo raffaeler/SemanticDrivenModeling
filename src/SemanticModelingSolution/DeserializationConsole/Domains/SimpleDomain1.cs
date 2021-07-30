@@ -25,7 +25,8 @@ namespace SimpleDomain1
                             {
                                 Id = Guid.NewGuid(),
                                 Name = "Mayonnaise",
-                                Description = "Regular mayonnaise"
+                                Description = "Regular mayonnaise",
+                                Expiry = DateTime.Now,
                             },
                             Customer = new Company()
                             {
@@ -53,7 +54,8 @@ namespace SimpleDomain1
                             {
                                 Id = Guid.NewGuid(),
                                 Name = "Ketchup",
-                                Description = "Tomato Ketchup"
+                                Description = "Tomato Ketchup",
+                                Expiry = DateTime.Now,
                             },
                             Customer = new Company()
                             {
@@ -89,7 +91,8 @@ namespace SimpleDomain1
                             {
                                 Id = Guid.NewGuid(),
                                 Name = "Tonno in scatola",
-                                Description = "Tuna"
+                                Description = "Tuna",
+                                Expiry = DateTime.Now,
                             },
                             Customer = new Company()
                             {
@@ -117,7 +120,8 @@ namespace SimpleDomain1
                             {
                                 Id = Guid.NewGuid(),
                                 Name = "Salmon",
-                                Description = "Smoked salmon"
+                                Description = "Smoked salmon",
+                                Expiry = DateTime.Now,
                             },
                             Customer = new Company()
                             {
@@ -169,7 +173,7 @@ namespace SimpleDomain1
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-
+        public DateTime Expiry { get; set; }
     }
 
     public class Company

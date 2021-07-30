@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConversionLibrary.Converters
 {
-    public class ToSbyteConversion : ConversionBase, IConversion
+    public class ToSByteConversion : ConversionBase, IConversion
     {
         private Type[] _allowed = new Type[]
         {
@@ -25,8 +25,9 @@ namespace ConversionLibrary.Converters
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
         };
 
-        public ToSbyteConversion(ConversionContext conversionContext) : base(conversionContext) { }
+        public ToSByteConversion(ConversionContext conversionContext) : base(conversionContext) { }
 
+        public override Type TargetType => typeof(sbyte);
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
