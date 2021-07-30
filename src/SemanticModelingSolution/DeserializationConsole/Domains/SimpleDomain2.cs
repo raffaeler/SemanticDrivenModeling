@@ -67,7 +67,8 @@ namespace SimpleDomain2
                             Id = Guid.NewGuid(),
                             ProductName = "Acciuga fresca",
                             ProductCode = "00AB0011",
-                            
+                            //Expiry = DateTimeOffset.Now,  // default value!
+
                             CustomerId = Guid.NewGuid(),
                             CustomerName = "Mare e salute",
                             Street = "via Fegina",
@@ -83,7 +84,8 @@ namespace SimpleDomain2
                             Id = Guid.NewGuid(),
                             ProductName = "Orata fresca",
                             ProductCode = "00AB0012",
-                            
+                            Expiry = new DateTimeOffset(2022, 02, 26, 2, 3, 4, TimeSpan.FromHours(1)),
+
                             CustomerId = Guid.NewGuid(),
                             CustomerName = "Mare e salute",
                             Street = "via Fegina",

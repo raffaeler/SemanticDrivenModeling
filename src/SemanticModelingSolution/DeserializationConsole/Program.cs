@@ -109,12 +109,13 @@ namespace DeserializationConsole
         static void Main(string[] args)
         {
             var p = new Program();
+            //new VerifyDeserialization().Test();
 
             //p.MappingVendorToSupplier();
-            p.MappingSupplierToVendor();
+            //p.MappingSupplierToVendor();
 
             //p.MappingOrderToOnlineOrder();
-            //p.MappingOnlineOrderToOrder();
+            p.MappingOnlineOrderToOrder();
         }
 
         public void MappingVendorToSupplier()
@@ -155,7 +156,9 @@ namespace DeserializationConsole
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
             var utilities = new MappingUtilities();
-            var targetObjects = utilities.OrderToOnlineOrder(m1, m2, sourceObjects);
+            var targetObjects = utilities.Transform<SimpleDomain1.Order, SimpleDomain2.OnlineOrder>("Order", m1, m2, sourceObjects);
+
+            //var targetObjects = utilities.OrderToOnlineOrder(m1, m2, sourceObjects);
         }
 
 
@@ -169,7 +172,9 @@ namespace DeserializationConsole
 
             var sourceObjects = SimpleDomain2.Samples.GetOrders();
             var utilities = new MappingUtilities();
-            var targetObjects = utilities.OnlineOrderToOrder(m2, m1, sourceObjects);
+
+            var targetObjects = utilities.Transform<SimpleDomain2.OnlineOrder, SimpleDomain1.Order>("OnlineOrder", m2, m1, sourceObjects);
+            //var targetObjects = utilities.OnlineOrderToOrder(m2, m1, sourceObjects);
 
         }
 

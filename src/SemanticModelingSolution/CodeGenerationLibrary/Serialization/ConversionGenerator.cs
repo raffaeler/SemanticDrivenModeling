@@ -47,9 +47,12 @@ namespace CodeGenerationLibrary.Serialization
         private Dictionary<string, MethodInfo> _readerGetValue;
         private Dictionary<string, Type> _converterTypes;
         private ConversionEngine _conversionEngine;
-        private Dictionary<string, SetPropertyDelegate> _cache;
+        private Dictionary<string, SetPropertyDelegate> _cacheSetProperty;
+        private Dictionary<string, GetConvertedValueDelegate> _cacheGetValue;
+        private PropertyInfo _readerTokenType;
 
         public delegate void SetPropertyDelegate(ref Utf8JsonReader reader, object instance);
+        public delegate object GetConvertedValueDelegate(ref Utf8JsonReader reader);
 
         public ConversionGenerator(ConversionContext conversionContext = null)
         {
@@ -81,6 +84,7 @@ namespace CodeGenerationLibrary.Serialization
 
             var reader = typeof(Utf8JsonReader);
 
+            _readerTokenType = reader.GetProperty("TokenType");
             _readerGetValue = new Dictionary<string, MethodInfo>()
             {
                 { "Boolean",            reader.GetMethod("GetBoolean")          },
@@ -129,13 +133,14 @@ namespace CodeGenerationLibrary.Serialization
                 { "Guid",               typeof(ToGuidConversion)               },
             };
 
-            _cache = new();
+            _cacheSetProperty = new();
+            _cacheGetValue = new();
         }
 
         public SetPropertyDelegate GetConverter(ScoredPropertyMapping<ModelNavigationNode> nodeMapping)
         {
             var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.ModelPropertyNode.Property.Name}";
-            if (!_cache.TryGetValue(path, out var lambda))
+            if (!_cacheSetProperty.TryGetValue(path, out var lambda))
             {
                 var expression = GenerateConversion(
                     nodeMapping.Source.ModelPropertyNode.PropertyTypeName,
@@ -154,6 +159,11 @@ namespace CodeGenerationLibrary.Serialization
             if (!_basicTypes.TryGetValue(sourceTypeName, out Type sourceType))
             {
                 throw new ArgumentException($"The type {sourceTypeName} is not valid for converting data in a json source");
+            }
+
+            if (!_basicTypes.TryGetValue(targetPropertyTypeName, out Type targetPropertyType))
+            {
+                throw new ArgumentException($"The type {targetPropertyTypeName} is not valid for converting data in a json source");
             }
 
             if (!_readerGetValue.TryGetValue(sourceTypeName, out MethodInfo readerMethod))
@@ -180,15 +190,83 @@ namespace CodeGenerationLibrary.Serialization
 
             var readerCall = Expression.Call(readerInputParameter, readerMethod);
             var conversionCall = Expression.Call(castedConverterInstance, fromMethod, readerCall);
+
+            // if JsonTokenType is null, I assign the default(targetPropertyType) to the property
+            var ternaryIf = Expression.Condition(
+                Expression.MakeBinary(ExpressionType.Equal,
+                    Expression.MakeMemberAccess(readerInputParameter, _readerTokenType),Expression.Constant(JsonTokenType.Null)),
+                Expression.Default(targetPropertyType),
+                conversionCall);
+
             var propertyAssignment = Expression.Assign(
                 Expression.Property(castedInputObject, propertyName),
-                conversionCall);
+                ternaryIf);
 
             var lambda = Expression.Lambda<SetPropertyDelegate>(propertyAssignment, readerInputParameter, inputObject);
             return lambda;
         }
 
+        public GetConvertedValueDelegate GetValueConverter(ScoredPropertyMapping<ModelNavigationNode> nodeMapping)
+        {
+            var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.ModelPropertyNode.Property.Name}";
+            if (!_cacheGetValue.TryGetValue(path, out var lambda))
+            {
+                var expression = GenerateValueConversion(
+                    nodeMapping.Source.ModelPropertyNode.PropertyTypeName,
+                    nodeMapping.Target.ModelPropertyNode.PropertyTypeName);
+                lambda = expression.Compile();
+            }
 
+            return lambda;
+        }
+
+        private Expression<GetConvertedValueDelegate> GenerateValueConversion(string sourceTypeName, string targetPropertyTypeName)
+        {
+            if (!_basicTypes.TryGetValue(sourceTypeName, out Type sourceType))
+            {
+                throw new ArgumentException($"The type {sourceTypeName} is not valid for converting data in a json source");
+            }
+
+            if (!_basicTypes.TryGetValue(targetPropertyTypeName, out Type targetPropertyType))
+            {
+                throw new ArgumentException($"The type {targetPropertyTypeName} is not valid for converting data in a json source");
+            }
+
+            if (!_readerGetValue.TryGetValue(sourceTypeName, out MethodInfo readerMethod))
+            {
+                throw new ArgumentException($"The type {sourceTypeName} is not valid for reading data from a json source");
+            }
+
+            if (!_conversionEngine.ConversionStrings.TryGetValue(targetPropertyTypeName, out IConversion targetConverter))
+            {
+                throw new ArgumentException($"There is no converter instance for the target type {targetPropertyTypeName}");
+            }
+
+            if (!_converterTypes.TryGetValue(targetPropertyTypeName, out Type converterType))
+            {
+                throw new ArgumentException($"There is no converter type for the target type {targetPropertyTypeName}");
+            }
+
+            var readerInputParameter = Expression.Parameter(typeof(Utf8JsonReader).MakeByRefType(), "reader");
+            var converterInstance = Expression.Constant(targetConverter);
+            var castedConverterInstance = Expression.Convert(converterInstance, converterType);
+            var fromMethod = converterType.GetMethod("From", new Type[] { sourceType });
+
+            var readerCall = Expression.Call(readerInputParameter, readerMethod);
+            var conversionCall = Expression.Call(castedConverterInstance, fromMethod, readerCall);
+
+            // if JsonTokenType is null, I assign the default(targetPropertyType) to the property
+            var ternaryIf = Expression.Condition(
+                Expression.MakeBinary(ExpressionType.Equal,
+                    Expression.MakeMemberAccess(readerInputParameter, _readerTokenType), Expression.Constant(JsonTokenType.Null)),
+                Expression.Default(targetPropertyType),
+                conversionCall);
+
+            var resultCast = Expression.Convert(ternaryIf, typeof(object));
+
+            var lambda = Expression.Lambda<GetConvertedValueDelegate>(resultCast, readerInputParameter);
+            return lambda;
+        }
 
         //public void x(ref Utf8JsonReader reader)
         //{

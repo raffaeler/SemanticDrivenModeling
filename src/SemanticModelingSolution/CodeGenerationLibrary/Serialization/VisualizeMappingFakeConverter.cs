@@ -11,14 +11,13 @@ using SemanticLibrary;
 
 namespace CodeGenerationLibrary.Serialization
 {
-    public class SemanticConverterBase<T> : JsonConverter<T>
+    public class VisualizeMappingFakeConverter<T> : JsonConverter<T>
     {
         private const string _arrayItemPlaceholder = "$";
 
         private Stack<string> _collectionElementStack;
         private Stack<JsonSegment> _sourcePath;
         private ConversionGenerator _conversionGenerator;
-        private Dictionary<string, CurrentInstance> _objects;
 
         protected ScoredTypeMapping _map;
         protected Dictionary<string, ScoredPropertyMapping<ModelNavigationNode>> _lookup = new();
@@ -27,7 +26,7 @@ namespace CodeGenerationLibrary.Serialization
         /// Important note: the instance of the JsonConverter is recycled during the same deserialization
         /// therefore anything that should not be recycled must be re-initialized in the Read/Write method
         /// </summary>
-        public SemanticConverterBase(ScoredTypeMapping map)
+        public VisualizeMappingFakeConverter(ScoredTypeMapping map)
         {
             _map = map;
             foreach (var propertyMapping in _map.PropertyMappings)
@@ -56,7 +55,7 @@ namespace CodeGenerationLibrary.Serialization
         {
             _collectionElementStack = new();
             _sourcePath = new();
-            _objects = new();
+            //_objects = new();
         }
 
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -151,38 +150,40 @@ namespace CodeGenerationLibrary.Serialization
 
                     case JsonTokenType.String:
                         {
+                            string stringValue = string.Empty;
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
                             if (nodeMapping != null)
                             {
-                                var instance = Materialize(nodeMapping);
-                                var converter = _conversionGenerator.GetConverter(nodeMapping);
-                                converter(ref reader, instance);
+                                var converter = _conversionGenerator.GetValueConverter(nodeMapping);
+                                var value = converter(ref reader);
+                                stringValue = value.ToString();
                             }
                             else
                             {
                                 reader.Skip();
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping);
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, stringValue);
                             _sourcePath.Pop();
                             break;
                         }
 
                     case JsonTokenType.Number:
                         {
+                            string stringValue = string.Empty;
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
                             if (nodeMapping != null)
                             {
-                                var instance = Materialize(nodeMapping);
-                                var converter = _conversionGenerator.GetConverter(nodeMapping);
-                                converter(ref reader, instance);
+                                var converter = _conversionGenerator.GetValueConverter(nodeMapping);
+                                var value = converter(ref reader);
+                                stringValue = value.ToString();
                             }
                             else
                             {
                                 reader.Skip();
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "(number)");
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, stringValue);
                             _sourcePath.Pop();
                             break;
                         }
@@ -209,45 +210,46 @@ namespace CodeGenerationLibrary.Serialization
 
                     case JsonTokenType.True:
                         {
+                            string stringValue = "(true)";
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
                             if (nodeMapping != null)
                             {
-                                var instance = Materialize(nodeMapping);
-                                var converter = _conversionGenerator.GetConverter(nodeMapping);
-                                converter(ref reader, instance);
+                                var converter = _conversionGenerator.GetValueConverter(nodeMapping);
+                                var value = converter(ref reader);
+                                stringValue = value.ToString();
                             }
                             else
                             {
                                 reader.Skip();
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "true");
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, stringValue);
                             _sourcePath.Pop();
                         }
                         break;
 
                     case JsonTokenType.False:
                         {
+                            string stringValue = "(false)";
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
                             if (nodeMapping != null)
                             {
-                                var instance = Materialize(nodeMapping);
-                                var converter = _conversionGenerator.GetConverter(nodeMapping);
-                                converter(ref reader, instance);
+                                var converter = _conversionGenerator.GetValueConverter(nodeMapping);
+                                var value = converter(ref reader);
+                                stringValue = value.ToString();
                             }
                             else
                             {
                                 reader.Skip();
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "false");
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, stringValue);
                             _sourcePath.Pop();
                         }
                         break;
 
                     default:
                         {
-                            Debug.Fail($"Unsupported JsonTokenType == {reader.TokenType}");
                             var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
                             if (nodeMapping != null)
                             {
@@ -270,6 +272,15 @@ namespace CodeGenerationLibrary.Serialization
             Console.WriteLine($"TesterConverter.Write> ");
             throw new NotSupportedException("This converter can only be used to deserialize");
         }
+
+        protected virtual void RemoveObjectsWithPath(string path)
+        {
+        }
+
+        private object GetDefaultForType(Type type) =>
+            type.IsValueType ? Activator.CreateInstance(type) : null;
+
+        protected virtual T RootResult => default(T);
 
         protected virtual void LogState(JsonTokenType jsonTokenType, int depth,
             string sourcePath, ScoredPropertyMapping<ModelNavigationNode> nodeMapping,
@@ -302,153 +313,6 @@ namespace CodeGenerationLibrary.Serialization
             var sourcePath = string.Join(".", _sourcePath.Reverse().Select(s => s.Name));
             _lookup.TryGetValue(sourcePath, out var node);
             return (sourcePath, node);
-        }
-
-        public object Materialize(ScoredPropertyMapping<ModelNavigationNode> scoredPropertyMapping)
-        {
-            //var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
-            //var targetPath = scoredPropertyMapping.Target.GetObjectMapPath();
-            //Console.WriteLine();
-            //Console.WriteLine($"Source: {sourcePath}");
-            //Console.WriteLine($"Target: {targetPath}");
-
-            var temp = scoredPropertyMapping.Target;
-            bool isFirst = true;
-            object result = null;
-            object lastCreatedInstance = null;
-            while (temp != null)
-            {
-                var isCollection = temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain ||
-                    temp.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToUnknown;
-
-                object instance;
-
-                var path = temp.GetObjectMapPath();
-                if (_objects.TryGetValue(path, out CurrentInstance cached))
-                {
-                    var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
-                    if (sourcePath.Contains(_arrayItemPlaceholder))
-                    {
-                        cached.SourceCollectionElementPath = sourcePath;
-                    }
-
-                    instance = cached.Instance;
-                    if (isCollection)
-                    {
-                        cached.AddCollectionMethod.Invoke(instance, new object[] { lastCreatedInstance });
-                    }
-                    else
-                    {
-                        temp.ModelPropertyNode.Property.SetValue(instance, lastCreatedInstance);
-                    }
-
-                    return isFirst ? instance : result;
-                }
-
-                if (isCollection)
-                {
-                    var property = temp.ModelPropertyNode.Property;
-                    var collectionType = property.PropertyType;
-                    instance = CreateInstance(collectionType);
-                    var addMethod = collectionType.GetMethod("Add");
-                    addMethod.Invoke(instance, new object[] { lastCreatedInstance });
-                    _objects[path] = new CurrentInstance
-                    {
-                        Instance = instance,
-                        IsCollection = true,
-                        SourceCollectionElementPath = scoredPropertyMapping.Source.GetObjectMapPath(),
-                        AddCollectionMethod = addMethod,
-                    };
-
-                    // root object:
-                    // the while(...) navigation never returns the root object because
-                    // the navigation relies on the properties, and there is no property pointing to the root
-                    if (temp.Previous == null)
-                    {
-                        var rootType = temp.ModelPropertyNode.Parent.Type;
-                        object rootInstance;
-                        if (_objects.TryGetValue(rootType.Name, out CurrentInstance cachedRoot))
-                        {
-                            rootInstance = cachedRoot.Instance;
-                        }
-                        else
-                        {
-                            rootInstance = CreateInstance(rootType);
-                            _objects[rootType.Name] = new CurrentInstance
-                            {
-                                Instance = rootInstance,
-                                IsCollection = false,
-                                SourceCollectionElementPath = string.Empty,
-                            };
-                        }
-
-                        property.SetValue(rootInstance, instance);
-                    }
-                }
-                else
-                {
-                    var parentType = temp.ModelPropertyNode.Parent.Type;
-                    instance = CreateInstance(parentType);
-                    var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
-
-                    _objects[path] = new CurrentInstance
-                    {
-                        Instance = instance,
-                        IsCollection = false,
-                        SourceCollectionElementPath = sourcePath.Contains(_arrayItemPlaceholder) ? sourcePath : string.Empty,
-                    };
-
-                    if (!isFirst)
-                    {
-                        var property = temp.ModelPropertyNode.Property;
-                        property.SetValue(instance, lastCreatedInstance);
-                    }
-                }
-
-                //Console.WriteLine($"{parentType.Name}.{property.Name} (IsCollection: {isCollection})");
-
-                if (isFirst)
-                {
-                    result = instance;
-                    isFirst = false;
-                }
-
-                temp = temp.Previous;
-                lastCreatedInstance = instance;
-            }
-
-            return result;
-        }
-
-        protected virtual void RemoveObjectsWithPath(string path)
-        {
-            var deleteKeys = _objects
-                .Where(i => i.Value.SourceCollectionElementPath.StartsWith(path) && i.Key.Contains(_arrayItemPlaceholder))
-                .Select(i => i.Key)
-                .ToArray();
-
-            //var deleteKeys = _objects.Keys.Where(k => k.StartsWith(path)).ToArray();
-            foreach (var dk in deleteKeys)
-            {
-                //if (dk == path)
-                //    _objects[dk].Instance = null;
-                //else
-                _objects.Remove(dk);
-            }
-        }
-
-        protected virtual T RootResult => (T)_objects[typeof(T).Name].Instance;
-        protected virtual K CreateObject<K>() => Activator.CreateInstance<K>();
-        private object CreateInstance(Type type) => Activator.CreateInstance(type);
-        private object GetDefaultForType(Type type) =>
-            type.IsValueType ? Activator.CreateInstance(type) : null;
-
-        private record CurrentInstance
-        {
-            public string SourceCollectionElementPath { get; set; } = string.Empty;
-            public bool IsCollection { get; set; }
-            public object Instance { get; set; }
-            public System.Reflection.MethodInfo AddCollectionMethod { get; set; }
         }
 
         private record JsonSegment()
