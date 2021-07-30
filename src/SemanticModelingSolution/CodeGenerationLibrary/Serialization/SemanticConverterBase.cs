@@ -37,7 +37,7 @@ namespace CodeGenerationLibrary.Serialization
             }
         }
 
-        protected Type SourceType => _map.SourceModelTypeNode.Type;
+        protected string SourceTypeName => _map.SourceModelTypeNode.TypeName;
         protected bool LogObjectArrayEnabled { get; set; } = true;
 
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -80,7 +80,7 @@ namespace CodeGenerationLibrary.Serialization
                             var found = _sourcePath.TryPeek(out JsonSegment seg);
                             if (!found)
                             {
-                                _sourcePath.Push(new JsonSegment(SourceType.Name, false));
+                                _sourcePath.Push(new JsonSegment(SourceTypeName, false));
                             }
                             else if (seg.IsArray)
                             {
@@ -141,7 +141,7 @@ namespace CodeGenerationLibrary.Serialization
                             {
                                 //var instance = GetOrCreateTree(nodeMapping.Target);
                                 var instance = Materialize(nodeMapping);
-                                SetValue(nodeMapping.Source, nodeMapping.Target, instance, value);
+                                SetValue(nodeMapping, instance, value);
                             }
 
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, value);
@@ -157,7 +157,7 @@ namespace CodeGenerationLibrary.Serialization
                             {
                                 //var instance = GetOrCreateTree(nodeMapping.Target);
                                 var instance = Materialize(nodeMapping);
-                                //SetValue(nodeMapping.Source, nodeMapping.Target, instance, ...);
+                                //SetValue(nodeMapping, instance, ...);
                             }
 
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "(number)");
@@ -174,7 +174,7 @@ namespace CodeGenerationLibrary.Serialization
                             {
                                 //var instance = GetOrCreateTree(nodeMapping.Target);
                                 var instance = Materialize(nodeMapping);
-                                SetNull(nodeMapping.Source, nodeMapping.Target, instance);
+                                SetNull(nodeMapping, instance);
                             }
 
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "null");
@@ -190,7 +190,7 @@ namespace CodeGenerationLibrary.Serialization
                             {
                                 //var instance = GetOrCreateTree(nodeMapping.Target);
                                 var instance = Materialize(nodeMapping);
-                                SetBoolean(nodeMapping.Source, nodeMapping.Target, instance, true);
+                                SetBoolean(nodeMapping, instance, true);
                             }
 
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "true");
@@ -206,7 +206,7 @@ namespace CodeGenerationLibrary.Serialization
                             {
                                 //var instance = GetOrCreateTree(nodeMapping.Target);
                                 var instance = Materialize(nodeMapping);
-                                SetBoolean(nodeMapping.Source, nodeMapping.Target, instance, false);
+                                SetBoolean(nodeMapping, instance, false);
                             }
 
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "false");
@@ -408,10 +408,10 @@ namespace CodeGenerationLibrary.Serialization
         protected virtual K CreateObject<K>() => Activator.CreateInstance<K>();
         private object CreateInstance(Type type) => Activator.CreateInstance(type);
 
-        protected virtual void SetValue(ModelNavigationNode source, ModelNavigationNode target, object instance, string value)
+        protected virtual void SetValue(ScoredPropertyMapping<ModelNavigationNode> scoredPropertyMapping, object instance, string value)
         {
-            var sourceProperty = source.ModelPropertyNode.Property;
-            var targetProperty = target.ModelPropertyNode.Property;
+            var sourceProperty = scoredPropertyMapping.Source.ModelPropertyNode.Property;
+            var targetProperty = scoredPropertyMapping.Target.ModelPropertyNode.Property;
             if (targetProperty.PropertyType != typeof(string) && targetProperty.PropertyType != typeof(Guid))
             {
                 throw new NotImplementedException($"Conversions not supported at this moment");
@@ -431,24 +431,24 @@ namespace CodeGenerationLibrary.Serialization
             }
         }
 
-        protected virtual void SetValue(ModelNavigationNode source, ModelNavigationNode target, object instance, int value)
+        protected virtual void SetValue(ScoredPropertyMapping<ModelNavigationNode> scoredPropertyMapping, object instance, int value)
         {
-            var sourceProperty = source.ModelPropertyNode.Property;
-            var targetProperty = target.ModelPropertyNode.Property;
+            var sourceProperty = scoredPropertyMapping.Source.ModelPropertyNode.Property;
+            var targetProperty = scoredPropertyMapping.Target.ModelPropertyNode.Property;
         }
 
-        protected virtual void SetNull(ModelNavigationNode source, ModelNavigationNode target, object instance)
+        protected virtual void SetNull(ScoredPropertyMapping<ModelNavigationNode> scoredPropertyMapping, object instance)
         {
-            var sourceProperty = source.ModelPropertyNode.Property;
-            var targetProperty = target.ModelPropertyNode.Property;
+            var sourceProperty = scoredPropertyMapping.Source.ModelPropertyNode.Property;
+            var targetProperty = scoredPropertyMapping.Target.ModelPropertyNode.Property;
 
             targetProperty.SetValue(instance, null);
         }
 
-        protected virtual void SetBoolean(ModelNavigationNode source, ModelNavigationNode target, object instance, bool value)
+        protected virtual void SetBoolean(ScoredPropertyMapping<ModelNavigationNode> scoredPropertyMapping, object instance, bool value)
         {
-            var sourceProperty = source.ModelPropertyNode.Property;
-            var targetProperty = target.ModelPropertyNode.Property;
+            var sourceProperty = scoredPropertyMapping.Source.ModelPropertyNode.Property;
+            var targetProperty = scoredPropertyMapping.Target.ModelPropertyNode.Property;
             if (targetProperty.PropertyType != typeof(bool))
             {
                 throw new NotImplementedException($"Conversions not supported at this moment");

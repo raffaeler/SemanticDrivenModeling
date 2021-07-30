@@ -12,7 +12,6 @@ namespace SemanticLibrary
 {
     public class ModelPropertyNode : IModelNode, IEqualityComparer<ModelPropertyNode>, IName
     {
-        private ModelTypeNode _navigationNode;
         public string OwnerTypeName => Parent.TypeName;
         public ModelTypeNode Parent { get; set; }
         public string Name => Property?.Name;
@@ -21,21 +20,7 @@ namespace SemanticLibrary
 
         /// <summary>
         /// </summary>
-        public ModelTypeNode NavigationNode
-        {
-            get => _navigationNode;
-            set
-            {
-                _navigationNode = value;
-                OnNavigationModeChanged();
-            }
-        }
-
-        private void OnNavigationModeChanged()
-        {
-            // update FlattenedSubProperties
-            if (_navigationNode == null) return;
-        }
+        public ModelTypeNode NavigationNode { get; set; }
 
         ///// <summary>
         ///// This collection contains the list of propertis of the One-To-One 
@@ -57,14 +42,6 @@ namespace SemanticLibrary
         public IEnumerable<Concept> CandidateConcepts => TermToConcepts.Select(c => c.Concept);
         public IEnumerable<string> CandidateConceptNames => TermToConcepts.Select(c => c.Concept.Name);
         public IEnumerable<string> CandidateConceptSpecifierNames => TermToConcepts.Select(c => c.ConceptSpecifier.Name);
-
-        //public IEnumerable<TermToConcept> EnrichedTermToConcepts
-        //{
-        //    get
-        //    {
-        //        if(PropertyKind == PropertyKind.BasicType)
-        //    }
-        //}
 
         private string UniqueString => $"{Parent?.Type?.FullName}.{Property?.Name}";
 
