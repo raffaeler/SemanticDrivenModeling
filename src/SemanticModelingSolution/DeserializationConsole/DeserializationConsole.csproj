@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CodeGenerationLibrary\CodeGenerationLibrary.csproj" />
     <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
     <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />
+    <ProjectReference Include="..\MaterializerLibrary\MaterializerLibrary.csproj" />
     <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
     <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
   </ItemGroup>

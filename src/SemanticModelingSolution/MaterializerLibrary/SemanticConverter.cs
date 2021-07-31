@@ -11,7 +11,7 @@ using SemanticLibrary;
 
 namespace CodeGenerationLibrary.Serialization
 {
-    public class SemanticConverterBase<T> : JsonConverter<T>
+    public class SemanticConverter<T> : JsonConverter<T>
     {
         private const string _arrayItemPlaceholder = "$";
 
@@ -27,7 +27,7 @@ namespace CodeGenerationLibrary.Serialization
         /// Important note: the instance of the JsonConverter is recycled during the same deserialization
         /// therefore anything that should not be recycled must be re-initialized in the Read/Write method
         /// </summary>
-        public SemanticConverterBase(ScoredTypeMapping map)
+        public SemanticConverter(ScoredTypeMapping map)
         {
             _map = map;
             foreach (var propertyMapping in _map.PropertyMappings)

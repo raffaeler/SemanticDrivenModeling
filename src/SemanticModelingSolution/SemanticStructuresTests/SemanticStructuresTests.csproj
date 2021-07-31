@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CodeGenerationLibrary\CodeGenerationLibrary.csproj" />
+        <ProjectReference Include="..\MaterializerLibrary\MaterializerLibrary.csproj" />
         <ProjectReference Include="..\ConversionLibrary\ConversionLibrary.csproj" />
         <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
         <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />

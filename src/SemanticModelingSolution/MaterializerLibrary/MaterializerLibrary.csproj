@@ -16,7 +16,4 @@
       <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
     </ItemGroup>
 
-
-    <Import Project="..\SharedGenerators\SharedGenerators.projitems" Label="Shared" />
-
 </Project>

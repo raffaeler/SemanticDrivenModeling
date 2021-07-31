@@ -17,8 +17,6 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedGenerators", "SharedG
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MappingConsole", "MappingConsole\MappingConsole.csproj", "{268B3C61-4642-4845-918A-FFF241198B5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGenerationLibrary", "CodeGenerationLibrary\CodeGenerationLibrary.csproj", "{5BF71706-E8D0-48D8-9489-3BA3399E9C9C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthwindModels", "NorthwindModels\NorthwindModels.csproj", "{7A5C0A90-7F86-4B81-8A29-426DA92CCD9D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DomainSamples", "DomainSamples", "{945852E0-BFB0-4F1B-B569-D096455B0C7B}"
@@ -29,16 +27,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{139EDF24
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErpDomain", "ErpDomain\ErpDomain.csproj", "{AF2C8226-102D-4F52-82C7-3A467B88DFDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeserializationConsole", "DeserializationConsole\DeserializationConsole.csproj", "{EA62B947-69E1-4811-BD48-FAC96E77315E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeserializationConsole", "DeserializationConsole\DeserializationConsole.csproj", "{EA62B947-69E1-4811-BD48-FAC96E77315E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConversionLibrary", "ConversionLibrary\ConversionLibrary.csproj", "{50F70773-BB56-44DB-954C-A4AFEBAA2310}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConversionLibrary", "ConversionLibrary\ConversionLibrary.csproj", "{50F70773-BB56-44DB-954C-A4AFEBAA2310}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaterializerLibrary", "MaterializerLibrary\MaterializerLibrary.csproj", "{FF9372AF-88BE-4F8D-824D-3B2A8545119B}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SharedGenerators\SharedGenerators.projitems*{1b2882b1-8efa-4c83-95e5-2b6b764dc469}*SharedItemsImports = 13
 		SharedGenerators\SharedGenerators.projitems*{268b3c61-4642-4845-918a-fff241198b5d}*SharedItemsImports = 5
 		SharedGenerators\SharedGenerators.projitems*{3f2e814c-ef91-4fdc-87a1-06d1598997b4}*SharedItemsImports = 5
-		SharedGenerators\SharedGenerators.projitems*{5bf71706-e8d0-48d8-9489-3ba3399e9c9c}*SharedItemsImports = 5
 		SharedGenerators\SharedGenerators.projitems*{8245f3e6-0299-421d-9578-dcd576554a84}*SharedItemsImports = 5
 		SharedGenerators\SharedGenerators.projitems*{878208fe-265d-4080-93d0-62f5c3c027d6}*SharedItemsImports = 5
 	EndGlobalSection
@@ -71,10 +70,6 @@ Global
 		{268B3C61-4642-4845-918A-FFF241198B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{268B3C61-4642-4845-918A-FFF241198B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{268B3C61-4642-4845-918A-FFF241198B5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5BF71706-E8D0-48D8-9489-3BA3399E9C9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5BF71706-E8D0-48D8-9489-3BA3399E9C9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5BF71706-E8D0-48D8-9489-3BA3399E9C9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5BF71706-E8D0-48D8-9489-3BA3399E9C9C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A5C0A90-7F86-4B81-8A29-426DA92CCD9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A5C0A90-7F86-4B81-8A29-426DA92CCD9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A5C0A90-7F86-4B81-8A29-426DA92CCD9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -91,6 +86,10 @@ Global
 		{50F70773-BB56-44DB-954C-A4AFEBAA2310}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50F70773-BB56-44DB-954C-A4AFEBAA2310}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50F70773-BB56-44DB-954C-A4AFEBAA2310}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF9372AF-88BE-4F8D-824D-3B2A8545119B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF9372AF-88BE-4F8D-824D-3B2A8545119B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF9372AF-88BE-4F8D-824D-3B2A8545119B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF9372AF-88BE-4F8D-824D-3B2A8545119B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,7 +100,6 @@ Global
 		{8245F3E6-0299-421D-9578-DCD576554A84} = {1A46B092-54C5-4BC6-9CC1-270DD8C6E5C3}
 		{878208FE-265D-4080-93D0-62F5C3C027D6} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{1B2882B1-8EFA-4C83-95E5-2B6B764DC469} = {1A46B092-54C5-4BC6-9CC1-270DD8C6E5C3}
-		{5BF71706-E8D0-48D8-9489-3BA3399E9C9C} = {1A46B092-54C5-4BC6-9CC1-270DD8C6E5C3}
 		{7A5C0A90-7F86-4B81-8A29-426DA92CCD9D} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
 		{EA62B947-69E1-4811-BD48-FAC96E77315E} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 	EndGlobalSection
