@@ -15,10 +15,11 @@ The possible source basic data types are therefore limited to the following type
 
 The JsonConverter may receive one of the following types
 
-* Null: meaning that  a nullable int having null is called here
+* Null: meaning that reference and nullable types being null fall in this case
 * True, False: Boolean
-* String: may receive String, Guid, DateTime and DateTimeOffset
 * Number: any number type
+* String: may receive String, Guid, DateTime, DateTimeOffset or any other non-object, non-array type
+* Array and objects are processed by the deserializer appropriately to match the graph
 
 ## Interpreting deserialized data
 
