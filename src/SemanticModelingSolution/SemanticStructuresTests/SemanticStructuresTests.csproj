@@ -28,6 +28,7 @@
         <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
         <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />
         <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
+        <ProjectReference Include="..\SimpleModels\SimpleModels.csproj" />
     </ItemGroup>
 
     <ItemGroup>

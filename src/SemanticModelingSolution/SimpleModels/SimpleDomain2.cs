@@ -23,6 +23,7 @@ namespace SimpleDomain2
                             Id = Guid.NewGuid(),
                             ProductName = "Pesto alla genovese",
                             ProductCode = "00AA0011",
+                            Expiry = DateTimeOffset.Now,
                             
                             CustomerId = Guid.NewGuid(),
                             CustomerName = "Helios",
@@ -32,7 +33,7 @@ namespace SimpleDomain2
                             Country = "Italy",
 
                             Net = 10,
-                            Price = 9.40,
+                            Payment = 9.40,
                         },
 
                         new OrderLine()
@@ -40,7 +41,8 @@ namespace SimpleDomain2
                             Id = Guid.NewGuid(),
                             ProductName = "Basilico",
                             ProductCode = "00AA0012",
-                            
+                            Expiry = DateTimeOffset.Now,
+
                             CustomerId = Guid.NewGuid(),
                             CustomerName = "Astra",
                             Street = "Salita dei Capuccini",
@@ -49,7 +51,7 @@ namespace SimpleDomain2
                             Country = "Italy",
 
                             Net = 40.8,
-                            Price = 2.20,
+                            Payment = 2.20,
                         },
                     },
                 },
@@ -65,7 +67,8 @@ namespace SimpleDomain2
                             Id = Guid.NewGuid(),
                             ProductName = "Acciuga fresca",
                             ProductCode = "00AB0011",
-                            
+                            //Expiry = DateTimeOffset.Now,  // default value!
+
                             CustomerId = Guid.NewGuid(),
                             CustomerName = "Mare e salute",
                             Street = "via Fegina",
@@ -74,14 +77,15 @@ namespace SimpleDomain2
                             Country = "Italy",
 
                             Net = 10,
-                            Price = 6.5,
+                            Payment = 6.5,
                         },
                         new OrderLine()
                         {
                             Id = Guid.NewGuid(),
                             ProductName = "Orata fresca",
                             ProductCode = "00AB0012",
-                            
+                            Expiry = new DateTimeOffset(2022, 02, 26, 2, 3, 4, TimeSpan.FromHours(1)),
+
                             CustomerId = Guid.NewGuid(),
                             CustomerName = "Mare e salute",
                             Street = "via Fegina",
@@ -90,7 +94,7 @@ namespace SimpleDomain2
                             Country = "Italy",
 
                             Net = 10,
-                            Price = 9.40,
+                            Payment = 9.40,
                         },
                     },
                 },
@@ -114,6 +118,8 @@ namespace SimpleDomain2
         public Guid Id { get; set; }
         public string ProductName { get; set; }
         public string ProductCode { get; set; }
+        public DateTimeOffset Expiry { get; set; }
+
 
         public Guid CustomerId { get; set; }
         public string CustomerName { get; set; }
@@ -123,7 +129,7 @@ namespace SimpleDomain2
         public string Country { get; set; }
 
         public double Net { get; set; }
-        public double Price { get; set; }
+        public double Payment { get; set; }
     }
 
 }

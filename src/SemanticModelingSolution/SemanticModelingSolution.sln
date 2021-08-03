@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31410.414
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31507.150
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegacyModels", "LegacyModels\LegacyModels.csproj", "{F3B8FF70-3BFA-4EB3-8822-95C136DD4C35}"
 EndProject
@@ -10,8 +10,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticStructuresTests", "SemanticStructuresTests\SemanticStructuresTests.csproj", "{3F2E814C-EF91-4FDC-87A1-06D1598997B4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticGlossaryGenerator", "SemanticGlossaryGenerator\SemanticGlossaryGenerator.csproj", "{8245F3E6-0299-421D-9578-DCD576554A84}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\TestConsole.csproj", "{878208FE-265D-4080-93D0-62F5C3C027D6}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedGenerators", "SharedGenerators\SharedGenerators.shproj", "{1B2882B1-8EFA-4C83-95E5-2B6B764DC469}"
 EndProject
@@ -37,13 +35,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domains", "Domains", "{D8BB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Materialization", "Materialization", "{93AC4280-6486-45AA-BF1C-991FCB3CD06F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleModels", "SimpleModels\SimpleModels.csproj", "{36D2DE91-370C-4826-B959-B34E4215A69E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestGeneratorsConsole", "TestGeneratorsConsole\TestGeneratorsConsole.csproj", "{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SharedGenerators\SharedGenerators.projitems*{1b2882b1-8efa-4c83-95e5-2b6b764dc469}*SharedItemsImports = 13
 		SharedGenerators\SharedGenerators.projitems*{268b3c61-4642-4845-918a-fff241198b5d}*SharedItemsImports = 5
 		SharedGenerators\SharedGenerators.projitems*{3f2e814c-ef91-4fdc-87a1-06d1598997b4}*SharedItemsImports = 5
 		SharedGenerators\SharedGenerators.projitems*{8245f3e6-0299-421d-9578-dcd576554a84}*SharedItemsImports = 5
-		SharedGenerators\SharedGenerators.projitems*{878208fe-265d-4080-93d0-62f5c3c027d6}*SharedItemsImports = 5
+		SharedGenerators\SharedGenerators.projitems*{d9fbbe4d-ab5f-4697-8886-e82e46b03aaa}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,10 +68,6 @@ Global
 		{8245F3E6-0299-421D-9578-DCD576554A84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8245F3E6-0299-421D-9578-DCD576554A84}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8245F3E6-0299-421D-9578-DCD576554A84}.Release|Any CPU.Build.0 = Release|Any CPU
-		{878208FE-265D-4080-93D0-62F5C3C027D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{878208FE-265D-4080-93D0-62F5C3C027D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{878208FE-265D-4080-93D0-62F5C3C027D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{878208FE-265D-4080-93D0-62F5C3C027D6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{268B3C61-4642-4845-918A-FFF241198B5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{268B3C61-4642-4845-918A-FFF241198B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{268B3C61-4642-4845-918A-FFF241198B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -94,6 +92,14 @@ Global
 		{FF9372AF-88BE-4F8D-824D-3B2A8545119B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF9372AF-88BE-4F8D-824D-3B2A8545119B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF9372AF-88BE-4F8D-824D-3B2A8545119B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36D2DE91-370C-4826-B959-B34E4215A69E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36D2DE91-370C-4826-B959-B34E4215A69E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36D2DE91-370C-4826-B959-B34E4215A69E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36D2DE91-370C-4826-B959-B34E4215A69E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,7 +108,6 @@ Global
 		{F3B8FF70-3BFA-4EB3-8822-95C136DD4C35} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
 		{3F2E814C-EF91-4FDC-87A1-06D1598997B4} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{8245F3E6-0299-421D-9578-DCD576554A84} = {1A46B092-54C5-4BC6-9CC1-270DD8C6E5C3}
-		{878208FE-265D-4080-93D0-62F5C3C027D6} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{1B2882B1-8EFA-4C83-95E5-2B6B764DC469} = {1A46B092-54C5-4BC6-9CC1-270DD8C6E5C3}
 		{268B3C61-4642-4845-918A-FFF241198B5D} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{7A5C0A90-7F86-4B81-8A29-426DA92CCD9D} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
@@ -110,6 +115,8 @@ Global
 		{EA62B947-69E1-4811-BD48-FAC96E77315E} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{50F70773-BB56-44DB-954C-A4AFEBAA2310} = {93AC4280-6486-45AA-BF1C-991FCB3CD06F}
 		{FF9372AF-88BE-4F8D-824D-3B2A8545119B} = {93AC4280-6486-45AA-BF1C-991FCB3CD06F}
+		{36D2DE91-370C-4826-B959-B34E4215A69E} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
+		{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA} = {1A46B092-54C5-4BC6-9CC1-270DD8C6E5C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDC7C7E5-38C7-49A4-B565-A242960159E4}

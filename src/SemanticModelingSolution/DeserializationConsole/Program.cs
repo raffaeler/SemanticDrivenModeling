@@ -95,7 +95,7 @@ namespace DeserializationConsole
         {
             typeof(SimpleDomain1.Order),
             typeof(SimpleDomain1.OrderItem),
-            typeof(SimpleDomain1.Product),
+            typeof(SimpleDomain1.Article),
             typeof(SimpleDomain1.Company),
             typeof(SimpleDomain1.Address),
         };

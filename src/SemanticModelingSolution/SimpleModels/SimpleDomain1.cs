@@ -21,12 +21,12 @@ namespace SimpleDomain1
                         new OrderItem()
                         {
                             Id = Guid.NewGuid(),
-                            Product = new Product()
+                            Article = new Article()
                             {
                                 Id = Guid.NewGuid(),
                                 Name = "Mayonnaise",
                                 Description = "Regular mayonnaise",
-                                Expiry = DateTime.Now,
+                                ExpirationDate = DateTime.Now,
                             },
                             Customer = new Company()
                             {
@@ -50,12 +50,12 @@ namespace SimpleDomain1
                         new OrderItem()
                         {
                             Id = Guid.NewGuid(),
-                            Product = new Product()
+                            Article = new Article()
                             {
                                 Id = Guid.NewGuid(),
                                 Name = "Ketchup",
                                 Description = "Tomato Ketchup",
-                                Expiry = DateTime.Now,
+                                ExpirationDate = DateTime.Now,
                             },
                             Customer = new Company()
                             {
@@ -87,12 +87,12 @@ namespace SimpleDomain1
                         new OrderItem()
                         {
                             Id = Guid.NewGuid(),
-                            Product = new Product()
+                            Article = new Article()
                             {
                                 Id = Guid.NewGuid(),
                                 Name = "Tonno in scatola",
                                 Description = "Tuna",
-                                Expiry = DateTime.Now,
+                                ExpirationDate = DateTime.Now,
                             },
                             Customer = new Company()
                             {
@@ -116,12 +116,12 @@ namespace SimpleDomain1
                         new OrderItem()
                         {
                             Id = Guid.NewGuid(),
-                            Product = new Product()
+                            Article = new Article()
                             {
                                 Id = Guid.NewGuid(),
                                 Name = "Salmon",
                                 Description = "Smoked salmon",
-                                Expiry = DateTime.Now,
+                                ExpirationDate = DateTime.Now,
                             },
                             Customer = new Company()
                             {
@@ -160,7 +160,7 @@ namespace SimpleDomain1
     public class OrderItem
     {
         public Guid Id { get; set; }
-        public Product Product { get; set; }
+        public Article Article { get; set; }
         public Company Customer { get; set; }
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
@@ -168,12 +168,12 @@ namespace SimpleDomain1
     }
 
 
-    public class Product
+    public class Article
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public DateTime Expiry { get; set; }
+        public DateTime ExpirationDate { get; set; }
     }
 
     public class Company

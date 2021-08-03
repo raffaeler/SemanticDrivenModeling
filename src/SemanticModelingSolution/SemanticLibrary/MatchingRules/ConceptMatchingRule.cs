@@ -13,10 +13,13 @@ namespace SemanticLibrary
     {
         public const int MinimumScoreForTypes = 50;
         private readonly bool _enableVerboseLogOnConsole;
+        private readonly bool _logOnlyValidated;
 
         public ConceptMatchingRule(bool enableVerboseLogOnConsole)
         {
             _enableVerboseLogOnConsole = enableVerboseLogOnConsole;
+            //_logOnlyValidated = false;
+            _logOnlyValidated = true;
         }
 
         public IReadOnlyCollection<ScoredTypeMapping> CandidateTypes { get; private set; }
@@ -293,6 +296,8 @@ namespace SemanticLibrary
 
         private void VerboseLog(ModelNavigationNode source, ModelNavigationNode target, bool isValidated)
         {
+            if (_logOnlyValidated && !isValidated) return;
+
             //var sourceContexts = source.Parent.CandidateConcepts;
             //var targetContexts = target.Parent.CandidateConcepts;
 
