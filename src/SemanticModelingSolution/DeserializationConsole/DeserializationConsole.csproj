@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
-    <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />
     <ProjectReference Include="..\MaterializerLibrary\MaterializerLibrary.csproj" />
+    <ProjectReference Include="..\ModelsFromGithub\ModelsFromGithub.csproj" />
     <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
     <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
     <ProjectReference Include="..\SimpleModels\SimpleModels.csproj" />

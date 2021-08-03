@@ -14,11 +14,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
-        <ProjectReference Include="..\LegacyModels\LegacyModels.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
+        <ProjectReference Include="..\ModelsFromGithub\ModelsFromGithub.csproj" />
+        <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31507.150
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegacyModels", "LegacyModels\LegacyModels.csproj", "{F3B8FF70-3BFA-4EB3-8822-95C136DD4C35}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticLibrary", "SemanticLibrary\SemanticLibrary.csproj", "{9CC8ADEE-2A06-48F6-8B4B-70DCD7E2EE5F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticStructuresTests", "SemanticStructuresTests\SemanticStructuresTests.csproj", "{3F2E814C-EF91-4FDC-87A1-06D1598997B4}"
@@ -39,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleModels", "SimpleModel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestGeneratorsConsole", "TestGeneratorsConsole\TestGeneratorsConsole.csproj", "{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelsFromGithub", "ModelsFromGithub\ModelsFromGithub.csproj", "{ED68234C-855A-46D2-BA11-32D211564539}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SharedGenerators\SharedGenerators.projitems*{1b2882b1-8efa-4c83-95e5-2b6b764dc469}*SharedItemsImports = 13
@@ -52,10 +52,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F3B8FF70-3BFA-4EB3-8822-95C136DD4C35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F3B8FF70-3BFA-4EB3-8822-95C136DD4C35}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F3B8FF70-3BFA-4EB3-8822-95C136DD4C35}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F3B8FF70-3BFA-4EB3-8822-95C136DD4C35}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9CC8ADEE-2A06-48F6-8B4B-70DCD7E2EE5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9CC8ADEE-2A06-48F6-8B4B-70DCD7E2EE5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CC8ADEE-2A06-48F6-8B4B-70DCD7E2EE5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -100,12 +96,15 @@ Global
 		{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED68234C-855A-46D2-BA11-32D211564539}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED68234C-855A-46D2-BA11-32D211564539}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED68234C-855A-46D2-BA11-32D211564539}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED68234C-855A-46D2-BA11-32D211564539}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F3B8FF70-3BFA-4EB3-8822-95C136DD4C35} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
 		{3F2E814C-EF91-4FDC-87A1-06D1598997B4} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{8245F3E6-0299-421D-9578-DCD576554A84} = {1A46B092-54C5-4BC6-9CC1-270DD8C6E5C3}
 		{1B2882B1-8EFA-4C83-95E5-2B6B764DC469} = {1A46B092-54C5-4BC6-9CC1-270DD8C6E5C3}
@@ -117,6 +116,7 @@ Global
 		{FF9372AF-88BE-4F8D-824D-3B2A8545119B} = {93AC4280-6486-45AA-BF1C-991FCB3CD06F}
 		{36D2DE91-370C-4826-B959-B34E4215A69E} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
 		{D9FBBE4D-AB5F-4697-8886-E82E46B03AAA} = {1A46B092-54C5-4BC6-9CC1-270DD8C6E5C3}
+		{ED68234C-855A-46D2-BA11-32D211564539} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDC7C7E5-38C7-49A4-B565-A242960159E4}

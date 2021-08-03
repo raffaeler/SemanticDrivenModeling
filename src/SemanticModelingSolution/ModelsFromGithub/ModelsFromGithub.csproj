@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models2\" />
+    <Folder Include="Coderush\" />
   </ItemGroup>
 
 </Project>
