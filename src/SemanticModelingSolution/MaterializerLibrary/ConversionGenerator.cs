@@ -403,7 +403,7 @@ namespace CodeGenerationLibrary.Serialization
 
 
         // vNext
-        private void y(ref Utf8JsonReader reader, object[] instances)
+        private void GeneratedCodeExample(ref Utf8JsonReader reader, object[] instances)
         {
             if (reader.TokenType == JsonTokenType.Null)
             {
