@@ -21,7 +21,7 @@ namespace CodeGenerationLibrary.Serialization
         private Dictionary<string, CurrentInstance> _objects;
 
         protected ScoredTypeMapping _map;
-        protected Dictionary<string, ScoredPropertyMapping<ModelNavigationNode>> _lookup = new();
+        protected Dictionary<string, List<ScoredPropertyMapping<ModelNavigationNode>>> _lookup = new();
 
         /// <summary>
         /// Important note: the instance of the JsonConverter is recycled during the same deserialization
@@ -34,7 +34,13 @@ namespace CodeGenerationLibrary.Serialization
             {
                 var sourcePath = propertyMapping.Source.GetMapPath();
                 //var targetPath = propertyMapping.Target.GetMapPath();
-                _lookup[sourcePath] = propertyMapping;
+                if (!_lookup.TryGetValue(sourcePath, out var list))
+                {
+                    list = new();
+                    _lookup[sourcePath] = list;
+                }
+
+                list.Add(propertyMapping);
             }
 
             var context = new ConversionLibrary.ConversionContext()
@@ -79,15 +85,15 @@ namespace CodeGenerationLibrary.Serialization
                                 Debug.Fail("This converter does not accept root of kind array");
                             }
 
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "");
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
                         }
                         break;
 
                     case JsonTokenType.EndArray:
                         {
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "");
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
                             _sourcePath.Pop();
                         }
                         break;
@@ -110,20 +116,20 @@ namespace CodeGenerationLibrary.Serialization
                                 seg.IsObject = true;
                             }
 
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
                             if (seg != null && seg.IsArray)
                             {
                                 _collectionElementStack.Push(sourcePath);
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "");
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
                         }
                         break;
 
                     case JsonTokenType.EndObject:
                         {
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "");
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
                             var endObject = _sourcePath.Pop();
                             if (endObject.IsArrayElement)
                             {
@@ -151,96 +157,97 @@ namespace CodeGenerationLibrary.Serialization
 
                     case JsonTokenType.String:
                         {
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            if (nodeMapping != null)
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+                            if (nodeMappings != null && nodeMappings.Count > 0)
                             {
-                                var instance = Materialize(nodeMapping);
-                                var converter = _conversionGenerator.GetConverter(nodeMapping);
-                                converter(ref reader, instance);
+                                var instances = nodeMappings.Select(nodeMapping => Materialize(nodeMapping)).ToArray();
+                                var converter = _conversionGenerator.GetConverterMultiple(sourcePath, nodeMappings);
+                                converter(ref reader, instances);
                             }
                             else
                             {
                                 reader.Skip();
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping);
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings);
                             _sourcePath.Pop();
                             break;
                         }
 
                     case JsonTokenType.Number:
                         {
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            if (nodeMapping != null)
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+                            if (nodeMappings != null && nodeMappings.Count > 0)
                             {
-                                var instance = Materialize(nodeMapping);
-                                var converter = _conversionGenerator.GetConverter(nodeMapping);
-                                converter(ref reader, instance);
+                                var instances = nodeMappings.Select(nodeMapping => Materialize(nodeMapping)).ToArray();
+                                var converter = _conversionGenerator.GetConverterMultiple(sourcePath, nodeMappings);
+                                converter(ref reader, instances);
                             }
                             else
                             {
                                 reader.Skip();
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "(number)");
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "(number)");
                             _sourcePath.Pop();
                             break;
                         }
 
                     case JsonTokenType.Null:
                         {
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            if (nodeMapping != null)
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+                            if (nodeMappings != null && nodeMappings.Count > 0)
                             {
-                                // json reader pretends we either read or skip
-                                //
-                                // since the value is null, this converter will never read anything
-                                // therefore in this specific case we always have to skip
-                                var converter = _conversionGenerator.GetValueConverter(nodeMapping);
-                                var value = converter(ref reader);
-                                Debug.Assert(value == GetDefaultForType(nodeMapping.Target.ModelPropertyNode.Property.PropertyType));
+                                var instances = nodeMappings.Select(nodeMapping => Materialize(nodeMapping)).ToArray();
+                                var converter = _conversionGenerator.GetConverterMultiple(sourcePath, nodeMappings);
+                                converter(ref reader, instances);
+                                //Debug.Assert(value == GetDefaultForType(nodeMapping.Target.ModelPropertyNode.Property.PropertyType));
+                            }
+                            else
+                            {
+                                reader.Skip();
                             }
 
-                            reader.Skip();
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "null");
+
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "null");
                             _sourcePath.Pop();
                         }
                         break;
 
                     case JsonTokenType.True:
                         {
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            if (nodeMapping != null)
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+                            if (nodeMappings != null && nodeMappings.Count > 0)
                             {
-                                var instance = Materialize(nodeMapping);
-                                var converter = _conversionGenerator.GetConverter(nodeMapping);
-                                converter(ref reader, instance);
+                                var instances = nodeMappings.Select(nodeMapping => Materialize(nodeMapping)).ToArray();
+                                var converter = _conversionGenerator.GetConverterMultiple(sourcePath, nodeMappings);
+                                converter(ref reader, instances);
                             }
                             else
                             {
                                 reader.Skip();
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "true");
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "true");
                             _sourcePath.Pop();
                         }
                         break;
 
                     case JsonTokenType.False:
                         {
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            if (nodeMapping != null)
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+                            if (nodeMappings != null && nodeMappings.Count > 0)
                             {
-                                var instance = Materialize(nodeMapping);
-                                var converter = _conversionGenerator.GetConverter(nodeMapping);
-                                converter(ref reader, instance);
+                                var instances = nodeMappings.Select(nodeMapping => Materialize(nodeMapping)).ToArray();
+                                var converter = _conversionGenerator.GetConverterMultiple(sourcePath, nodeMappings);
+                                converter(ref reader, instances);
                             }
                             else
                             {
                                 reader.Skip();
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "false");
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "false");
                             _sourcePath.Pop();
                         }
                         break;
@@ -248,13 +255,14 @@ namespace CodeGenerationLibrary.Serialization
                     default:
                         {
                             Debug.Fail($"Unsupported JsonTokenType == {reader.TokenType}");
-                            var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
-                            if (nodeMapping != null)
+                            var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+                            if (nodeMappings != null && nodeMappings.Count > 0)
                             {
                                 //...
                             }
 
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, "");
+                            reader.Skip();
+                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
                         }
                         break;
                 }
@@ -272,7 +280,7 @@ namespace CodeGenerationLibrary.Serialization
         }
 
         protected virtual void LogState(JsonTokenType jsonTokenType, int depth,
-            string sourcePath, ScoredPropertyMapping<ModelNavigationNode> nodeMapping,
+            string sourcePath, IEnumerable<ScoredPropertyMapping<ModelNavigationNode>> nodeMappings,
             string message = null)
         {
             if (!LogObjectArrayEnabled && (
@@ -284,20 +292,39 @@ namespace CodeGenerationLibrary.Serialization
                 return;
             }
 
-            Console.Write($"[{depth} {jsonTokenType}] {message}".PadRight(60));
-            Console.Write(sourcePath.PadRight(50));
-            if (nodeMapping != null)
+            Console.Write($"[{depth} {jsonTokenType}] {message}".PadRight(25));
+            bool isFirst = true;
+            if (nodeMappings != null)
             {
-                var sourceType = nodeMapping.Source.ModelPropertyNode.Property.PropertyType;
-                var targetType = nodeMapping.Target.ModelPropertyNode.Property.PropertyType;
-                Console.Write($"{sourceType.Name} -> {targetType.Name}".PadRight(30));
-                Console.Write(nodeMapping.Target.GetMapPath());
+                foreach (var nodeMapping in nodeMappings)
+                {
+                    if (isFirst)
+                    {
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        Console.Write("".PadRight(25));
+                    }
+
+                    Console.Write(sourcePath.PadRight(50));
+
+                    var sourceType = nodeMapping.Source.ModelPropertyNode.Property.PropertyType;
+                    var targetType = nodeMapping.Target.ModelPropertyNode.Property.PropertyType;
+                    Console.Write($"{sourceType.Name} -> {targetType.Name}".PadRight(30));
+                    Console.Write(nodeMapping.Target.GetMapPath());
+                    Console.WriteLine();
+                }
+            }
+            else
+            {
+                Console.Write(sourcePath.PadRight(50));
+                Console.WriteLine();
             }
 
-            Console.WriteLine();
         }
 
-        private (string sourcePath, ScoredPropertyMapping<ModelNavigationNode> nodeMapping) GetSourcePathAndMapping()
+        private (string sourcePath, List<ScoredPropertyMapping<ModelNavigationNode>> nodeMapping) GetSourcePathAndMapping()
         {
             var sourcePath = string.Join(".", _sourcePath.Reverse().Select(s => s.Name));
             _lookup.TryGetValue(sourcePath, out var node);

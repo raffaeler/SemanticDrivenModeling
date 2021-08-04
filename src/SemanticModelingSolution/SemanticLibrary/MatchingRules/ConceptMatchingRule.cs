@@ -18,8 +18,8 @@ namespace SemanticLibrary
         public ConceptMatchingRule(bool enableVerboseLogOnConsole)
         {
             _enableVerboseLogOnConsole = enableVerboseLogOnConsole;
-            //_logOnlyValidated = false;
-            _logOnlyValidated = true;
+            _logOnlyValidated = false;
+            //_logOnlyValidated = true;
         }
 
         public IReadOnlyCollection<ScoredTypeMapping> CandidateTypes { get; private set; }
@@ -72,6 +72,18 @@ namespace SemanticLibrary
 
         private ScoredPropertyMapping<ModelNavigationNode> onSelectEquallyScored(List<ScoredPropertyMapping<ModelNavigationNode>> mappings)
         {
+            var firstTarget = mappings.First().Target;
+            if (firstTarget.GetAllConceptsFromPath().Select(ttc => ttc.Concept).Contains(KnownBaseConcepts.UniqueIdentity))
+            {
+                // if this mappings refer to a uniqueIdentity, let's get the one with the same depth
+                var targetDepth = GetDepth(firstTarget);
+                var sources = mappings
+                    .Select(m => (depth: GetDepth(m.Source), mapping: m))
+                    .Where(t => t.depth <= targetDepth)
+                    .OrderBy(t => t.depth);
+                if (sources.Any()) return sources.First().mapping;
+            }
+
             foreach (var mapping in mappings)
             {
                 var sourceTerms = mapping.Source.ModelPropertyNode.TermToConcepts.Select(ttc => ttc.Term);
@@ -88,6 +100,18 @@ namespace SemanticLibrary
             return mappings.First();
         }
 
+        private int GetDepth(ModelNavigationNode node)
+        {
+            int i = 0;
+            while (node != null)
+            {
+                node = node.Previous;
+                i++;
+            }
+
+            return i;
+        }
+
         private int GetPropertyScore(ModelNavigationNode source, ModelNavigationNode target)
         {
             var sourceContexts = source.ModelPropertyNode.Parent.CandidateConcepts;
@@ -95,6 +119,7 @@ namespace SemanticLibrary
             var isValidated = ValidateContexts(source, target);
 
             if (_enableVerboseLogOnConsole) VerboseLog(source, target, isValidated);
+
             int score = 0;
             foreach (var targetTtc in target.ModelPropertyNode.TermToConcepts)
             {
@@ -107,6 +132,20 @@ namespace SemanticLibrary
                         sourceTtc, targetTtc, sourceContexts, targetContexts);
                 }
             }
+
+            if (score != 0)
+            {
+                List<Concept> src = new();
+                List<Concept> tgt = new();
+                src.AddRange(sourceContexts);
+                src.AddRange(source.ModelPropertyNode.TermToConcepts.Select(ttc => ttc.Concept));
+
+                tgt.AddRange(targetContexts);
+                tgt.AddRange(target.ModelPropertyNode.TermToConcepts.Select(ttc => ttc.Concept));
+                var intersectionCount = src.Intersect(tgt).Count();
+                score += 30 * (intersectionCount / tgt.Count);
+            }
+
 
             if (isValidated) score = 1234;
             return score;
@@ -132,21 +171,23 @@ namespace SemanticLibrary
             else
                 matchingConceptContext = false;
 
-            if(matchingConceptContext.HasValue) increment += matchingConceptContext.Value ? 0.3 : -0.3;
+            if (matchingConceptContext.HasValue) increment += matchingConceptContext.Value ? 0.3 : -0.3;
 
             bool? matchingSpecifiers;
-            if (source.ConceptSpecifier == KnownBaseConceptSpecifiers.None)
+            if (matchingTopConcepts != true || source.ConceptSpecifier == KnownBaseConceptSpecifiers.None)
                 matchingSpecifiers = null;
             else if (target.ConceptSpecifier == source.ConceptSpecifier)
                 matchingSpecifiers = true;
             else
                 matchingSpecifiers = false;
 
-            if(matchingSpecifiers.HasValue) increment += matchingSpecifiers.Value ? 0.6 : -0.6;
+            if (matchingSpecifiers.HasValue) increment += matchingSpecifiers.Value ? 0.6 : -0.6;
 
             bool matchingTargetContext =
                 (targetContexts != null && targetContexts.Contains(source.Concept)) ||
                 (sourceContexts != null && sourceContexts.Contains(target.Concept));
+
+            //if (matchingTargetContext) increment += 0.5;
 
             bool isFailed = false;
             if (matchingTopConcepts == false && matchingTargetContext == false) isFailed = true;
