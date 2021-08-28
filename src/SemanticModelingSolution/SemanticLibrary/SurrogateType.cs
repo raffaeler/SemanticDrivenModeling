@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 using SemanticLibrary.Helpers;
@@ -42,5 +43,26 @@ namespace SemanticLibrary
         public Type GetOriginalType() => _type ??= TypeHelper.GetEntityType(FullName, AssemblyName);
 
         public object CreateInstance() => Activator.CreateInstance(GetOriginalType());
+
+        public object GetDefaultForType()
+        {
+            var type = GetOriginalType();
+            return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
+
+        public MethodInfo GetMethod(string methodName)
+        {
+            var type = GetOriginalType();
+            var method = type.GetMethod(methodName);
+            if (method == null) throw new InvalidOperationException($"Cannot find the method '{methodName}' in '{FullName}'");
+            return method;
+        }
+
+        public bool Is(Type type)
+        {
+            if (FullName == type.FullName) return true;
+            return false;
+        }
+
     }
 }

@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 using SemanticLibrary;
+using SemanticLibrary.Helpers;
 
 namespace CodeGenerationLibrary.Serialization
 {
@@ -48,7 +49,7 @@ namespace CodeGenerationLibrary.Serialization
                 OnNotSupported = (converter, value) =>
                 {
                     Console.WriteLine($"Conversion of a value from {value} To {converter.TargetType.Name} is not supported");
-                    return GetDefaultForType(converter.TargetType);
+                    return converter.TargetType.GetDefaultForType();
                 },
             };
 
@@ -376,7 +377,7 @@ namespace CodeGenerationLibrary.Serialization
                 {
                     var property = temp.ModelPropertyNode.Property;
                     var collectionType = property.PropertyType;
-                    instance = CreateInstance(collectionType);
+                    instance = collectionType.CreateInstance();
                     var addMethod = collectionType.GetMethod("Add");
                     addMethod.Invoke(instance, new object[] { lastCreatedInstance });
                     _objects[path] = new CurrentInstance
@@ -392,7 +393,7 @@ namespace CodeGenerationLibrary.Serialization
                     // the navigation relies on the properties, and there is no property pointing to the root
                     if (temp.Previous == null)
                     {
-                        var rootType = temp.ModelPropertyNode.Parent.Type.GetOriginalType();
+                        var rootType = temp.ModelPropertyNode.Parent.Type;
                         object rootInstance;
                         if (_objects.TryGetValue(rootType.Name, out CurrentInstance cachedRoot))
                         {
@@ -400,7 +401,7 @@ namespace CodeGenerationLibrary.Serialization
                         }
                         else
                         {
-                            rootInstance = CreateInstance(rootType);
+                            rootInstance = rootType.CreateInstance();
                             _objects[rootType.Name] = new CurrentInstance
                             {
                                 Instance = rootInstance,
@@ -414,8 +415,7 @@ namespace CodeGenerationLibrary.Serialization
                 }
                 else
                 {
-                    var parentType = temp.ModelPropertyNode.Parent.Type.GetOriginalType();
-                    instance = CreateInstance(parentType);
+                    instance = temp.ModelPropertyNode.Parent.Type.CreateInstance();
                     var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
 
                     _objects[path] = new CurrentInstance
@@ -465,10 +465,8 @@ namespace CodeGenerationLibrary.Serialization
         }
 
         protected virtual T RootResult => (T)_objects[typeof(T).Name].Instance;
-        protected virtual K CreateObject<K>() => Activator.CreateInstance<K>();
+        //protected virtual K CreateObject<K>() => Activator.CreateInstance<K>();
         private object CreateInstance(Type type) => Activator.CreateInstance(type);
-        private object GetDefaultForType(Type type) =>
-            type.IsValueType ? Activator.CreateInstance(type) : null;
 
         private record CurrentInstance
         {

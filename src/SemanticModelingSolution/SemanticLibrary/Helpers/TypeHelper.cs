@@ -50,6 +50,9 @@ namespace SemanticLibrary.Helpers
             return type;
         }
 
+        public static object GetDefaultForType(this Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
+
+
         public static bool IsBasicType(Type type) => BasicTypes.Contains(type);
         public static Type GetUnderlyingNullable(Type type) => Nullable.GetUnderlyingType(type);
         public static Type GetUnderlyingArray(Type type) => type.HasElementType ? type.GetElementType() : null;

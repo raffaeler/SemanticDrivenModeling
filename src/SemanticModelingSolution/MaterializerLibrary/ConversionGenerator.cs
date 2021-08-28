@@ -145,9 +145,9 @@ namespace CodeGenerationLibrary.Serialization
             if (!_cacheSetProperty.TryGetValue(path, out var lambda))
             {
                 var expression = GenerateConversion(
-                    nodeMapping.Source.ModelPropertyNode.PropertyTypeName,
+                    nodeMapping.Source.ModelPropertyNode.Property.PropertyType.Name,
                     nodeMapping.Target.ModelPropertyNode.Parent.Type.GetOriginalType(),
-                    nodeMapping.Target.ModelPropertyNode.PropertyTypeName,
+                    nodeMapping.Target.ModelPropertyNode.Property.PropertyType.Name,
                     nodeMapping.Target.ModelPropertyNode.PropertyName);
                 lambda = expression.Compile();
             }
@@ -224,7 +224,7 @@ namespace CodeGenerationLibrary.Serialization
             if (nodeMappings == null) throw new ArgumentNullException(nameof(nodeMappings));
             if (nodeMappings.Count == 0) throw new ArgumentException(nameof(nodeMappings));
 
-            var sourceTypeName = nodeMappings.First().Source.ModelPropertyNode.PropertyTypeName;
+            var sourceTypeName = nodeMappings.First().Source.ModelPropertyNode.Property.PropertyType.Name;
             if (!_basicTypes.TryGetValue(sourceTypeName, out Type sourceType))
             {
                 throw new ArgumentException($"The type {sourceTypeName} is not valid for converting data in a json source");

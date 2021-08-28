@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 using SemanticLibrary;
+using SemanticLibrary.Helpers;
 
 namespace CodeGenerationLibrary.Serialization
 {
@@ -41,7 +42,7 @@ namespace CodeGenerationLibrary.Serialization
                 OnNotSupported = (converter, value) =>
                 {
                     Console.WriteLine($"Conversion of a value from {value} To {converter.TargetType.Name} is not supported");
-                    return GetDefaultForType(converter.TargetType);
+                    return converter.TargetType.GetDefaultForType();
                 },
             };
 
@@ -199,7 +200,7 @@ namespace CodeGenerationLibrary.Serialization
                                 // therefore in this specific case we always have to skip
                                 var converter = _conversionGenerator.GetValueConverter(nodeMapping);
                                 var value = converter(ref reader);
-                                Debug.Assert(value == GetDefaultForType(nodeMapping.Target.ModelPropertyNode.Property.PropertyType));
+                                Debug.Assert(value == nodeMapping.Target.ModelPropertyNode.Property.PropertyType.GetDefaultForType());
                             }
 
                             reader.Skip();
@@ -276,9 +277,6 @@ namespace CodeGenerationLibrary.Serialization
         protected virtual void RemoveObjectsWithPath(string path)
         {
         }
-
-        private object GetDefaultForType(Type type) =>
-            type.IsValueType ? Activator.CreateInstance(type) : null;
 
         protected virtual T RootResult => default(T);
 

@@ -163,16 +163,17 @@ namespace CodeGenerationLibrary.Serialization
                             // conversion goes here
                             if (currentProperty.PropertyType == _currentMapping.Source.ModelPropertyNode.Property.PropertyType)
                             {
-                                if (currentProperty.PropertyType == typeof(Guid))
+                                if (currentProperty.PropertyType.Is(typeof(Guid)))
                                 {
                                     var g = Guid.Parse(value);
-                                    currentProperty.SetMethod.Invoke(currentInstance.Instance, new object[] { g });
+                                    currentProperty.SetValue(currentInstance.Instance, g);
                                 }
                                 else
                                 {
-                                    currentProperty.SetMethod.Invoke(currentInstance.Instance, new object[] { value });
+                                    currentProperty.SetValue(currentInstance.Instance, value);
                                 }
                             }
+
                             _sourcePath.Pop();
                             Log(ref reader, value);
                             break;
@@ -243,7 +244,7 @@ namespace CodeGenerationLibrary.Serialization
                 {
                     // instance is a collection
                     current.Collection = ownerType.Type.CreateInstance();
-                    current.Instance = CreateInstance(modelNavigationNode.ModelPropertyNode.CoreType);
+                    current.Instance = modelNavigationNode.ModelPropertyNode.CoreType.CreateInstance();
                     var addMethod = ownerType.Type.GetOriginalType().GetMethod("Add");
                     addMethod.Invoke(current, new object[] { current.Instance });
                 }
@@ -272,7 +273,7 @@ namespace CodeGenerationLibrary.Serialization
                 Debug.Assert(current.Collection != null);
                 // this means it is a new object inside the collection
                 var ownerType = modelNavigationNode.ModelPropertyNode.Parent;
-                current.Instance = CreateInstance(modelNavigationNode.ModelPropertyNode.CoreType);
+                current.Instance = modelNavigationNode.ModelPropertyNode.CoreType.CreateInstance();
                 var addMethod = ownerType.Type.GetOriginalType().GetMethod("Add");
                 addMethod.Invoke(current, new object[] { current.Instance });
             }

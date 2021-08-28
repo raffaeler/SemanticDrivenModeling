@@ -101,14 +101,7 @@ namespace SemanticLibrary
         {
             //Console.WriteLine($"{type.Name} - {propertyInfo.Name} - {propertyInfo.PropertyType.Name} - {classification} - {coreType?.Name}");
             var propertyTermToConcepts = _analysis.AnalyzeProperty(modelTypeNode.TermToConcepts, propertyInfo.Name, coreType);
-            var modelPropertyNode = new ModelPropertyNode()
-            {
-                Parent = modelTypeNode,
-                Property = propertyInfo,
-                PropertyKind = classification,
-                CoreType = coreType,
-                TermToConcepts = propertyTermToConcepts,
-            };
+            var modelPropertyNode = new ModelPropertyNode(modelTypeNode, propertyInfo, classification, coreType, propertyTermToConcepts);
 
             _onPropertyNode?.Invoke(modelPropertyNode);
             return modelPropertyNode;

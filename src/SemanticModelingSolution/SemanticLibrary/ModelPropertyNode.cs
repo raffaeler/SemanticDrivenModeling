@@ -17,9 +17,30 @@ namespace SemanticLibrary
         {
         }
 
+        internal ModelPropertyNode(ModelTypeNode parent, PropertyInfo propertyInfo,
+            PropertyKind kind, Type coreType, IList<TermToConcept> termToConcepts)
+        {
+            Parent = parent;
+            Property = new(propertyInfo, parent.Type);
+            PropertyKind = kind;
+            CoreType = new(coreType);
+            TermToConcepts = termToConcepts;
+        }
+
         public ModelTypeNode Parent { get; set; }
+
+        public SurrogatePropertyInfo Property { get; set; }
+
+        /// <summary>
+        /// The type of the property extracted from the collection.
+        /// If the property type is string, this is still string
+        /// But if the property type is List of string, this is string
+        /// </summary>
+        public SurrogateType CoreType { get; set; }
+
+
         public string Name => Property?.Name;
-        public PropertyInfo Property { get; set; }
+        ////////////////////////public PropertyInfo Property { get; set; }
         public string PropertyName => Property.Name;
         public string PropertyTypeName => Property.PropertyType.Name;
         public PropertyKind PropertyKind { get; set; }
@@ -42,7 +63,7 @@ namespace SemanticLibrary
         /// If the property type is string, this is still string
         /// But if the property type is List of string, this is string
         /// </summary>
-        public Type CoreType { get; set; }
+        /////////public Type CoreType { get; set; }
 
         public IList<TermToConcept> TermToConcepts { get; set; }
         public IEnumerable<Concept> CandidateConcepts => TermToConcepts.Select(c => c.Concept);

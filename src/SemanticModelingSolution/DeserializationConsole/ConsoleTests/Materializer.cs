@@ -72,7 +72,7 @@ namespace DeserializationConsole
                 {
                     var property = temp.ModelPropertyNode.Property;
                     var collectionType = property.PropertyType;
-                    instance = CreateInstance(collectionType);
+                    instance = collectionType.CreateInstance();
                     var addMethod = collectionType.GetMethod("Add");
                     addMethod.Invoke(instance, new object[] { lastCreatedInstance });
                     _objects[path] = new CurrentInstance
