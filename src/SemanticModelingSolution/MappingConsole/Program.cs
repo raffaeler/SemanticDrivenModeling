@@ -175,9 +175,9 @@ namespace MappingConsole
         private static void DumpType(ModelTypeNode type, string typeCategory, string scoring = null)
         {
             if(string.IsNullOrEmpty(scoring))
-                Console.WriteLine($"The {typeCategory} type is {type.TypeName} whose properties are:");
+                Console.WriteLine($"The {typeCategory} type is {type.Type.Name} whose properties are:");
             else
-                Console.WriteLine($"The {typeCategory} type is {type.TypeName} [{scoring}] whose properties are:");
+                Console.WriteLine($"The {typeCategory} type is {type.Type.Name} [{scoring}] whose properties are:");
             foreach (var p in type.FlatHierarchyProperties())
                 Console.WriteLine($"\t{p.ToString()}");
             Console.WriteLine();
@@ -191,7 +191,7 @@ namespace MappingConsole
             static void VisitType(ModelTypeNode modelTypeNode)
             {
                 Console.WriteLine();
-                Console.WriteLine($"Type {modelTypeNode.TypeName} => [{string.Join(", ", modelTypeNode.CandidateConceptNames)}]");
+                Console.WriteLine($"Type {modelTypeNode.Type.Name} => [{string.Join(", ", modelTypeNode.CandidateConceptNames)}]");
             }
 
             static void VisitProperty(ModelPropertyNode modelPropertyNode)

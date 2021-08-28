@@ -12,7 +12,11 @@ namespace SemanticLibrary
 {
     public class ModelPropertyNode : IModelNode, IEqualityComparer<ModelPropertyNode>, IName
     {
-        public string OwnerTypeName => Parent.TypeName;
+        // default constructor is intended only for the serializer
+        public ModelPropertyNode()
+        {
+        }
+
         public ModelTypeNode Parent { get; set; }
         public string Name => Property?.Name;
         public PropertyInfo Property { get; set; }
@@ -45,7 +49,7 @@ namespace SemanticLibrary
         public IEnumerable<string> CandidateConceptNames => TermToConcepts.Select(c => c.Concept.Name);
         public IEnumerable<string> CandidateConceptSpecifierNames => TermToConcepts.Select(c => c.ConceptSpecifier.Name);
 
-        private string UniqueString => $"{Parent?.Type?.FullName}.{Property?.Name}";
+        private string UniqueString => $"{Parent?.Type.FullName}.{Property?.Name}";
 
         public override bool Equals(object obj)
         {
@@ -68,7 +72,7 @@ namespace SemanticLibrary
 
         public string ToStringNoConceptual()
         {
-            return $"{OwnerTypeName}.{Name} ({PropertyKind})";
+            return $"{Parent.Type.Name}.{Name} ({PropertyKind})";
         }
 
         public bool Equals(ModelPropertyNode x, ModelPropertyNode y)

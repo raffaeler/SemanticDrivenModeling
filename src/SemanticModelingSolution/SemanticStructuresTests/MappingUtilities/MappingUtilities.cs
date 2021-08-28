@@ -36,7 +36,7 @@ namespace SemanticStructuresTests.MappingUtilities
         public IEnumerable<SimpleDomain2.OnlineOrder> OrderToOnlineOrder(IList<ModelTypeNode> source, IList<ModelTypeNode> target,
             IEnumerable<SimpleDomain1.Order> sourceObjects)
         {
-            var order = source.First(t => t.TypeName == "Order");
+            var order = source.First(t => t.Type.Name == "Order");
             var mapping = Analyzer.CreateMappingsFor(order, target);
             var settings = CreateSettings(mapping);
 
@@ -49,7 +49,7 @@ namespace SemanticStructuresTests.MappingUtilities
         public IEnumerable<SimpleDomain1.Order> OnlineOrderToOrder(IList<ModelTypeNode> source, IList<ModelTypeNode> target,
             IEnumerable<SimpleDomain2.OnlineOrder> sourceObjects)
         {
-            var onlineOrder = target.First(t => t.TypeName == "OnlineOrder");
+            var onlineOrder = source.First(t => t.Type.Name == "OnlineOrder");
             var mapping = Analyzer.CreateMappingsFor(onlineOrder, target);
             var settings = CreateSettings(mapping);
 

@@ -84,7 +84,7 @@ namespace DeserializationConsole
 
         public void TestMaterializer(string sourceItem, Analyzer analyzer,IList<ModelTypeNode> source, IList<ModelTypeNode> target)
         {
-            var sourceModel = source.First(t => t.TypeName == sourceItem);
+            var sourceModel = source.First(t => t.Type.Name == sourceItem);
             var mapping = analyzer.CreateMappingsFor(sourceModel, target);
 
             var materializer = new Materializer();

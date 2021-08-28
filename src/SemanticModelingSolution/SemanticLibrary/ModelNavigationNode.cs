@@ -67,9 +67,9 @@ namespace SemanticLibrary
             if (insertStartType)
             {
                 if (insertStartNamespace)
-                    segments.Insert(0, $"{rootType.Type.Namespace}.{rootType.TypeName}");
+                    segments.Insert(0, $"{rootType.Type.FullName}");
                 else
-                    segments.Insert(0, rootType.TypeName);
+                    segments.Insert(0, rootType.Type.Name);
             }
 
             return string.Join(separator, segments);
@@ -104,9 +104,9 @@ namespace SemanticLibrary
             if (insertStartType)
             {
                 if (insertStartNamespace)
-                    segments.Insert(0, $"{rootType.Type.Namespace}.{rootType.TypeName}");
+                    segments.Insert(0, $"{rootType.Type.FullName}");
                 else
-                    segments.Insert(0, rootType.TypeName);
+                    segments.Insert(0, rootType.Type.Name);
             }
 
             return string.Join(separator, segments);
@@ -207,9 +207,9 @@ namespace SemanticLibrary
         public override string ToString()
         {
             if (Previous == null)
-                return $"{ModelPropertyNode.OwnerTypeName}.{ModelPropertyNode.Name}";
+                return $"{ModelPropertyNode.Parent.Type.FullName}";
 
-            return $"{ModelPropertyNode.OwnerTypeName}.{ModelPropertyNode.Name} (from: {Previous?.ToString()})";
+            return $"{ModelPropertyNode.Parent.Type.FullName}.{ModelPropertyNode.Name} (from: {Previous?.ToString()})";
         }
     }
 }

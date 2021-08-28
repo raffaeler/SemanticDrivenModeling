@@ -52,16 +52,12 @@ namespace SemanticLibrary
         private ModelTypeNode VisitType(Type type)
         {
             ModelTypeNode modelTypeNode;
-            if (_visited.TryGetValue(type.AssemblyQualifiedName, out modelTypeNode)) return modelTypeNode;
+            if (_visited.TryGetValue(type.GetUniqueTypeName(), out modelTypeNode)) return modelTypeNode;
 
             var classTermToConcepts = _analysis.AnalyzeType(type.Name);
-            modelTypeNode = new ModelTypeNode()
-            {
-                TermToConcepts = classTermToConcepts,
-                Type = type,
-            };
+            modelTypeNode = new ModelTypeNode(type, classTermToConcepts);
 
-            _visited[type.AssemblyQualifiedName] = modelTypeNode;
+            _visited[type.GetUniqueTypeName()] = modelTypeNode;
             _onTypeNode?.Invoke(modelTypeNode);
 
             var properties = type.GetProperties(_flags);

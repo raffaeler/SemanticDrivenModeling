@@ -50,10 +50,11 @@ namespace SemanticStructuresTests
             var domain = new GeneratedCode.Domain();
             var modelsDomain1 = new DomainTypesGraphVisitor(domain, SimpleDomain1.Types.All).Visit(null, null, null);
             var order = modelsDomain1.Single(m => m.Type.Name == "Order");
-            var onlineOrder = modelsDomain1.Single(m => m.Type.Name == "OnlineOrder");
-
             var propertiesSupplier = order.FlatHierarchyProperties().ToList();
 
+
+            var modelsDomain2 = new DomainTypesGraphVisitor(domain, SimpleDomain2.Types.All).Visit(null, null, null);
+            var onlineOrder = modelsDomain2.Single(m => m.Type.Name == "OnlineOrder");
             var propertiesdelivery = onlineOrder.FlatHierarchyProperties().ToList();
 
 

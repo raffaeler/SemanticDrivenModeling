@@ -54,8 +54,9 @@ namespace SemanticLibrary
             var sb = new StringBuilder();
             var source = candidateModelType.SourceModelTypeNode;
             var target = candidateModelType.TargetModelTypeNode;
-            sb.Append($"Source type: {candidateModelType.SourceModelTypeNode.Type.Namespace}.{target.TypeName} => ");
-            sb.Append($"Candidate type: {target.Type.Namespace}.{target.TypeName}");
+            sb.Append($"Source type: {source.Type.FullName} => ");
+            sb.Append($"Candidate type: {target.Type.FullName}");
+
             sb.AppendLine($" (Type score: {candidateModelType.TypeScore}) Prop score: {candidateModelType.PropertiesScore}");
             sb.AppendLine($"Mappings:");
             foreach (var map in candidateModelType.PropertyMappings)

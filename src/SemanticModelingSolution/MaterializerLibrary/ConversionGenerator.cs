@@ -146,7 +146,7 @@ namespace CodeGenerationLibrary.Serialization
             {
                 var expression = GenerateConversion(
                     nodeMapping.Source.ModelPropertyNode.PropertyTypeName,
-                    nodeMapping.Target.ModelPropertyNode.Parent.Type,
+                    nodeMapping.Target.ModelPropertyNode.Parent.Type.GetOriginalType(),
                     nodeMapping.Target.ModelPropertyNode.PropertyTypeName,
                     nodeMapping.Target.ModelPropertyNode.PropertyName);
                 lambda = expression.Compile();
@@ -250,7 +250,7 @@ namespace CodeGenerationLibrary.Serialization
             int i = 0;
             foreach (var nodeMapping in nodeMappings)
             {
-                Type targetInstanceType = nodeMapping.Target.ModelPropertyNode.Parent.Type;
+                Type targetInstanceType = nodeMapping.Target.ModelPropertyNode.Parent.Type.GetOriginalType();
                 string targetPropertyTypeName = nodeMapping.Target.ModelPropertyNode.PropertyTypeName;
                 string propertyName = nodeMapping.Target.ModelPropertyNode.PropertyName;
 

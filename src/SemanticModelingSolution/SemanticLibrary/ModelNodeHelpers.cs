@@ -21,9 +21,9 @@ namespace SemanticLibrary
         private static IEnumerable<ModelNavigationNode> FlatHierarchyPropertiesInternal(ModelTypeNode node, ModelNavigationNode previous,
             Dictionary<string, ModelTypeNode> visited)
         {
-            if (!visited.TryGetValue(node.Type.AssemblyQualifiedName, out _))
+            if (!visited.TryGetValue(node.Type.UniqueName, out _))
             {
-                visited[node.Type.AssemblyQualifiedName] = node;
+                visited[node.Type.UniqueName] = node;
                 foreach (var propertyNode in node.PropertyNodes)
                 {
                     var navigation = new ModelNavigationNode(propertyNode, previous);

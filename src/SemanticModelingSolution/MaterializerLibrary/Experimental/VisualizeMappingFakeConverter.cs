@@ -48,7 +48,7 @@ namespace CodeGenerationLibrary.Serialization
             _conversionGenerator = new(context);   // the new is here in order to recycle the generator cache
         }
 
-        protected string SourceTypeName => _map.SourceModelTypeNode.TypeName;
+        protected string SourceTypeName => _map.SourceModelTypeNode.Type.Name;
         protected bool LogObjectArrayEnabled { get; set; } = true;
 
         protected virtual void InitializeForEachObject()
@@ -60,7 +60,7 @@ namespace CodeGenerationLibrary.Serialization
 
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == _map.TargetModelTypeNode.Type);
+            Debug.Assert(typeToConvert.FullName == _map.TargetModelTypeNode.Type.FullName);
             InitializeForEachObject();
 
             do

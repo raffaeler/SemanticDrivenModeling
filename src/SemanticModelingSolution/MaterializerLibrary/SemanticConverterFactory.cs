@@ -24,7 +24,7 @@ namespace CodeGenerationLibrary.Serialization
         public override bool CanConvert(Type typeToConvert)
         {
             Console.Write($"SemanticConverterFactory.CanConvert> {typeToConvert.Name} ");
-            if (Map == null || typeToConvert != Map.TargetModelTypeNode.Type)
+            if (Map == null || typeToConvert.FullName != Map.TargetModelTypeNode.Type.FullName)
             {
                 Console.WriteLine("No");
                 return false;

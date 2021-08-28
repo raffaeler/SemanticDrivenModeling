@@ -88,16 +88,16 @@ namespace DeserializationConsole
                     // the navigation relies on the properties, and there is no property pointing to the root
                     if (temp.Previous == null)
                     {
-                        var rootType = temp.ModelPropertyNode.Parent.Type;
+                        var rootType = temp.ModelPropertyNode.Parent;
                         object rootInstance;
-                        if (_objects.TryGetValue(rootType.Name, out CurrentInstance cachedRoot))
+                        if (_objects.TryGetValue(rootType.Type.Name, out CurrentInstance cachedRoot))
                         {
                             rootInstance = cachedRoot.Instance;
                         }
                         else
                         {
-                            rootInstance = CreateInstance(rootType);
-                            _objects[rootType.Name] = new CurrentInstance
+                            rootInstance = rootType.Type.CreateInstance();
+                            _objects[rootType.Type.Name] = new CurrentInstance
                             {
                                 Instance = rootInstance,
                                 IsCollection = false,
@@ -110,8 +110,8 @@ namespace DeserializationConsole
                 }
                 else
                 {
-                    var parentType = temp.ModelPropertyNode.Parent.Type;
-                    instance = CreateInstance(parentType);
+                    var parentType = temp.ModelPropertyNode.Parent;
+                    instance = parentType.Type.CreateInstance();
                     var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
 
                     _objects[path] = new CurrentInstance

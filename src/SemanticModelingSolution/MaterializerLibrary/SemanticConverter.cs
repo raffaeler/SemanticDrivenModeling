@@ -55,7 +55,7 @@ namespace CodeGenerationLibrary.Serialization
             _conversionGenerator = new(context);   // the new is here in order to recycle the generator cache
         }
 
-        protected string SourceTypeName => _map.SourceModelTypeNode.TypeName;
+        protected string SourceTypeName => _map.SourceModelTypeNode.Type.Name;
         protected bool LogObjectArrayEnabled { get; set; } = true;
 
         protected virtual void InitializeForEachObject()
@@ -67,7 +67,7 @@ namespace CodeGenerationLibrary.Serialization
 
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == _map.TargetModelTypeNode.Type);
+            Debug.Assert(typeToConvert.FullName == _map.TargetModelTypeNode.Type.FullName);
             InitializeForEachObject();
 
             do
@@ -392,7 +392,7 @@ namespace CodeGenerationLibrary.Serialization
                     // the navigation relies on the properties, and there is no property pointing to the root
                     if (temp.Previous == null)
                     {
-                        var rootType = temp.ModelPropertyNode.Parent.Type;
+                        var rootType = temp.ModelPropertyNode.Parent.Type.GetOriginalType();
                         object rootInstance;
                         if (_objects.TryGetValue(rootType.Name, out CurrentInstance cachedRoot))
                         {
@@ -414,7 +414,7 @@ namespace CodeGenerationLibrary.Serialization
                 }
                 else
                 {
-                    var parentType = temp.ModelPropertyNode.Parent.Type;
+                    var parentType = temp.ModelPropertyNode.Parent.Type.GetOriginalType();
                     instance = CreateInstance(parentType);
                     var sourcePath = scoredPropertyMapping.Source.GetObjectMapPath();
 

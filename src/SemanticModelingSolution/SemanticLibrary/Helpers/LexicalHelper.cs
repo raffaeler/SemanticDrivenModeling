@@ -14,7 +14,15 @@ namespace SemanticLibrary.Helpers
             var composed = composedTerms
                 .Select(t => (word: t, start: word.IndexOf(t)))
                 .Where(ws => ws.start != -1)
+                .OrderBy(ws => ws.start)
                 .ToArray();
+
+            var lastEnd = 0;
+            foreach (var c in composed)
+            {
+                if (c.start < lastEnd) throw new Exception("Composed words are overlapping");
+                lastEnd += c.word.Length;
+            }
 
             if (composed.Length == 0)
             {
@@ -22,21 +30,30 @@ namespace SemanticLibrary.Helpers
             }
 
             var result = new List<string>();
+            int startFence = 0;
             for (int i = 0; i < composed.Length; i++)
             {
                 var item = composed[i];
-                if(item.start != 0)
+                // add the non-composed words before the current composed word
+                if (item.start != startFence)
                 {
-                    var segments = CamelPascalCaseExtract(word.Substring(0, item.start));
+                    var segments = CamelPascalCaseExtract(word.Substring(startFence, item.start - startFence));
                     result.AddRange(segments);
                 }
 
+                // add the composed word
                 result.Add(item.word);
 
-                if (word.Length > item.start + item.word.Length)
+                startFence += item.word.Length;//item.start + word.Length;
+
+                // if it is the last composed word, add the non-composed words after the current composed word
+                if (i == composed.Length - 1)
                 {
-                    var segments = CamelPascalCaseExtract(word.Substring(item.start + item.word.Length));
-                    result.AddRange(segments);
+                    if (word.Length > item.start + item.word.Length)
+                    {
+                        var segments = CamelPascalCaseExtract(word.Substring(item.start + item.word.Length));
+                        result.AddRange(segments);
+                    }
                 }
             }
 

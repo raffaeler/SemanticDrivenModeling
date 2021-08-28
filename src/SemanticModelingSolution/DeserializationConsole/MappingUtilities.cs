@@ -75,7 +75,7 @@ namespace DeserializationConsole
 
         public ScoredTypeMapping GetMappings(string sourceTypeName, IList<ModelTypeNode> source, IList<ModelTypeNode> target)
         {
-            var sourceType = source.First(t => t.TypeName == sourceTypeName);  // i.e. "OnlineOrder"
+            var sourceType = source.First(t => t.Type.Name == sourceTypeName);  // i.e. "OnlineOrder"
             var mapping = Analyzer.CreateMappingsFor(sourceType, target);
             return mapping;
         }

@@ -217,14 +217,14 @@ namespace CodeGenerationLibrary.Serialization
                 if (modelNavigationNode.ModelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain)
                 {
                     // instance is a collection
-                    current.Collection = CreateInstance(ownerType.Type);
+                    current.Collection = ownerType.Type.CreateInstance();
                     current.Instance = CreateInstance(modelNavigationNode.ModelPropertyNode.CoreType);
-                    var addMethod = ownerType.Type.GetMethod("Add");
+                    var addMethod = ownerType.Type.GetOriginalType().GetMethod("Add");
                     addMethod.Invoke(current, new object[] { current.Instance });
                 }
                 else
                 {
-                    current.Instance = CreateInstance(ownerType.Type);
+                    current.Instance = ownerType.Type.CreateInstance();
                 }
 
                 _objects[pathToType] = current;
@@ -248,7 +248,7 @@ namespace CodeGenerationLibrary.Serialization
                 // this means it is a new object inside the collection
                 var ownerType = modelNavigationNode.ModelPropertyNode.Parent;
                 current.Instance = CreateInstance(modelNavigationNode.ModelPropertyNode.CoreType);
-                var addMethod = ownerType.Type.GetMethod("Add");
+                var addMethod = ownerType.Type.GetOriginalType().GetMethod("Add");
                 addMethod.Invoke(current, new object[] { current.Instance });
             }
 

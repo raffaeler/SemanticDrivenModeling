@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -66,6 +67,17 @@ namespace SemanticStructuresTests
         }
 
         [TestMethod]
+        public void InvalidComposedWord()
+        {
+            var testDomain = new MyDomain();
+
+            Assert.ThrowsException<Exception>(() => LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "AName"),
+                "Composed words should not be able to overlap");
+            Assert.ThrowsException<Exception>(() => LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "MyAName"),
+                "Composed words should not be able to overlap");
+        }
+
+        [TestMethod]
         public void TestPascalCaseExtract()
         {
             var testDomain = new MyDomain();
@@ -74,8 +86,6 @@ namespace SemanticStructuresTests
             CollectionAssert.AreEqual(new string[] { "Id" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "id"));
             CollectionAssert.AreEqual(new string[] { "First", "Name" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "FirstName"));
             CollectionAssert.AreEqual(new string[] { "First", "Name" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "firstName"));
-            CollectionAssert.AreEqual(new string[] { "AName" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "AName"));
-            CollectionAssert.AreEqual(new string[] { "My", "AName" }, LexicalHelper.CamelPascalCaseExtract(testDomain.AllTerms, "MyAName"));
         }
 
         [TestMethod]

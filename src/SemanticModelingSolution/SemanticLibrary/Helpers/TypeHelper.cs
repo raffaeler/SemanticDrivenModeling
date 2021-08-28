@@ -21,6 +21,35 @@ namespace SemanticLibrary.Helpers
                 typeof(Guid),
             };
 
+        /// <summary>
+        /// This does not use "AssemblyQualifiedName" to avoid dependencies on the assembly name
+        /// See ModelTypeNode class for its usage
+        /// </summary>
+        public static string GetUniqueTypeName(this Type type) => type.FullName;
+
+        public static Type GetBasicType(string typeFullName)
+        {
+            if (typeFullName == null) throw new ArgumentNullException(nameof(typeFullName));
+            if (!typeFullName.StartsWith("System"))
+            {
+                throw new ArgumentException("This method must only be used with basic types belonging to the 'System' namespace", nameof(typeFullName));
+            }
+
+            var type = Type.GetType(typeFullName);
+            if (type == null) throw new ArgumentException($"The type {typeFullName} cannot be retrieved");
+            return type;
+        }
+
+        public static Type GetEntityType(string typeFullName, string assemblyName = null)
+        {
+            if (typeFullName == null) throw new ArgumentNullException(nameof(typeFullName));
+
+            var finalTypeName = assemblyName == null ? typeFullName : $"{typeFullName},{assemblyName}";
+            var type = Type.GetType(finalTypeName);
+            if (type == null) throw new ArgumentException($"The type {finalTypeName} cannot be retrieved");
+            return type;
+        }
+
         public static bool IsBasicType(Type type) => BasicTypes.Contains(type);
         public static Type GetUnderlyingNullable(Type type) => Nullable.GetUnderlyingType(type);
         public static Type GetUnderlyingArray(Type type) => type.HasElementType ? type.GetElementType() : null;
@@ -37,7 +66,7 @@ namespace SemanticLibrary.Helpers
 
         private static Type GetUnderlyingCollectionInternal(Type type)
         {
-            if(IsGenericCollection(type))
+            if (IsGenericCollection(type))
             {
                 var genTypes = type.GetGenericArguments();
                 if (genTypes.Length == 1) return genTypes.Single();
