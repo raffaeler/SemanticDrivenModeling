@@ -42,14 +42,38 @@ namespace SemanticStructuresTests
 
             var sourceObjects = SimpleDomain2.Samples.GetOrders();
             var targetObjects = utilities.OnlineOrderToOrder(m2, m1, sourceObjects);
-
         }
+
+        [TestMethod]
+        public void MappingOnlineOrderToOrderFromSerialization()
+        {
+            var jsonDomainDefinitions = File.ReadAllText("Serializations\\domainDefinitions.json");
+            var jsonDomain1 = File.ReadAllText("Serializations\\domain1types.json");
+            var jsonDomain2 = File.ReadAllText("Serializations\\domain2types.json");
+
+
+            var utilities = new MappingUtilities.MappingUtilities();
+            //var domain = new GeneratedCode.Domain();
+            var domain = JsonSerializer.Deserialize<GeneratedCode.Domain>(jsonDomainDefinitions);
+            var analyzer = new MappingUtilities.Analyzer();
+            //var m1 = analyzer.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
+            //var m2 = analyzer.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
+            var m1 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain1, domain);
+            var m2 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain2, domain);
+
+            var sourceObjects = SimpleDomain2.Samples.GetOrders();
+            var targetObjects = utilities.OnlineOrderToOrder(m2, m1, sourceObjects);
+        }
+
+
+
 
         [TestMethod]
         public void ModelNodeVisitorTests2()
         {
             var domain = new GeneratedCode.Domain();
             var modelsDomain1 = new DomainTypesGraphVisitor(domain, SimpleDomain1.Types.All).Visit(null, null, null);
+
             var order = modelsDomain1.Single(m => m.Type.Name == "Order");
             var propertiesSupplier = order.FlatHierarchyProperties().ToList();
 
@@ -61,6 +85,22 @@ namespace SemanticStructuresTests
 
             //Assert.AreEqual(, );
         }
+
+        //[TestMethod]
+        //public void SerializeAll()
+        //{
+        //    var domain = new GeneratedCode.Domain();
+        //    var jsonDomainDefinitions = JsonSerializer.Serialize(domain);
+        //    File.WriteAllText("domainDefinitions.json", jsonDomainDefinitions);
+
+        //    var modelsDomain1 = new DomainTypesGraphVisitor(domain, SimpleDomain1.Types.All).Visit(null, null, null);
+        //    var jsonDomain1 = modelsDomain1.Serialize(domain);
+        //    File.WriteAllText("domain1types.json", jsonDomain1);
+
+        //    var modelsDomain2 = new DomainTypesGraphVisitor(domain, SimpleDomain2.Types.All).Visit(null, null, null);
+        //    var jsonDomain2 = modelsDomain2.Serialize(domain);
+        //    File.WriteAllText("domain2types.json", jsonDomain2);
+        //}
 
 
         [TestMethod]

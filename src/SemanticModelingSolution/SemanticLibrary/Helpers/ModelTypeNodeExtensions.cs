@@ -47,34 +47,57 @@ namespace SemanticLibrary
 
         public static ModelTypeNode DeserializeOne(string json, DomainBase domain)
         {
+            ModelTypeNodeVisitor visitor = new();
+
             JsonSerializerOptions options = new()
             {
                 Converters =
                 {
-                    new ModelTypeNodeJsonConverter(),
                     new ConceptJsonConverter(domain),
                     new ConceptSpecifierJsonConverter(domain),
                     new TermJsonConverter(domain),
                 },
             };
 
-            return JsonSerializer.Deserialize<ModelTypeNode>(json, options);
+            var item = JsonSerializer.Deserialize<ModelTypeNode>(json, options);
+            RestoreParent(visitor, item);
+            return item;
         }
 
         public static IList<ModelTypeNode> DeserializeMany(string json, DomainBase domain)
         {
+            ModelTypeNodeVisitor visitor = new();
+
             JsonSerializerOptions options = new()
             {
                 Converters =
                 {
-                    new ModelTypeNodeJsonConverter(),
                     new ConceptJsonConverter(domain),
                     new ConceptSpecifierJsonConverter(domain),
                     new TermJsonConverter(domain),
                 },
             };
 
-            return JsonSerializer.Deserialize<List<ModelTypeNode>>(json, options);
+            var items = JsonSerializer.Deserialize<List<ModelTypeNode>>(json, options);
+            foreach (var item in items)
+            {
+                RestoreParent(visitor, item);
+            }
+
+            return items;
+        }
+
+        private static void RestoreParent(ModelTypeNodeVisitor visitor, ModelTypeNode modelTypeNode)
+        {
+            visitor.Visit(modelTypeNode,
+                typeNode =>
+                {
+                    foreach (var prop in typeNode.PropertyNodes)
+                    {
+                        prop.Parent = typeNode;
+                    }
+                }, _ => { });
+            return;
         }
     }
 }
