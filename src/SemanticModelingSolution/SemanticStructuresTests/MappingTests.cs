@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 
 using Humanizer;
 
@@ -26,7 +27,7 @@ namespace SemanticStructuresTests
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
             var targetObjects = utilities.OrderToOnlineOrder(m1, m2, sourceObjects);
-            
+
         }
 
 
@@ -59,6 +60,42 @@ namespace SemanticStructuresTests
 
 
             //Assert.AreEqual(, );
+        }
+
+
+        [TestMethod]
+        public void MetadataSerialization()
+        {
+            var domain = new GeneratedCode.Domain();
+            var modelsDomain1 = new DomainTypesGraphVisitor(domain, SimpleDomain1.Types.All).Visit(null, null, null);
+            //var json2 = Newtonsoft.Json.JsonConvert.SerializeObject(modelsDomain1);
+            var json = modelsDomain1.Serialize(domain);
+
+            var cloneDomain = ModelTypeNodeExtensions.DeserializeMany(json, domain);
+            Assert.AreEqual(modelsDomain1.Count, cloneDomain.Count);
+
+            ModelTypeNodeVisitor visitor = new();
+            
+            var types1 = 0;
+            var properties1 = 0;
+            foreach (var modelTypeNode in modelsDomain1)
+            {
+                visitor.Visit(modelTypeNode,
+                    tn => types1++,
+                    pn => properties1++);
+            }
+
+            var types2 = 0;
+            var properties2 = 0;
+            foreach (var modelTypeNode in cloneDomain)
+            {
+                visitor.Visit(modelTypeNode,
+                    tn => types2++,
+                    pn => properties2++);
+            }
+
+            Assert.AreEqual(types1, types2);
+            Assert.AreEqual(properties1, properties2);
         }
     }
 }

@@ -141,14 +141,14 @@ namespace CodeGenerationLibrary.Serialization
 
         public SetPropertiesDelegate GetConverter(ScoredPropertyMapping<ModelNavigationNode> nodeMapping)
         {
-            var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.ModelPropertyNode.Property.Name}";
+            var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.ModelPropertyNode.PropertyInfo.Name}";
             if (!_cacheSetProperty.TryGetValue(path, out var lambda))
             {
                 var expression = GenerateConversion(
-                    nodeMapping.Source.ModelPropertyNode.Property.PropertyType.Name,
+                    nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType.Name,
                     nodeMapping.Target.ModelPropertyNode.Parent.Type.GetOriginalType(),
-                    nodeMapping.Target.ModelPropertyNode.Property.PropertyType.Name,
-                    nodeMapping.Target.ModelPropertyNode.PropertyName);
+                    nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType.Name,
+                    nodeMapping.Target.ModelPropertyNode.Name);
                 lambda = expression.Compile();
             }
 
@@ -224,7 +224,7 @@ namespace CodeGenerationLibrary.Serialization
             if (nodeMappings == null) throw new ArgumentNullException(nameof(nodeMappings));
             if (nodeMappings.Count == 0) throw new ArgumentException(nameof(nodeMappings));
 
-            var sourceTypeName = nodeMappings.First().Source.ModelPropertyNode.Property.PropertyType.Name;
+            var sourceTypeName = nodeMappings.First().Source.ModelPropertyNode.PropertyInfo.PropertyType.Name;
             if (!_basicTypes.TryGetValue(sourceTypeName, out Type sourceType))
             {
                 throw new ArgumentException($"The type {sourceTypeName} is not valid for converting data in a json source");
@@ -251,8 +251,8 @@ namespace CodeGenerationLibrary.Serialization
             foreach (var nodeMapping in nodeMappings)
             {
                 Type targetInstanceType = nodeMapping.Target.ModelPropertyNode.Parent.Type.GetOriginalType();
-                string targetPropertyTypeName = nodeMapping.Target.ModelPropertyNode.PropertyTypeName;
-                string propertyName = nodeMapping.Target.ModelPropertyNode.PropertyName;
+                string targetPropertyTypeName = nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType.Name;
+                string propertyName = nodeMapping.Target.ModelPropertyNode.Name;
 
                 if (!_basicTypes.TryGetValue(targetPropertyTypeName, out Type targetPropertyType))
                 {
@@ -298,12 +298,12 @@ namespace CodeGenerationLibrary.Serialization
 
         public GetConvertedValueDelegate GetValueConverter(ScoredPropertyMapping<ModelNavigationNode> nodeMapping)
         {
-            var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.ModelPropertyNode.Property.Name}";
+            var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.ModelPropertyNode.PropertyInfo.Name}";
             if (!_cacheGetValue.TryGetValue(path, out var lambda))
             {
                 var expression = GenerateValueConversion(
-                    nodeMapping.Source.ModelPropertyNode.PropertyTypeName,
-                    nodeMapping.Target.ModelPropertyNode.PropertyTypeName);
+                    nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType.Name,
+                    nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType.Name);
                 lambda = expression.Compile();
             }
 

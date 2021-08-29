@@ -200,7 +200,7 @@ namespace CodeGenerationLibrary.Serialization
                                 // therefore in this specific case we always have to skip
                                 var converter = _conversionGenerator.GetValueConverter(nodeMapping);
                                 var value = converter(ref reader);
-                                Debug.Assert(value == nodeMapping.Target.ModelPropertyNode.Property.PropertyType.GetDefaultForType());
+                                Debug.Assert(value == nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType.GetDefaultForType());
                             }
 
                             reader.Skip();
@@ -297,8 +297,8 @@ namespace CodeGenerationLibrary.Serialization
             Console.Write(sourcePath.PadRight(50));
             if (nodeMapping != null)
             {
-                var sourceType = nodeMapping.Source.ModelPropertyNode.Property.PropertyType;
-                var targetType = nodeMapping.Target.ModelPropertyNode.Property.PropertyType;
+                var sourceType = nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType;
+                var targetType = nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType;
                 Console.Write($"{sourceType.Name} -> {targetType.Name}".PadRight(30));
                 Console.Write(nodeMapping.Target.GetMapPath());
             }

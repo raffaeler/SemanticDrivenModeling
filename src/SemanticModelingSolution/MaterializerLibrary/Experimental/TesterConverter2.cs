@@ -159,9 +159,9 @@ namespace CodeGenerationLibrary.Serialization
                             //    _objects[path] = instance;
                             //}
 
-                            var currentProperty = _currentMapping.Target.ModelPropertyNode.Property;
+                            var currentProperty = _currentMapping.Target.ModelPropertyNode.PropertyInfo;
                             // conversion goes here
-                            if (currentProperty.PropertyType == _currentMapping.Source.ModelPropertyNode.Property.PropertyType)
+                            if (currentProperty.PropertyType == _currentMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType)
                             {
                                 if (currentProperty.PropertyType.Is(typeof(Guid)))
                                 {
@@ -262,7 +262,7 @@ namespace CodeGenerationLibrary.Serialization
                     if (parentInstance != null)
                     {
                         //parentInstance.<property> = instance;
-                        var property = modelNavigationNode.Previous.ModelPropertyNode.Property;
+                        var property = modelNavigationNode.Previous.ModelPropertyNode.PropertyInfo;
                         property.SetValue(parentInstance.Instance, current.Instance);
                     }
                 }
@@ -311,7 +311,7 @@ namespace CodeGenerationLibrary.Serialization
 
             var from = $"{_currentProperty}:{value}";
             var to = $"{_currentMapping?.Target.GetMapPath()}";
-            var targetType = (_currentMapping?.Target.ModelPropertyNode.Property.PropertyType.Name) ?? "";
+            var targetType = (_currentMapping?.Target.ModelPropertyNode.PropertyInfo.PropertyType.Name) ?? "";
 
             if (string.IsNullOrEmpty(to)) to = "(unmapped)";
             if (string.IsNullOrEmpty(message)) message = "";

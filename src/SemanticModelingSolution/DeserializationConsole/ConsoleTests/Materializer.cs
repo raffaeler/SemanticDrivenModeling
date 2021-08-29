@@ -62,7 +62,7 @@ namespace DeserializationConsole
                     }
                     else
                     {
-                        temp.ModelPropertyNode.Property.SetValue(instance, lastCreatedInstance);
+                        temp.ModelPropertyNode.PropertyInfo.SetValue(instance, lastCreatedInstance);
                     }
 
                     return isFirst ? instance : result;
@@ -70,7 +70,7 @@ namespace DeserializationConsole
 
                 if (isCollection)
                 {
-                    var property = temp.ModelPropertyNode.Property;
+                    var property = temp.ModelPropertyNode.PropertyInfo;
                     var collectionType = property.PropertyType;
                     instance = collectionType.CreateInstance();
                     var addMethod = collectionType.GetMethod("Add");
@@ -123,7 +123,7 @@ namespace DeserializationConsole
 
                     if (!isFirst)
                     {
-                        var property = temp.ModelPropertyNode.Property;
+                        var property = temp.ModelPropertyNode.PropertyInfo;
                         property.SetValue(instance, lastCreatedInstance);
                     }
                 }

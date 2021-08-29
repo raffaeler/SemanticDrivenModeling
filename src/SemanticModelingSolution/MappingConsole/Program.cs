@@ -201,7 +201,7 @@ namespace MappingConsole
 
                 Console.Write($"    - {{P}} {modelPropertyNode.Name.PadRight(30)} => [{string.Join(", ", modelPropertyNode.CandidateConceptNames).PadRight(60)}] ");
                 Console.Write($"[{string.Join(", ", conceptSpecifiers).PadRight(25)}]");
-                Console.WriteLine($" <== {modelPropertyNode.Property.PropertyType.Name.PadRight(20)} - {modelPropertyNode.PropertyKind.ToString().PadRight(20)} - {modelPropertyNode.CoreType?.Name}");
+                Console.WriteLine($" <== {modelPropertyNode.PropertyInfo.PropertyType.Name.PadRight(20)} - {modelPropertyNode.PropertyKind.ToString().PadRight(20)} - {modelPropertyNode.CoreType?.Name}");
             }
         }
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using SemanticLibrary.Helpers;
+using System.Text.Json.Serialization;
 
 namespace SemanticLibrary
 {
@@ -24,7 +25,11 @@ namespace SemanticLibrary
         public SurrogateType Type { get; set; }
 
         public IList<TermToConcept> TermToConcepts { get; set; }
+        
+        [JsonIgnore]
         public IEnumerable<Concept> CandidateConcepts => TermToConcepts.Select(c => c.Concept);
+        
+        [JsonIgnore]
         public IEnumerable<string> CandidateConceptNames => TermToConcepts.Select(c => c.Concept.Name);
 
         public IList<ModelPropertyNode> PropertyNodes { get; set; } = new List<ModelPropertyNode>();

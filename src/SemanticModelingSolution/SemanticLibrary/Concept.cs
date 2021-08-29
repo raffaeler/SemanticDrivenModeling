@@ -2,7 +2,7 @@
 
 namespace SemanticLibrary
 {
-    public record Concept(string Name, string description, params ConceptSpecifier[] ConceptSpecifiers)
+    public record Concept(string Name, string Description, params ConceptSpecifier[] ConceptSpecifiers)
     {
     }
 }

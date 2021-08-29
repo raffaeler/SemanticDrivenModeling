@@ -310,8 +310,8 @@ namespace CodeGenerationLibrary.Serialization
 
                     Console.Write(sourcePath.PadRight(50));
 
-                    var sourceType = nodeMapping.Source.ModelPropertyNode.Property.PropertyType;
-                    var targetType = nodeMapping.Target.ModelPropertyNode.Property.PropertyType;
+                    var sourceType = nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType;
+                    var targetType = nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType;
                     Console.Write($"{sourceType.Name} -> {targetType.Name}".PadRight(30));
                     Console.Write(nodeMapping.Target.GetMapPath());
                     Console.WriteLine();
@@ -367,7 +367,7 @@ namespace CodeGenerationLibrary.Serialization
                     }
                     else
                     {
-                        temp.ModelPropertyNode.Property.SetValue(instance, lastCreatedInstance);
+                        temp.ModelPropertyNode.PropertyInfo.SetValue(instance, lastCreatedInstance);
                     }
 
                     return isFirst ? instance : result;
@@ -375,7 +375,7 @@ namespace CodeGenerationLibrary.Serialization
 
                 if (isCollection)
                 {
-                    var property = temp.ModelPropertyNode.Property;
+                    var property = temp.ModelPropertyNode.PropertyInfo;
                     var collectionType = property.PropertyType;
                     instance = collectionType.CreateInstance();
                     var addMethod = collectionType.GetMethod("Add");
@@ -427,7 +427,7 @@ namespace CodeGenerationLibrary.Serialization
 
                     if (!isFirst)
                     {
-                        var property = temp.ModelPropertyNode.Property;
+                        var property = temp.ModelPropertyNode.PropertyInfo;
                         property.SetValue(instance, lastCreatedInstance);
                     }
                 }

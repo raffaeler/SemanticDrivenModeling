@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 using SemanticLibrary.Helpers;
@@ -21,15 +22,20 @@ namespace SemanticLibrary
             PropertyKind kind, Type coreType, IList<TermToConcept> termToConcepts)
         {
             Parent = parent;
-            Property = new(propertyInfo, parent.Type);
+            PropertyInfo = new(propertyInfo, parent.Type);
             PropertyKind = kind;
             CoreType = new(coreType);
             TermToConcepts = termToConcepts;
         }
 
+        [JsonIgnore]
         public ModelTypeNode Parent { get; set; }
 
-        public SurrogatePropertyInfo Property { get; set; }
+        public PropertyKind PropertyKind { get; set; }
+        public SurrogatePropertyInfo PropertyInfo { get; set; }
+
+        [JsonIgnore]
+        public string Name => PropertyInfo?.Name;
 
         /// <summary>
         /// The type of the property extracted from the collection.
@@ -38,39 +44,23 @@ namespace SemanticLibrary
         /// </summary>
         public SurrogateType CoreType { get; set; }
 
-
-        public string Name => Property?.Name;
-        ////////////////////////public PropertyInfo Property { get; set; }
-        public string PropertyName => Property.Name;
-        public string PropertyTypeName => Property.PropertyType.Name;
-        public PropertyKind PropertyKind { get; set; }
-
         /// <summary>
         /// </summary>
         public ModelTypeNode NavigationNode { get; set; }
 
-        ///// <summary>
-        ///// This collection contains the list of propertis of the One-To-One 
-        ///// or One-To-Many relationships of the direct child type (CoreType)
-        ///// If the Proeprty type is a BasicType this is null
-        ///// It will be used to map the concepts between graphs. Thanks to the Parent it
-        ///// is then possible re-create the hierarachy when generating code
-        ///// </summary>
-        //public IList<ModelPropertyNode> FlattenedSubProperties => _navigationNode?.PropertyNodes;
-
-        /// <summary>
-        /// The type of the property extracted from the collection.
-        /// If the property type is string, this is still string
-        /// But if the property type is List of string, this is string
-        /// </summary>
-        /////////public Type CoreType { get; set; }
-
         public IList<TermToConcept> TermToConcepts { get; set; }
+
+        [JsonIgnore]
         public IEnumerable<Concept> CandidateConcepts => TermToConcepts.Select(c => c.Concept);
+        
+        [JsonIgnore]
         public IEnumerable<string> CandidateConceptNames => TermToConcepts.Select(c => c.Concept.Name);
+        
+        [JsonIgnore]
         public IEnumerable<string> CandidateConceptSpecifierNames => TermToConcepts.Select(c => c.ConceptSpecifier.Name);
 
-        private string UniqueString => $"{Parent?.Type.FullName}.{Property?.Name}";
+        [JsonIgnore]
+        private string UniqueString => $"{Parent?.Type.FullName}.{PropertyInfo?.Name}";
 
         public override bool Equals(object obj)
         {
