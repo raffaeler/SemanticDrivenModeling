@@ -45,7 +45,7 @@ namespace MaterializerLibrary
                 WriteIndented = true,
                 Converters =
                 {
-                    new CodeGenerationLibrary.Serialization.SemanticConverterFactory(scoredTypeMapping),
+                    new SemanticConverterFactory(scoredTypeMapping),
                 },
             };
 

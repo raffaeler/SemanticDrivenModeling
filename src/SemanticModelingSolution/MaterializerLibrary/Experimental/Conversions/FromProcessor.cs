@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
             
 //var typeName = SyntaxFactory.ParseTypeName("bool");
 
-namespace CodeGenerationLibrary.Conversions
+namespace MaterializerLibrary
 {
     public class FromProcessor
     {

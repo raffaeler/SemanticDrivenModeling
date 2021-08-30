@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 using SemanticLibrary;
 
-namespace CodeGenerationLibrary.Serialization
+namespace MaterializerLibrary
 {
     public class SemanticConverterFactory : JsonConverterFactory
     {

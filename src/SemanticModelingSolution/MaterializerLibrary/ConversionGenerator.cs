@@ -39,7 +39,7 @@ using SemanticLibrary;
     string GetComment();
 */
 
-namespace CodeGenerationLibrary.Serialization
+namespace MaterializerLibrary
 {
     public class ConversionGenerator
     {
@@ -432,7 +432,9 @@ namespace CodeGenerationLibrary.Serialization
             public DateTimeOffset Date { get; set; }
         }
 
-        private IConversion _conversion;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0044:Add readonly modifier",
+            Justification = "Sample Code to generate")]
+        private IConversion _conversion = null;
 
         // current
         private void Func(ref Utf8JsonReader reader, Object inputObject)

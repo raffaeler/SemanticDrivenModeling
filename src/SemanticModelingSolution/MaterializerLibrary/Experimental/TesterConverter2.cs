@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using SemanticLibrary;
 
-namespace CodeGenerationLibrary.Serialization
+namespace MaterializerLibrary
 {
     public class TesterConverter2<T> : JsonConverter<T>
     {

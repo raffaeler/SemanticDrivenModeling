@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using SemanticLibrary;
 using SemanticLibrary.Helpers;
 
-namespace CodeGenerationLibrary.Serialization
+namespace MaterializerLibrary
 {
     public class VisualizeMappingFakeConverter<T> : JsonConverter<T>
     {

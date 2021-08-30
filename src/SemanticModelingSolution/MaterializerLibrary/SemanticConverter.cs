@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 using SemanticLibrary;
 using SemanticLibrary.Helpers;
 
-namespace CodeGenerationLibrary.Serialization
+namespace MaterializerLibrary
 {
-    public class SemanticConverter<T> : JsonConverter<T>
+    public partial class SemanticConverter<T> : JsonConverter<T>
     {
         private const string _arrayItemPlaceholder = "$";
 
@@ -271,13 +271,6 @@ namespace CodeGenerationLibrary.Serialization
             while (reader.Read());
 
             return default(T);
-        }
-
-        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
-        {
-            // not supported
-            Console.WriteLine($"TesterConverter.Write> ");
-            throw new NotSupportedException("This converter can only be used to deserialize");
         }
 
         protected virtual void LogState(JsonTokenType jsonTokenType, int depth,
