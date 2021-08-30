@@ -7,6 +7,8 @@ using System.Text.Json;
 
 using Humanizer;
 
+using MaterializerLibrary;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using SemanticLibrary;
@@ -19,29 +21,28 @@ namespace SemanticStructuresTests
         [TestMethod]
         public void MappingOrderToOnlineOrder()
         {
-            var utilities = new MappingUtilities.MappingUtilities();
             var domain = new GeneratedCode.Domain();
-            var analyzer = new MappingUtilities.Analyzer();
-            var m1 = analyzer.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
-            var m2 = analyzer.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
+            var utilities = new MappingUtilities(domain);
+            var m1 = utilities.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
+            var m2 = utilities.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
-            var targetObjects = utilities.OrderToOnlineOrder(m1, m2, sourceObjects);
-
+            var targetObjects = utilities.Transform<SimpleDomain2.OnlineOrder>(
+                "Order", m1, m2, sourceObjects);
         }
 
 
         [TestMethod]
         public void MappingOnlineOrderToOrder()
         {
-            var utilities = new MappingUtilities.MappingUtilities();
             var domain = new GeneratedCode.Domain();
-            var analyzer = new MappingUtilities.Analyzer();
-            var m1 = analyzer.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
-            var m2 = analyzer.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
+            var utilities = new MappingUtilities(domain);
+            var m1 = utilities.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
+            var m2 = utilities.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
 
             var sourceObjects = SimpleDomain2.Samples.GetOrders();
-            var targetObjects = utilities.OnlineOrderToOrder(m2, m1, sourceObjects);
+            var targetObjects = utilities.Transform<SimpleDomain1.Order>(
+                "OnlineOrder", m2, m1, sourceObjects);
         }
 
         [TestMethod]
@@ -52,17 +53,14 @@ namespace SemanticStructuresTests
             var jsonDomain2 = File.ReadAllText("Serializations\\domain2types.json");
 
 
-            var utilities = new MappingUtilities.MappingUtilities();
-            //var domain = new GeneratedCode.Domain();
             var domain = JsonSerializer.Deserialize<GeneratedCode.Domain>(jsonDomainDefinitions);
-            var analyzer = new MappingUtilities.Analyzer();
-            //var m1 = analyzer.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
-            //var m2 = analyzer.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
+            var utilities = new MappingUtilities(domain);
             var m1 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain1, domain);
             var m2 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain2, domain);
 
             var sourceObjects = SimpleDomain2.Samples.GetOrders();
-            var targetObjects = utilities.OnlineOrderToOrder(m2, m1, sourceObjects);
+            var targetObjects = utilities.Transform<SimpleDomain1.Order>(
+                "OnlineOrder", m2, m1, sourceObjects);
         }
 
 

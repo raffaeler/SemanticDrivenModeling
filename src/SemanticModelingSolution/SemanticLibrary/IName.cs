@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SemanticLibrary.Helpers
+namespace SemanticLibrary
 {
     public interface IName
     {
