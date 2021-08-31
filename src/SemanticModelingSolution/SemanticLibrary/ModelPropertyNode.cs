@@ -28,14 +28,17 @@ namespace SemanticLibrary
             TermToConcepts = termToConcepts;
         }
 
+        /// <summary>
+        /// The type owning this property
+        /// </summary>
         [JsonIgnore]
         public ModelTypeNode Parent { get; set; }
 
-        public PropertyKind PropertyKind { get; set; }
+        /// <summary>
+        /// The relevant metadata retrieved with reflection
+        /// and copied here so that we can serialize them
+        /// </summary>
         public SurrogatePropertyInfo PropertyInfo { get; set; }
-
-        [JsonIgnore]
-        public string Name => PropertyInfo?.Name;
 
         /// <summary>
         /// The type of the property extracted from the collection.
@@ -45,8 +48,18 @@ namespace SemanticLibrary
         public SurrogateType CoreType { get; set; }
 
         /// <summary>
+        /// The navigation info for this property.
+        /// The type is different from CoreType only for collections
         /// </summary>
         public ModelTypeNode NavigationNode { get; set; }
+
+        /// <summary>
+        /// Our property classification 
+        /// </summary>
+        public PropertyKind PropertyKind { get; set; }
+
+        [JsonIgnore]
+        public string Name => PropertyInfo?.Name;
 
         public IList<TermToConcept> TermToConcepts { get; set; }
 

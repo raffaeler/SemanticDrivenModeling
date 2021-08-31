@@ -16,9 +16,9 @@ namespace MaterializerLibrary
     {
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
-            // not supported
             Console.WriteLine($"TesterConverter.Write> ");
-            throw new NotSupportedException("This converter can only be used to deserialize");
+
+
         }
 
 

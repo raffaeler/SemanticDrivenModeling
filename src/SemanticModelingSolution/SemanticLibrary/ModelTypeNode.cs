@@ -24,6 +24,8 @@ namespace SemanticLibrary
 
         public SurrogateType Type { get; set; }
 
+        public IList<ModelPropertyNode> PropertyNodes { get; set; } = new List<ModelPropertyNode>();
+
         public IList<TermToConcept> TermToConcepts { get; set; }
         
         [JsonIgnore]
@@ -31,8 +33,6 @@ namespace SemanticLibrary
         
         [JsonIgnore]
         public IEnumerable<string> CandidateConceptNames => TermToConcepts.Select(c => c.Concept.Name);
-
-        public IList<ModelPropertyNode> PropertyNodes { get; set; } = new List<ModelPropertyNode>();
 
         public override string ToString()
         {
