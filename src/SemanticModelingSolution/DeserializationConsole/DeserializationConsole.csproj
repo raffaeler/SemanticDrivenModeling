@@ -16,4 +16,16 @@
     <ProjectReference Include="..\SimpleModels\SimpleModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Serializations\domain1types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Serializations\domain2types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Serializations\domainDefinitions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

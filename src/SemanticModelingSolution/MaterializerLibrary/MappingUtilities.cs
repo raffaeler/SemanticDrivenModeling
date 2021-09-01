@@ -34,7 +34,10 @@ namespace MaterializerLibrary
 
 
         public string SerializePlain<T>(IEnumerable<T> item) => JsonSerializer.Serialize(item, SettingsVanilla);
+        public string SerializeByTransform<T>(IEnumerable<T> item, JsonSerializerOptions options)
+            => JsonSerializer.Serialize(item, options);
 
+        public object DeserializePlain(string json, Type type) => JsonSerializer.Deserialize(json, type);
         public object DeserializeByTransform(string json, Type type, JsonSerializerOptions options) => JsonSerializer.Deserialize(json, type, options);
 
         protected virtual JsonSerializerOptions SettingsVanilla => _jsonVanillaOptions;
@@ -67,7 +70,7 @@ namespace MaterializerLibrary
         }
 
 
-        public IEnumerable<TTarget> Transform<TSource, TTarget>(string sourceTypeName,
+        public IEnumerable<TTarget> TransformDeserialize<TSource, TTarget>(string sourceTypeName,
             IList<ModelTypeNode> source, IList<ModelTypeNode> target,
             IEnumerable<TSource> sourceObjects)
         {
@@ -80,7 +83,7 @@ namespace MaterializerLibrary
             return targetObjects;
         }
 
-        public IEnumerable<TTarget> Transform<TTarget>(string sourceTypeName,
+        public IEnumerable<TTarget> TransformDeserialize<TTarget>(string sourceTypeName,
             IList<ModelTypeNode> source, IList<ModelTypeNode> target,
             IEnumerable<object> sourceObjects)
         {
@@ -89,6 +92,18 @@ namespace MaterializerLibrary
 
             var json = SerializePlain(sourceObjects);
             var targetObjects = (IEnumerable<TTarget>)DeserializeByTransform(json, typeof(TTarget[]), settings);
+            return targetObjects;
+        }
+
+        public IEnumerable<TTarget> TransformSerialize<TSource, TTarget>(string sourceTypeName,
+            IList<ModelTypeNode> source, IList<ModelTypeNode> target,
+            IEnumerable<TSource> sourceObjects)
+        {
+            var mapping = GetMappings(sourceTypeName, source, target);
+            var settings = CreateSettings(mapping);
+
+            var json = SerializeByTransform<TSource>(sourceObjects, settings);
+            var targetObjects = (IEnumerable<TTarget>)DeserializePlain(json, typeof(TTarget[]));
             return targetObjects;
         }
 

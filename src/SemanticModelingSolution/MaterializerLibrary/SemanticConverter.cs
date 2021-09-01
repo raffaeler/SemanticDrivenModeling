@@ -22,7 +22,7 @@ namespace MaterializerLibrary
         private Dictionary<string, CurrentInstance> _objects;
 
         protected ScoredTypeMapping _map;
-        protected Dictionary<string, List<ScoredPropertyMapping<ModelNavigationNode>>> _lookup = new();
+        protected Dictionary<string, List<ScoredPropertyMapping<ModelNavigationNode>>> _sourceLookup = new();
 
         /// <summary>
         /// Important note: the instance of the JsonConverter is recycled during the same deserialization
@@ -33,15 +33,20 @@ namespace MaterializerLibrary
             _map = map;
             foreach (var propertyMapping in _map.PropertyMappings)
             {
+                // _sourceLookup is needed in the Read to deserialize
                 var sourcePath = propertyMapping.Source.GetMapPath();
-                //var targetPath = propertyMapping.Target.GetMapPath();
-                if (!_lookup.TryGetValue(sourcePath, out var list))
+                if (!_sourceLookup.TryGetValue(sourcePath, out var listSource))
                 {
-                    list = new();
-                    _lookup[sourcePath] = list;
+                    listSource = new();
+                    _sourceLookup[sourcePath] = listSource;
                 }
 
-                list.Add(propertyMapping);
+                listSource.Add(propertyMapping);
+
+                // _targetLookup is needed in the Write to serialize
+                // there is no list here because every target only has a single source
+                var targetPath = propertyMapping.Target.GetMapPath();
+                _targetLookup[targetPath] = propertyMapping;
             }
 
             var context = new ConversionLibrary.ConversionContext()
@@ -321,7 +326,7 @@ namespace MaterializerLibrary
         private (string sourcePath, List<ScoredPropertyMapping<ModelNavigationNode>> nodeMapping) GetSourcePathAndMapping()
         {
             var sourcePath = string.Join(".", _sourcePath.Reverse().Select(s => s.Name));
-            _lookup.TryGetValue(sourcePath, out var node);
+            _sourceLookup.TryGetValue(sourcePath, out var node);
             return (sourcePath, node);
         }
 

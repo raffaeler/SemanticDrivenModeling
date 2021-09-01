@@ -90,13 +90,13 @@ namespace SemanticLibrary
         private static void RestoreParent(ModelTypeNodeVisitor visitor, ModelTypeNode modelTypeNode)
         {
             visitor.Visit(modelTypeNode,
-                typeNode =>
+                (typeNode, path) =>
                 {
                     foreach (var prop in typeNode.PropertyNodes)
                     {
                         prop.Parent = typeNode;
                     }
-                }, _ => { });
+                }, (_, _) => { });
             return;
         }
     }

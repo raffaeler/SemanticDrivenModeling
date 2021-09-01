@@ -24,7 +24,9 @@ namespace MaterializerLibrary
         public override bool CanConvert(Type typeToConvert)
         {
             Console.Write($"SemanticConverterFactory.CanConvert> {typeToConvert.Name} ");
-            if (Map == null || typeToConvert.FullName != Map.TargetModelTypeNode.Type.FullName)
+            if (Map == null ||
+                (typeToConvert.FullName != Map.TargetModelTypeNode.Type.FullName &&
+                typeToConvert.FullName != Map.SourceModelTypeNode.Type.FullName))
             {
                 Console.WriteLine("No");
                 return false;

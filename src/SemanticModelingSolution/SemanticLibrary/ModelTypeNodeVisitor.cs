@@ -6,45 +6,62 @@ namespace SemanticLibrary
 {
     public class ModelTypeNodeVisitor
     {
-        private Action<ModelTypeNode> _onModelTypeNode;
-        private Action<ModelPropertyNode> _onModelPropertyNode;
+        private Action<ModelTypeNode, string> _onBeginModelTypeNode;
+        private Action<ModelTypeNode, string> _onEndModelTypeNode;
+        private Action<ModelPropertyNode, string> _onModelPropertyNode;
 
         public void Visit(ModelTypeNode modelTypeNode,
-            Action<ModelTypeNode> onModelTypeNode = null,
-            Action<ModelPropertyNode> onModelPropertyNode = null)
+            Action<ModelTypeNode, string> onBeginModelTypeNode = null,
+            Action<ModelTypeNode, string> onEndModelTypeNode = null,
+            Action<ModelPropertyNode, string> onModelPropertyNode = null)
         {
-            _onModelTypeNode = onModelTypeNode;
+            _onBeginModelTypeNode = onBeginModelTypeNode;
+            _onEndModelTypeNode = onEndModelTypeNode;
             _onModelPropertyNode = onModelPropertyNode;
 
-            VisitModelTypeNode(modelTypeNode);
+            VisitModelTypeNode(modelTypeNode, modelTypeNode.Type.Name);
         }
 
-        public virtual void OnVisitModelTypeNode(ModelTypeNode modelTypeNode)
+        public virtual void OnBeginVisitModelTypeNode(ModelTypeNode modelTypeNode, string path)
         {
-            _onModelTypeNode?.Invoke(modelTypeNode);
+            _onBeginModelTypeNode?.Invoke(modelTypeNode, path);
         }
 
-        public virtual void OnVisitModelPropertyNode(ModelPropertyNode modelPropertyNode)
+        public virtual void OnEndVisitModelTypeNode(ModelTypeNode modelTypeNode, string path)
         {
-            _onModelPropertyNode?.Invoke(modelPropertyNode);
+            _onEndModelTypeNode?.Invoke(modelTypeNode, path);
+        }
+
+        public virtual void OnVisitModelPropertyNode(ModelPropertyNode modelPropertyNode, string path)
+        {
+            _onModelPropertyNode?.Invoke(modelPropertyNode, path);
         }
 
 
-        private void VisitModelTypeNode(ModelTypeNode modelTypeNode)
+        private void VisitModelTypeNode(ModelTypeNode modelTypeNode, string path)
         {
-            OnVisitModelTypeNode(modelTypeNode);
+            OnBeginVisitModelTypeNode(modelTypeNode, path);
             foreach (var prop in modelTypeNode.PropertyNodes)
             {
-                VisitPropertyTypeNode(prop);
+                VisitPropertyTypeNode(prop, path);
             }
+
+            OnEndVisitModelTypeNode(modelTypeNode, path);
         }
 
-        private void VisitPropertyTypeNode(ModelPropertyNode modelPropertyNode)
+        private void VisitPropertyTypeNode(ModelPropertyNode modelPropertyNode, string path)
         {
-            OnVisitModelPropertyNode(modelPropertyNode);
+            path += "." + modelPropertyNode.Name;
+            if (modelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain ||
+                modelPropertyNode.PropertyKind == PropertyKind.OneToManyToUnknown)
+            {
+                path += ".$";
+            }
+
+            OnVisitModelPropertyNode(modelPropertyNode, path);
             if (modelPropertyNode.NavigationNode != null)
             {
-                VisitModelTypeNode(modelPropertyNode.NavigationNode);
+                VisitModelTypeNode(modelPropertyNode.NavigationNode, path);
             }
         }
     }

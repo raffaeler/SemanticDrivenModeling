@@ -27,7 +27,7 @@ namespace SemanticStructuresTests
             var m2 = utilities.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
-            var targetObjects = utilities.Transform<SimpleDomain2.OnlineOrder>(
+            var targetObjects = utilities.TransformDeserialize<SimpleDomain2.OnlineOrder>(
                 "Order", m1, m2, sourceObjects);
         }
 
@@ -41,7 +41,7 @@ namespace SemanticStructuresTests
             var m2 = utilities.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
 
             var sourceObjects = SimpleDomain2.Samples.GetOrders();
-            var targetObjects = utilities.Transform<SimpleDomain1.Order>(
+            var targetObjects = utilities.TransformDeserialize<SimpleDomain1.Order>(
                 "OnlineOrder", m2, m1, sourceObjects);
         }
 
@@ -59,10 +59,28 @@ namespace SemanticStructuresTests
             var m2 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain2, domain);
 
             var sourceObjects = SimpleDomain2.Samples.GetOrders();
-            var targetObjects = utilities.Transform<SimpleDomain1.Order>(
+            var targetObjects = utilities.TransformDeserialize<SimpleDomain1.Order>(
                 "OnlineOrder", m2, m1, sourceObjects);
         }
 
+
+        [TestMethod]
+        public void MappingOnlineOrderToOrderUsingSerialization()
+        {
+            var jsonDomainDefinitions = File.ReadAllText("Serializations\\domainDefinitions.json");
+            var jsonDomain1 = File.ReadAllText("Serializations\\domain1types.json");
+            var jsonDomain2 = File.ReadAllText("Serializations\\domain2types.json");
+
+
+            var domain = JsonSerializer.Deserialize<GeneratedCode.Domain>(jsonDomainDefinitions);
+            var utilities = new MappingUtilities(domain);
+            var m1 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain1, domain);
+            var m2 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain2, domain);
+
+            var sourceObjects = SimpleDomain2.Samples.GetOrders();
+            var targetObjects = utilities.TransformSerialize<SimpleDomain2.OnlineOrder, SimpleDomain1.Order>(
+                "OnlineOrder", m2, m1, sourceObjects);
+        }
 
 
 
@@ -119,8 +137,8 @@ namespace SemanticStructuresTests
             foreach (var modelTypeNode in modelsDomain1)
             {
                 visitor.Visit(modelTypeNode,
-                    tn => types1++,
-                    pn => properties1++);
+                    (tn, path) => types1++,
+                    (pn, path) => properties1++);
             }
 
             var types2 = 0;
@@ -128,8 +146,8 @@ namespace SemanticStructuresTests
             foreach (var modelTypeNode in cloneDomain)
             {
                 visitor.Visit(modelTypeNode,
-                    tn => types2++,
-                    pn => properties2++);
+                    (tn, path) => types2++,
+                    (pn, path) => properties2++);
             }
 
             Assert.AreEqual(types1, types2);

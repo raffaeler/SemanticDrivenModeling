@@ -1,0 +1,1113 @@
+[
+  {
+    "Type": {
+      "AssemblyName": "SimpleModels",
+      "Namespace": null,
+      "Name": "OnlineOrder",
+      "FullName": "SimpleDomain2.OnlineOrder",
+      "UniqueName": "SimpleDomain2.OnlineOrder"
+    },
+    "TermToConcepts": [
+      {
+        "Concept": "Undefined",
+        "ContextConcept": "Any",
+        "ConceptSpecifier": "None",
+        "Term": "Online",
+        "Weight": 100
+      },
+      {
+        "Concept": "Order",
+        "ContextConcept": "Any",
+        "ConceptSpecifier": "None",
+        "Term": "Order",
+        "Weight": 100
+      }
+    ],
+    "PropertyNodes": [
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "Id",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "Guid",
+            "FullName": "System.Guid",
+            "UniqueName": "System.Guid"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OnlineOrder",
+            "FullName": "SimpleDomain2.OnlineOrder",
+            "UniqueName": "SimpleDomain2.OnlineOrder"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "Guid",
+          "FullName": "System.Guid",
+          "UniqueName": "System.Guid"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "UniqueIdentity",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Id",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "Description",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "String",
+            "FullName": "System.String",
+            "UniqueName": "System.String"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OnlineOrder",
+            "FullName": "SimpleDomain2.OnlineOrder",
+            "UniqueName": "SimpleDomain2.OnlineOrder"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "String",
+          "FullName": "System.String",
+          "UniqueName": "System.String"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "HumanDescription",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Description",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 5,
+        "PropertyInfo": {
+          "Name": "OrderLines",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "List\u00601",
+            "FullName": "System.Collections.Generic.List\u00601[[SimpleDomain2.OrderLine, SimpleModels, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+            "UniqueName": "System.Collections.Generic.List\u00601[[SimpleDomain2.OrderLine, SimpleModels, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OnlineOrder",
+            "FullName": "SimpleDomain2.OnlineOrder",
+            "UniqueName": "SimpleDomain2.OnlineOrder"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "SimpleModels",
+          "Namespace": null,
+          "Name": "OrderLine",
+          "FullName": "SimpleDomain2.OrderLine",
+          "UniqueName": "SimpleDomain2.OrderLine"
+        },
+        "NavigationNode": {
+          "Type": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          },
+          "TermToConcepts": [
+            {
+              "Concept": "Order",
+              "ContextConcept": "Any",
+              "ConceptSpecifier": "None",
+              "Term": "Order",
+              "Weight": 100
+            },
+            {
+              "Concept": "RelativePosition",
+              "ContextConcept": "Any",
+              "ConceptSpecifier": "Index",
+              "Term": "Line",
+              "Weight": 100
+            }
+          ],
+          "PropertyNodes": [
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "Id",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "Guid",
+                  "FullName": "System.Guid",
+                  "UniqueName": "System.Guid"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "Guid",
+                "FullName": "System.Guid",
+                "UniqueName": "System.Guid"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "UniqueIdentity",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Id",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "ProductName",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "String",
+                  "FullName": "System.String",
+                  "UniqueName": "System.String"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "String",
+                "FullName": "System.String",
+                "UniqueName": "System.String"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "Product",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Product",
+                  "Weight": 100
+                },
+                {
+                  "Concept": "Identity",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Name",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "ProductCode",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "String",
+                  "FullName": "System.String",
+                  "UniqueName": "System.String"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "String",
+                "FullName": "System.String",
+                "UniqueName": "System.String"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "Product",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Product",
+                  "Weight": 100
+                },
+                {
+                  "Concept": "Identity",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Code",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "Expiry",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "DateTimeOffset",
+                  "FullName": "System.DateTimeOffset",
+                  "UniqueName": "System.DateTimeOffset"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "DateTimeOffset",
+                "FullName": "System.DateTimeOffset",
+                "UniqueName": "System.DateTimeOffset"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "AbsoluteTime",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Expiry",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "CustomerId",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "Guid",
+                  "FullName": "System.Guid",
+                  "UniqueName": "System.Guid"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "Guid",
+                "FullName": "System.Guid",
+                "UniqueName": "System.Guid"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "Company",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "Customer",
+                  "Term": "Customer",
+                  "Weight": 100
+                },
+                {
+                  "Concept": "UniqueIdentity",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Id",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "CustomerName",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "String",
+                  "FullName": "System.String",
+                  "UniqueName": "System.String"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "String",
+                "FullName": "System.String",
+                "UniqueName": "System.String"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "Company",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "Customer",
+                  "Term": "Customer",
+                  "Weight": 100
+                },
+                {
+                  "Concept": "Identity",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Name",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "Street",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "String",
+                  "FullName": "System.String",
+                  "UniqueName": "System.String"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "String",
+                "FullName": "System.String",
+                "UniqueName": "System.String"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "Address",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "Street",
+                  "Term": "Street",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "City",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "String",
+                  "FullName": "System.String",
+                  "UniqueName": "System.String"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "String",
+                "FullName": "System.String",
+                "UniqueName": "System.String"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "Address",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "City",
+                  "Term": "City",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "State",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "String",
+                  "FullName": "System.String",
+                  "UniqueName": "System.String"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "String",
+                "FullName": "System.String",
+                "UniqueName": "System.String"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "Address",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "State",
+                  "Term": "State",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "Country",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "String",
+                  "FullName": "System.String",
+                  "UniqueName": "System.String"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "String",
+                "FullName": "System.String",
+                "UniqueName": "System.String"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "Address",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "Country",
+                  "Term": "Country",
+                  "Weight": 100
+                }
+              ]
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "Net",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "Double",
+                  "FullName": "System.Double",
+                  "UniqueName": "System.Double"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "Double",
+                "FullName": "System.Double",
+                "UniqueName": "System.Double"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": []
+            },
+            {
+              "PropertyKind": 0,
+              "PropertyInfo": {
+                "Name": "Payment",
+                "PropertyType": {
+                  "AssemblyName": "System.Private.CoreLib",
+                  "Namespace": null,
+                  "Name": "Double",
+                  "FullName": "System.Double",
+                  "UniqueName": "System.Double"
+                },
+                "ParentType": {
+                  "AssemblyName": "SimpleModels",
+                  "Namespace": null,
+                  "Name": "OrderLine",
+                  "FullName": "SimpleDomain2.OrderLine",
+                  "UniqueName": "SimpleDomain2.OrderLine"
+                }
+              },
+              "CoreType": {
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "Double",
+                "FullName": "System.Double",
+                "UniqueName": "System.Double"
+              },
+              "NavigationNode": null,
+              "TermToConcepts": [
+                {
+                  "Concept": "Money",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Payment",
+                  "Weight": 100
+                }
+              ]
+            }
+          ]
+        },
+        "TermToConcepts": []
+      }
+    ]
+  },
+  {
+    "Type": {
+      "AssemblyName": "SimpleModels",
+      "Namespace": null,
+      "Name": "OrderLine",
+      "FullName": "SimpleDomain2.OrderLine",
+      "UniqueName": "SimpleDomain2.OrderLine"
+    },
+    "TermToConcepts": [
+      {
+        "Concept": "Order",
+        "ContextConcept": "Any",
+        "ConceptSpecifier": "None",
+        "Term": "Order",
+        "Weight": 100
+      },
+      {
+        "Concept": "RelativePosition",
+        "ContextConcept": "Any",
+        "ConceptSpecifier": "Index",
+        "Term": "Line",
+        "Weight": 100
+      }
+    ],
+    "PropertyNodes": [
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "Id",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "Guid",
+            "FullName": "System.Guid",
+            "UniqueName": "System.Guid"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "Guid",
+          "FullName": "System.Guid",
+          "UniqueName": "System.Guid"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "UniqueIdentity",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Id",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "ProductName",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "String",
+            "FullName": "System.String",
+            "UniqueName": "System.String"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "String",
+          "FullName": "System.String",
+          "UniqueName": "System.String"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "Product",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Product",
+            "Weight": 100
+          },
+          {
+            "Concept": "Identity",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Name",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "ProductCode",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "String",
+            "FullName": "System.String",
+            "UniqueName": "System.String"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "String",
+          "FullName": "System.String",
+          "UniqueName": "System.String"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "Product",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Product",
+            "Weight": 100
+          },
+          {
+            "Concept": "Identity",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Code",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "Expiry",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "DateTimeOffset",
+            "FullName": "System.DateTimeOffset",
+            "UniqueName": "System.DateTimeOffset"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "DateTimeOffset",
+          "FullName": "System.DateTimeOffset",
+          "UniqueName": "System.DateTimeOffset"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "AbsoluteTime",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Expiry",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "CustomerId",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "Guid",
+            "FullName": "System.Guid",
+            "UniqueName": "System.Guid"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "Guid",
+          "FullName": "System.Guid",
+          "UniqueName": "System.Guid"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "Company",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "Customer",
+            "Term": "Customer",
+            "Weight": 100
+          },
+          {
+            "Concept": "UniqueIdentity",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Id",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "CustomerName",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "String",
+            "FullName": "System.String",
+            "UniqueName": "System.String"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "String",
+          "FullName": "System.String",
+          "UniqueName": "System.String"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "Company",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "Customer",
+            "Term": "Customer",
+            "Weight": 100
+          },
+          {
+            "Concept": "Identity",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Name",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "Street",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "String",
+            "FullName": "System.String",
+            "UniqueName": "System.String"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "String",
+          "FullName": "System.String",
+          "UniqueName": "System.String"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "Address",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "Street",
+            "Term": "Street",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "City",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "String",
+            "FullName": "System.String",
+            "UniqueName": "System.String"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "String",
+          "FullName": "System.String",
+          "UniqueName": "System.String"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "Address",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "City",
+            "Term": "City",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "State",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "String",
+            "FullName": "System.String",
+            "UniqueName": "System.String"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "String",
+          "FullName": "System.String",
+          "UniqueName": "System.String"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "Address",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "State",
+            "Term": "State",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "Country",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "String",
+            "FullName": "System.String",
+            "UniqueName": "System.String"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "String",
+          "FullName": "System.String",
+          "UniqueName": "System.String"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "Address",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "Country",
+            "Term": "Country",
+            "Weight": 100
+          }
+        ]
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "Net",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "Double",
+            "FullName": "System.Double",
+            "UniqueName": "System.Double"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "Double",
+          "FullName": "System.Double",
+          "UniqueName": "System.Double"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": []
+      },
+      {
+        "PropertyKind": 0,
+        "PropertyInfo": {
+          "Name": "Payment",
+          "PropertyType": {
+            "AssemblyName": "System.Private.CoreLib",
+            "Namespace": null,
+            "Name": "Double",
+            "FullName": "System.Double",
+            "UniqueName": "System.Double"
+          },
+          "ParentType": {
+            "AssemblyName": "SimpleModels",
+            "Namespace": null,
+            "Name": "OrderLine",
+            "FullName": "SimpleDomain2.OrderLine",
+            "UniqueName": "SimpleDomain2.OrderLine"
+          }
+        },
+        "CoreType": {
+          "AssemblyName": "System.Private.CoreLib",
+          "Namespace": null,
+          "Name": "Double",
+          "FullName": "System.Double",
+          "UniqueName": "System.Double"
+        },
+        "NavigationNode": null,
+        "TermToConcepts": [
+          {
+            "Concept": "Money",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Payment",
+            "Weight": 100
+          }
+        ]
+      }
+    ]
+  }
+]
