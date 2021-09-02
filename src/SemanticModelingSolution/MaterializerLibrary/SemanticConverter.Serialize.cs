@@ -22,7 +22,7 @@ namespace MaterializerLibrary
             var visitor = new ModelTypeNodeVisitor();
             visitor.Visit(_map.TargetModelTypeNode, (modelTypeNode, path) =>
             {
-                Console.WriteLine($"==> Path: {path}");
+                Console.WriteLine($"********> {path} [{modelTypeNode.Type.Name}]");
                 writer.WriteStartObject();
             },
             (modelTypeNode, path) =>
@@ -33,35 +33,54 @@ namespace MaterializerLibrary
             {
                 if (!_targetLookup.TryGetValue(path, out var scoredPropertyMapping))
                 {
-                    Console.WriteLine($"Path: {path} unmapped");
+                    Console.WriteLine($"PathProp> {path} unmapped");
                     return;
                 }
 
-                if (modelPropertyNode.PropertyKind == PropertyKind.OneToOneToDomain ||
-                    modelPropertyNode.PropertyKind == PropertyKind.OneToOneToUnknown)
+                var sourcePath = scoredPropertyMapping.Source.GetMapPath();
+                Console.Write($"PathProp> {path} <== Source: {sourcePath}   |   ");
+
+                var expressions = GeneratorUtilities.CreateGetValue<T>(scoredPropertyMapping.Source);
+
+                if (modelPropertyNode.PropertyKind.IsOneToOne())
                 {
                     // one-to-one
-                    //Console.WriteLine("");
+                    Console.Write("1-1");
                     writer.WritePropertyName(modelPropertyNode.Name);
-                    return;
+                    //return;
                 }
-
-                if (modelPropertyNode.PropertyKind == PropertyKind.OneToManyToUnknown ||
-                    modelPropertyNode.PropertyKind == PropertyKind.OneToManyToDomain ||
-                    modelPropertyNode.PropertyKind == PropertyKind.OneToManyEnum ||
-                    modelPropertyNode.PropertyKind == PropertyKind.OneToManyBasicType)
+                else if (modelPropertyNode.PropertyKind.IsOneToMany())
                 {
                     // collection of something
-                    //Console.WriteLine("");
+                    Console.Write("1-Many");
                     writer.WritePropertyName(modelPropertyNode.Name);
                     //writer.WriteStartArray();
                     //writer.WriteEndArray();   // when?
-                    return;
+                    //return;
+                }
+                else
+                {
+                    Console.Write("B");
+                    writer.WritePropertyName(modelPropertyNode.Name);
+                    // basic types
                 }
 
-                // basic types
-
-                Console.WriteLine($"Path: {path}: {scoredPropertyMapping}");
+                Console.WriteLine();
+                foreach(var expression in expressions)
+                {
+                    Console.WriteLine($"     [E]>{expression}");
+                }
+            },
+            (modelPropertyNode, path) =>
+            {
+                // begin collection
+                //var sourcePath = scoredPropertyMapping.Source.GetMapPath();
+                Console.WriteLine($"Start  C> {path} ");
+            },
+            (modelPropertyNode, path) =>
+            {
+                // end collection
+                Console.WriteLine($"End    C> {path} ");
             });
         }
 
