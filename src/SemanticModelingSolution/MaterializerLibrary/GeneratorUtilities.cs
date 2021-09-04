@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using SemanticLibrary;
@@ -14,13 +15,51 @@ namespace MaterializerLibrary
 {
     internal static class GeneratorUtilities
     {
+        public static Expression JsonWriteNull(ParameterExpression writer, string propertyName)
+            => JsonWrite(writer, KnownMethods.WriteNullValue, propertyName);
+        public static Expression JsonWriteStartArray(ParameterExpression writer, string propertyName)
+            => JsonWrite(writer, KnownMethods.WriteStartArray, propertyName);
+        public static Expression JsonWriteEndArray(ParameterExpression writer)
+            => JsonWrite(writer, KnownMethods.WriteEndArray);
+        public static Expression JsonWriteStartObject(ParameterExpression writer)
+            => JsonWrite(writer, KnownMethods.WriteStartObject0);
+        public static Expression JsonWritePropertyName(ParameterExpression writer, string propertyName)
+            => JsonWrite(writer, KnownMethods.WritePropertyName, propertyName);
+        public static Expression JsonWriteStartObject(ParameterExpression writer, string propertyName)
+            => JsonWrite(writer, KnownMethods.WriteStartObject1, propertyName);
+        public static Expression JsonWriteEndObject(ParameterExpression writer)
+            => JsonWrite(writer, KnownMethods.WriteEndObject);
+
+        public static Expression JsonWriteString(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteString, propertyName, valueExpression);
+        public static Expression JsonWriteBoolean(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteBoolean, propertyName, valueExpression);
+
+        public static Expression JsonWrite(ParameterExpression writer, MethodInfo writeMethod)
+        {
+            return Expression.Call(writer, writeMethod);
+        }
+
+        public static Expression JsonWrite(ParameterExpression writer, MethodInfo writeMethod,
+            string propertyName)
+        {
+            var propertyNameExpression = Expression.Constant(propertyName);
+            return Expression.Call(writer, writeMethod, propertyNameExpression);
+        }
+
+        public static Expression JsonWrite(ParameterExpression writer, MethodInfo writeMethod,
+            string propertyName, Expression valueExpression)
+        {
+            var propertyNameExpression = Expression.Constant(propertyName);
+            return Expression.Call(writer, writeMethod, propertyNameExpression, valueExpression);
+        }
         public static (Type root, IList<(PropertyInfo propertyInfo, PropertyKind propertyKind, Type propCoreType)> segments)
-            CreateSegments<TRoot>(ModelNavigationNode modelNavigationNode)
+            CreateSegments(ModelNavigationNode modelNavigationNode)
         {
             var segments = new List<(PropertyInfo, PropertyKind, Type propCoreType)>();
             var temp = modelNavigationNode;
             Type root = null;
-            while (temp != null)
+            while (temp != null && (!temp.ModelPropertyNode.PropertyKind.IsOneToMany() || segments.Count == 0))
             {
                 var propInfo = temp.ModelPropertyNode.PropertyInfo.GetOriginalPropertyInfo();
                 var propCoreType = temp.ModelPropertyNode.CoreType.GetOriginalType();
@@ -39,35 +78,34 @@ namespace MaterializerLibrary
         /// This expression cannot return a typed lambda because
         /// the return type is inside the metadata and not known type at compile time
         /// </summary>
-        public static IList<Expression> CreateGetValue<TRoot>(
+        public static Expression CreateGetValue(ParameterExpression inputObject,
             ModelNavigationNode modelNavigationNode)
         {
-            var result = new List<Expression>();
-            var (root, segments) = CreateSegments<TRoot>(modelNavigationNode);
+            //var result = new List<Expression>();
+            var (root, segments) = CreateSegments(modelNavigationNode);
             var segs = string.Join(".", segments.Select(x => x.propertyInfo.Name));
             //Console.WriteLine($"{root.Name}.{segs}");
 
-            bool isLoop = false;
-            var inputObject = Expression.Parameter(typeof(TRoot), "input");
+            //bool isLoop = false;
 
             Expression parent = inputObject;
             foreach (var segment in segments)
             {
-                isLoop = false;
+                //isLoop = false;
                 parent = Expression.Property(parent, segment.propertyInfo);
-                if (segment.propertyKind.IsOneToMany())
-                {
-                    var loopVar = Expression.Variable(segment.propCoreType, "loopVar");
-                    var body = Expression.Call(typeof(Console).GetMethod("WriteLine", new[] { typeof(object) }), loopVar);
-                    result.Add(ForEach(parent, loopVar, body));
-                    parent = loopVar;
-                    isLoop = true;
-                }
+                //if (segment.propertyKind.IsOneToMany())
+                //{
+                //    var loopVar = Expression.Variable(segment.propCoreType, "loopVar");
+                //    var body = Expression.Call(typeof(Console).GetMethod("WriteLine", new[] { typeof(object) }), loopVar);
+                //    result.Add(ForEach(parent, loopVar, body));
+                //    parent = loopVar;
+                //    isLoop = true;
+                //}
             }
 
-            if (!isLoop) result.Add(parent);
-
-            return result;
+            //if (!isLoop) result.Add(parent);
+            //return result;
+            return parent;
 
             //Expression.Property(?, propInfo);
 

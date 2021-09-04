@@ -100,6 +100,8 @@ namespace DeserializationConsole
             var targetObjects = utilities.TransformDeserialize<SimpleDomain1.Order>(
                 "OnlineOrder", m2, m1, sourceObjects);
             //var targetObjects = utilities.OnlineOrderToOrder(m2, m1, sourceObjects);
+
+            //var finalJson = utilities.SerializePlain(targetObjects);
         }
 
 
