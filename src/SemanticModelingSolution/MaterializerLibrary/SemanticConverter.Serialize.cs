@@ -91,22 +91,17 @@ namespace MaterializerLibrary
 
                 // TODO: create expression to write accessor.ToString() to json
                 // TODO: create utilities to create Expressions writing json
-                var writeExpression = GeneratorUtilities.JsonWriteString(inputWriter,
-                    modelPropertyNode.Name, Expression.Constant(modelPropertyNode.Name));
+                var valueExpression = _conversionGenerator.GetJsonConversionExpression(scoredPropertyMapping, accessor);
+                var writeExpression = GeneratorUtilities.JsonWriteValue(inputWriter, modelPropertyNode.Name, valueExpression);
+                //var writeExpression = GeneratorUtilities.JsonWriteString(inputWriter,
+                //    modelPropertyNode.Name, Expression.Constant(modelPropertyNode.Name));
                 currentContext.Statements.Add(writeExpression);
 
-                
+                //writer.WriteString()
 
                 // basic types
                 Console.Write("B");
-                //writer.WritePropertyName(modelPropertyNode.Name);
-                //writer.WriteString(modelPropertyNode.Name, modelPropertyNode.Name);
-
                 Console.WriteLine();
-                //foreach (var expression in expressions)
-                //{
-                //    Console.WriteLine($"     [E]>{expression}");
-                //}
             },
             (modelPropertyNode, path) =>
             {
@@ -118,13 +113,9 @@ namespace MaterializerLibrary
                 var writeExpression = GeneratorUtilities.JsonWriteStartArray(inputWriter, modelPropertyNode.Name);
                 currentContext.Statements.Add(writeExpression);
 
-
                 // create var used in the foreach
                 // all the expressions after this must use this as "root"
                 // in the end-collection we create the foreach with that variable
-                // 
-                // every begin-collection must be put inside a stack
-                // every end-collection must pop-out from the stack
 
                 var sourceModelPropertyNode = FindFirstCollectionOnSourceModelPropertyNode(path);
                 var context = new OneToManyContext(sourceModelPropertyNode, path);
@@ -139,8 +130,6 @@ namespace MaterializerLibrary
                 var currentContext = _codeGenContext.Pop() as OneToManyContext;
                 var outerContext = _codeGenContext.Peek();
 
-                var writeExpression = GeneratorUtilities.JsonWriteEndArray(inputWriter);
-                outerContext.Statements.Add(writeExpression);
 
                 // if the outerContext.Variable has a Type mismatch,
                 // the code must be modified to search the correct one in the other contexts
@@ -148,6 +137,9 @@ namespace MaterializerLibrary
                 // this may happen with two nested list<>
                 var loop = currentContext.CreateForEach(outerContext.Variable);
                 outerContext.Statements.Add(loop);
+
+                var writeExpression = GeneratorUtilities.JsonWriteEndArray(inputWriter);
+                outerContext.Statements.Add(writeExpression);
             });
 
             var finalContext = _codeGenContext.Pop() as SimpleContext;

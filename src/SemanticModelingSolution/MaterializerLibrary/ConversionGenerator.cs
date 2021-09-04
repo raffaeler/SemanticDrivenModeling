@@ -52,6 +52,18 @@ namespace MaterializerLibrary
         private PropertyInfo _readerTokenType;
         private MethodInfo _readerSkipMethodInfo;
 
+        private Type[] _jsonNumericTypes = new Type[]
+        {
+            typeof(decimal), typeof(double), typeof(float),
+            typeof(Int32), typeof(UInt32), typeof(Int64), typeof(UInt64)
+        };
+
+        private string[] _jsonNumericTypeStrings = new string[]
+        {
+            "Decimal", "Double", "Single",
+            "Int32", "UInt32", "Int64", "UInt64"
+        };
+
         public delegate void SetPropertiesDelegate(ref Utf8JsonReader reader, object[] instances);
         public delegate object GetConvertedValueDelegate(ref Utf8JsonReader reader);
 
@@ -137,6 +149,67 @@ namespace MaterializerLibrary
 
             _cacheSetProperty = new();
             _cacheGetValue = new();
+        }
+
+        public Expression GetJsonConversionExpression(ScoredPropertyMapping<ModelNavigationNode> nodeMapping,
+            Expression sourceExpression)
+        {
+            var targetType = nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType.GetOriginalType();
+            var sourceType = nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType.GetOriginalType();
+
+            if (targetType.Name == "String" ||
+                targetType.Name == "Boolean")
+            {
+                return CreateConvertedExpression(_conversionEngine.ConversionStrings[targetType.Name], sourceType, targetType, sourceExpression);
+            }
+
+            if (targetType.Name == "Guid" ||
+                targetType.Name == "DateTime" ||
+                targetType.Name == "DateTimeOffset")
+            {
+                return CreateConvertedExpression(_conversionEngine.ConversionStrings[targetType.Name], sourceType, targetType, sourceExpression);
+            }
+
+            if (targetType.Name == "TimeSpan")
+            {
+                var step1 = CreateConvertedExpression(_conversionEngine.ConversionStrings[targetType.Name], sourceType, targetType, sourceExpression);
+                var tostring = CreateConvertedExpression(_conversionEngine.ConversionStrings["String"], step1.Type, typeof(string), step1);
+                return tostring;
+            }
+
+            if (targetType.Name == "Byte" ||
+                targetType.Name == "SByte" ||
+                targetType.Name == "Int16" ||
+                targetType.Name == "UInt16")
+            {
+                var step1 = CreateConvertedExpression(_conversionEngine.ConversionStrings[targetType.Name], sourceType, targetType, sourceExpression);
+                var toint = Expression.Convert(step1, typeof(int));
+                return toint;
+            }
+
+            if (targetType.Name == "Int32" || targetType.Name == "UInt32" ||
+                targetType.Name == "Int64" || targetType.Name == "UInt64" ||
+                targetType.Name == "Decimal" || targetType.Name == "Double" || targetType.Name == "Single")
+            {
+                return CreateConvertedExpression(_conversionEngine.ConversionStrings[targetType.Name], sourceType, targetType, sourceExpression);
+            }
+
+            throw new Exception($"Unsupported basic type: {targetType.Namespace}.{targetType.Name}");
+        }
+
+        private Expression CreateConvertedExpression(IConversion converter, Type sourceType, Type targetType, Expression sourceExpression)
+        {
+            if (!_converterTypes.TryGetValue(targetType.Name, out var converterType))
+            {
+                throw new Exception($"Missing converter for type {sourceType.Name}");
+            }
+
+            var converterInstance = Expression.Constant(converter);
+            var castedConverterInstance = Expression.Convert(converterInstance, converterType);
+
+            var fromMethod = converterType.GetMethod("From", new Type[] { sourceType });
+            var conversionCall = Expression.Call(castedConverterInstance, fromMethod, sourceExpression);
+            return conversionCall;
         }
 
         public SetPropertiesDelegate GetConverter(ScoredPropertyMapping<ModelNavigationNode> nodeMapping)
@@ -370,7 +443,7 @@ namespace MaterializerLibrary
         /// </summary>
         private Expression CreateAssignFromStatement(int index,
             ParameterExpression inputInstancesArray,
-            ParameterExpression fromMethodArgument, Type sourceType, 
+            ParameterExpression fromMethodArgument, Type sourceType,
             Type targetInstanceType, string propertyName,
             Type targetPropertyType, IConversion targetConverter, Type converterType)
         {

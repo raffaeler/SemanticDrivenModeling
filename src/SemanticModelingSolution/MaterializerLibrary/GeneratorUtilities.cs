@@ -30,10 +30,50 @@ namespace MaterializerLibrary
         public static Expression JsonWriteEndObject(ParameterExpression writer)
             => JsonWrite(writer, KnownMethods.WriteEndObject);
 
-        public static Expression JsonWriteString(ParameterExpression writer, string propertyName, Expression valueExpression)
-            => JsonWrite(writer, KnownMethods.WriteString, propertyName, valueExpression);
+        public static Expression JsonWriteValue(ParameterExpression writer, string propertyName, Expression valueExpression)
+        {
+            if (valueExpression.Type == typeof(string)) return JsonWriteStringString(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(Guid)) return JsonWriteStringGuid(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(DateTime)) return JsonWriteStringDateTime(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(DateTimeOffset)) return JsonWriteStringDateTimeOffset(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(bool)) return JsonWriteBoolean(writer, propertyName, valueExpression);
+
+            if (valueExpression.Type == typeof(decimal)) return JsonWriteNumberDecimal(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(double)) return JsonWriteNumberDouble(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(float)) return JsonWriteNumberFloat(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(Int32)) return JsonWriteNumberInt32(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(UInt32)) return JsonWriteNumberUInt32(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(Int64)) return JsonWriteNumberInt64(writer, propertyName, valueExpression);
+            if (valueExpression.Type == typeof(UInt64)) return JsonWriteNumberUInt64(writer, propertyName, valueExpression);
+            throw new Exception($"Unsupported basic type: {valueExpression.Type.FullName}");
+        }
+
+        public static Expression JsonWriteStringString(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteStringString, propertyName, valueExpression);
+        public static Expression JsonWriteStringGuid(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteStringGuid, propertyName, valueExpression);
+        public static Expression JsonWriteStringDateTime(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteStringDateTime, propertyName, valueExpression);
+        public static Expression JsonWriteStringDateTimeOffset(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteStringDateTimeOffset, propertyName, valueExpression);
         public static Expression JsonWriteBoolean(ParameterExpression writer, string propertyName, Expression valueExpression)
             => JsonWrite(writer, KnownMethods.WriteBoolean, propertyName, valueExpression);
+
+        public static Expression JsonWriteNumberDecimal(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteNumberDecimal, propertyName, valueExpression);
+        public static Expression JsonWriteNumberDouble(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteNumberDouble, propertyName, valueExpression);
+        public static Expression JsonWriteNumberFloat(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteNumberFloat, propertyName, valueExpression);
+        public static Expression JsonWriteNumberInt32(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteNumberInt32, propertyName, valueExpression);
+        public static Expression JsonWriteNumberUInt32(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteNumberUInt32, propertyName, valueExpression);
+        public static Expression JsonWriteNumberInt64(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteNumberInt64, propertyName, valueExpression);
+        public static Expression JsonWriteNumberUInt64(ParameterExpression writer, string propertyName, Expression valueExpression)
+            => JsonWrite(writer, KnownMethods.WriteNumberUInt64, propertyName, valueExpression);
+
 
         public static Expression JsonWrite(ParameterExpression writer, MethodInfo writeMethod)
         {
