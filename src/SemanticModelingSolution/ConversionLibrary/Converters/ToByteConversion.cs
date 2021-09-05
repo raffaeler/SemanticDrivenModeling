@@ -32,7 +32,10 @@ namespace ConversionLibrary.Converters
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
         public virtual byte From(string value)
-            => byte.TryParse(value, out byte res) ? res : (byte)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        {
+            if (value == null) return FromNull();
+            return byte.TryParse(value, out byte res) ? res : (byte)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        }
 
         public virtual byte From(bool value) => (byte)(value ? 1 : 0);
         public virtual byte From(Guid value) => (byte)_conversionContext?.OnNotSupported?.Invoke(this, value);

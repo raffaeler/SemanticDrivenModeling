@@ -32,8 +32,11 @@ namespace ConversionLibrary.Converters
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
         public virtual decimal From(string value)
-            => decimal.TryParse(value, GetNumberStyles(), GetFormatProvider(), out decimal res)
-                ? res : (decimal)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        {
+            if (value == null) return FromNull();
+            return decimal.TryParse(value, GetNumberStyles(), GetFormatProvider(), out decimal res)
+                           ? res : (decimal)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        }
 
         public virtual decimal From(bool value) => (decimal)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual decimal From(Guid value) => (decimal)_conversionContext?.OnNotSupported?.Invoke(this, value);

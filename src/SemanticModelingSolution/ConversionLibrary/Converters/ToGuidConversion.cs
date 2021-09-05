@@ -32,8 +32,11 @@ namespace ConversionLibrary.Converters
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
         public virtual Guid From(string value)
-            => Guid.TryParseExact(value, GetGuidFormat(), out Guid res)
-                ? res : (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        {
+            if (value == null) return FromNull();
+            return Guid.TryParseExact(value, GetGuidFormat(), out Guid res)
+                           ? res : (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        }
 
         public virtual Guid From(bool value) => (Guid)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual Guid From(Guid value) => value;

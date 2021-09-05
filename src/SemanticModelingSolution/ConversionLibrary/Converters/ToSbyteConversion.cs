@@ -32,8 +32,11 @@ namespace ConversionLibrary.Converters
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
         public virtual sbyte From(string value)
-            => sbyte.TryParse(value, out sbyte res) 
-                ? res : (sbyte)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        {
+            if (value == null) return FromNull();
+            return sbyte.TryParse(value, out sbyte res)
+                           ? res : (sbyte)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        }
 
         public virtual sbyte From(bool value) => (sbyte)(value ? 1 : 0);
         public virtual sbyte From(Guid value) => (sbyte)_conversionContext?.OnNotSupported?.Invoke(this, value);

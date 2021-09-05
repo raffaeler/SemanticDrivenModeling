@@ -30,8 +30,11 @@ namespace ConversionLibrary.Converters
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
         public virtual DateTimeOffset From(string value)
-            => DateTimeOffset.TryParseExact(value, GetDateFormats(), GetFormatProvider(), GetDateTimeStyles(), out DateTimeOffset res)
-                ? res : (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        {
+            if (value == null) return FromNull();
+            return DateTimeOffset.TryParseExact(value, GetDateFormats(), GetFormatProvider(), GetDateTimeStyles(), out DateTimeOffset res)
+                           ? res : (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        }
 
         public virtual DateTimeOffset From(bool value) => (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual DateTimeOffset From(Guid value) => (DateTimeOffset)_conversionContext?.OnNotSupported?.Invoke(this, value);

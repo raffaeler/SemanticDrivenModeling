@@ -35,8 +35,11 @@ namespace ConversionLibrary.Converters
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
         public virtual Int32 From(string value)
-            => Int32.TryParse(value, GetNumberStyles(), GetFormatProvider(), out Int32 res)
-                ? res : (Int32)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        {
+            if (value == null) return FromNull();
+            return Int32.TryParse(value, GetNumberStyles(), GetFormatProvider(), out Int32 res)
+                           ? res : (Int32)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        }
 
         public virtual Int32 From(bool value) => (Int32)(value ? 1 : 0);
         public virtual Int32 From(Guid value) => (Int32)_conversionContext?.OnNotSupported?.Invoke(this, value);

@@ -29,9 +29,12 @@ namespace ConversionLibrary.Converters
         public override Type[] LossyOrDangerous => _lossyOrDangerous;
         public virtual bool CanConvertFrom(Type type) => _allowed.Contains(type);
 
-        public virtual TimeSpan From(string value) 
-            => TimeSpan.TryParseExact(value, GetTimeFormats(), GetFormatProvider(), GetTimeSpanStyles(), out TimeSpan res)
+        public virtual TimeSpan From(string value)
+        {
+            if (value == null) return FromNull();
+            return TimeSpan.TryParseExact(value, GetTimeFormats(), GetFormatProvider(), GetTimeSpanStyles(), out TimeSpan res)
                 ? res : (TimeSpan)_conversionContext?.OnNotSupported?.Invoke(this, value);
+        }
 
         public virtual TimeSpan From(bool value) => (TimeSpan)_conversionContext?.OnNotSupported?.Invoke(this, value);
         public virtual TimeSpan From(Guid value) => (TimeSpan)_conversionContext?.OnNotSupported?.Invoke(this, value);

@@ -89,8 +89,6 @@ namespace MaterializerLibrary
                 var accessor = GeneratorUtilities.CreateGetValue(context.Variable,
                     scoredPropertyMapping.Source);
 
-                // TODO: create expression to write accessor.ToString() to json
-                // TODO: create utilities to create Expressions writing json
                 var valueExpression = _conversionGenerator.GetJsonConversionExpression(scoredPropertyMapping, accessor);
                 var writeExpression = GeneratorUtilities.JsonWriteValue(inputWriter, modelPropertyNode.Name, valueExpression);
                 //var writeExpression = GeneratorUtilities.JsonWriteString(inputWriter,
