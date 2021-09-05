@@ -48,6 +48,9 @@ namespace MaterializerLibrary
             throw new Exception($"Unsupported basic type: {valueExpression.Type.FullName}");
         }
 
+        /// <summary>
+        /// If the valueExpression is a null string, the JsonWriteString will write the null json token
+        /// </summary>
         public static Expression JsonWriteStringString(ParameterExpression writer, string propertyName, Expression valueExpression)
             => JsonWrite(writer, KnownMethods.WriteStringString, propertyName, valueExpression);
         public static Expression JsonWriteStringGuid(ParameterExpression writer, string propertyName, Expression valueExpression)
@@ -93,6 +96,7 @@ namespace MaterializerLibrary
             var propertyNameExpression = Expression.Constant(propertyName);
             return Expression.Call(writer, writeMethod, propertyNameExpression, valueExpression);
         }
+
         public static (Type root, IList<(PropertyInfo propertyInfo, PropertyKind propertyKind, Type propCoreType)> segments)
             CreateSegments(ModelNavigationNode modelNavigationNode)
         {
@@ -112,8 +116,6 @@ namespace MaterializerLibrary
             return (root, segments);
         }
 
-        //private static Expression CreateNested(Expression root, )
-
         /// <summary>
         /// This expression cannot return a typed lambda because
         /// the return type is inside the metadata and not known type at compile time
@@ -121,32 +123,38 @@ namespace MaterializerLibrary
         public static Expression CreateGetValue(ParameterExpression inputObject,
             ModelNavigationNode modelNavigationNode)
         {
-            //var result = new List<Expression>();
-            var (root, segments) = CreateSegments(modelNavigationNode);
-            var segs = string.Join(".", segments.Select(x => x.propertyInfo.Name));
-            //Console.WriteLine($"{root.Name}.{segs}");
-
-            //bool isLoop = false;
+            var (_, segments) = CreateSegments(modelNavigationNode);
+            //var segs = string.Join(".", segments.Select(x => x.propertyInfo.Name));
 
             Expression parent = inputObject;
-            foreach (var segment in segments)
+            for(int i=0; i<segments.Count; i++)
             {
-                //isLoop = false;
-                parent = Expression.Property(parent, segment.propertyInfo);
-                //if (segment.propertyKind.IsOneToMany())
-                //{
-                //    var loopVar = Expression.Variable(segment.propCoreType, "loopVar");
-                //    var body = Expression.Call(typeof(Console).GetMethod("WriteLine", new[] { typeof(object) }), loopVar);
-                //    result.Add(ForEach(parent, loopVar, body));
-                //    parent = loopVar;
-                //    isLoop = true;
-                //}
+                //a.b.c.d
+                //r r v r
+                var segment = segments[i];
+                if (i != 0 && !parent.Type.IsValueType)
+                {
+                    // null check
+                    var test = Expression.Equal(parent, Expression.Default(parent.Type));
+                    parent = Expression.Condition(test,
+                        Expression.Default(segment.propertyInfo.PropertyType),
+                        Expression.Property(parent, segment.propertyInfo));
+                }
+                else
+                {
+                    parent = Expression.Property(parent, segment.propertyInfo);
+                }
             }
+            //foreach (var segment in segments)
+            //{
+            //    parent = Expression.Property(parent, segment.propertyInfo);
+            //}
 
-            //if (!isLoop) result.Add(parent);
-            //return result;
             return parent;
+        }
 
+        private static void test()
+        {
             //Expression.Property(?, propInfo);
 
             W w = new(
@@ -166,12 +174,11 @@ namespace MaterializerLibrary
             Debug.WriteLine(w.X.Y.Name);
             foreach (var v1 in w.Zs)
             {
-                foreach(var v2 in v1.Xs)
+                foreach (var v2 in v1.Xs)
                 {
                     Debug.WriteLine(v2.Y.Name);
                 }
             }
-
 
 
             A a = new(new B("B"), new List<B> { new B("B1"), new B("B2") });
@@ -186,9 +193,6 @@ namespace MaterializerLibrary
             var x = a.B;
             var x1 = a.B.Name;
             var x2 = a.Bs;
-
-
-            return null;
         }
 
 

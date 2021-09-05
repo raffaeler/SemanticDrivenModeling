@@ -23,7 +23,8 @@ namespace DeserializationConsole
             //p.MappingOrderToOnlineOrder();
             //p.MappingOnlineOrderToOrder();
 
-            p.MappingOnlineOrderToOrderUsingSerialization();
+            //p.MappingOnlineOrderToOrderUsingSerialization();
+            p.MappingOrderToOnlineOrderUsingSerialization();
         }
 
         public void MappingVendorToSupplier()
@@ -129,6 +130,23 @@ namespace DeserializationConsole
             var sourceObjects = SimpleDomain2.Samples.GetOrders();
             var targetObjects = utilities.TransformSerialize<SimpleDomain2.OnlineOrder, SimpleDomain1.Order>(
                 "OnlineOrder", m2, m1, sourceObjects);
+        }
+
+        public void MappingOrderToOnlineOrderUsingSerialization()
+        {
+            var jsonDomainDefinitions = File.ReadAllText("Serializations\\domainDefinitions.json");
+            var jsonDomain1 = File.ReadAllText("Serializations\\domain1types.json");
+            var jsonDomain2 = File.ReadAllText("Serializations\\domain2types.json");
+
+
+            var domain = JsonSerializer.Deserialize<GeneratedCode.Domain>(jsonDomainDefinitions);
+            var utilities = new MappingUtilities(domain);
+            var m1 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain1, domain);
+            var m2 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain2, domain);
+
+            var sourceObjects = SimpleDomain1.Samples.GetOrders();
+            var targetObjects = utilities.TransformSerialize<SimpleDomain1.Order, SimpleDomain2.OnlineOrder>(
+                "Order", m1, m2, sourceObjects);
         }
 
 

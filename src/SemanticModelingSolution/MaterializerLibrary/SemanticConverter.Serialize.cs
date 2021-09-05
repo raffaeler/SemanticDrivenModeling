@@ -73,17 +73,52 @@ namespace MaterializerLibrary
 
                 //var expressions = GeneratorUtilities.CreateGetValue<T>(scoredPropertyMapping.Source);
 
+                // look for the the parent needed to access the chain done with 1-1 and/or basic types 
+                var tempNav = scoredPropertyMapping.Source;
+                ModelNavigationNode relativeRoot = null;
+                SurrogateType relativeRootType = null;
+                while (true)
+                {
+                    if (tempNav.Previous == null ||
+                        (tempNav.Previous != null && tempNav.Previous.ModelPropertyNode.PropertyKind.IsOneToMany()))
+                    {
+                        relativeRoot = tempNav;
+                        relativeRootType = tempNav.ModelPropertyNode.Parent.Type;
+                        break;
+                    }
+
+                    tempNav = tempNav.Previous;
+                }
+
+                // get the first context whose type matches with the one found above
                 ICodeGenerationContext context = null;
                 foreach (var ctx in _codeGenContext)
                 {
-                    if(ctx.Variable.Type == scoredPropertyMapping.Source.ModelPropertyNode.PropertyInfo.ParentType.GetOriginalType())
+                    if (ctx.Variable.Type == relativeRootType.GetOriginalType())
                     {
                         context = ctx;
                         break;
                     }
                 }
 
-                Debug.Assert(context != null);
+                //Debug.Assert(context != null);
+                if (context == null)
+                {
+                    // context is null when
+                    // source object is inside a collection
+                    // target object is outside the collection
+                    // since there is no "for loop" in the target, we have to build a special expression:
+                    // - get the first element of the collection and use it to extract the value to write in the target
+                    // It makes no sense to repeat the operation for all the source element of the collection
+                    // because they will just overwrite the previous
+                    // Example:
+                    // Target: OnlineOrder.Description
+                    // Source: Order.OrderItems.$.Article.Description
+                    // This property should be applied to the [collection].FirstOrDefault() from the parent context
+                    // relativeRoot.ModelPropertyNode.PropertyInfo
+                    Console.WriteLine("Skipped <special case>");
+                    return;
+                }
 
                 var currentContext = _codeGenContext.Peek();
                 var accessor = GeneratorUtilities.CreateGetValue(context.Variable,
@@ -149,14 +184,14 @@ namespace MaterializerLibrary
         private ModelNavigationNode FindFirstCollectionOnSourceModelPropertyNode(string targetPath)
         {
             ModelNavigationNode navigation;
-            foreach(var path in _targetLookup.Keys)
+            foreach (var path in _targetLookup.Keys)
             {
-                if(path.Contains(targetPath))
+                if (path.Contains(targetPath))
                 {
                     navigation = _targetLookup[path].Source;
-                    while(navigation != null)
+                    while (navigation != null)
                     {
-                        if(navigation.ModelPropertyNode.PropertyKind.IsOneToMany())
+                        if (navigation.ModelPropertyNode.PropertyKind.IsOneToMany())
                         {
                             return navigation;
                         }
@@ -210,7 +245,7 @@ namespace MaterializerLibrary
                 Statements = new List<Expression>();
                 BodyVariables = new();
             }
-            
+
             public ModelNavigationNode PropertyNode { get; }
             public string Path { get; }
             public ParameterExpression Variable { get; }
