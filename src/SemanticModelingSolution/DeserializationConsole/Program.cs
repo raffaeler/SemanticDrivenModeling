@@ -149,8 +149,6 @@ namespace DeserializationConsole
                 "Order", m1, m2, sourceObjects);
         }
 
-
-
         private ConversionLibrary.IConversion _conversion = null;
 
         private void Simulate(Utf8JsonWriter writer, SimpleDomain2.OnlineOrder item)

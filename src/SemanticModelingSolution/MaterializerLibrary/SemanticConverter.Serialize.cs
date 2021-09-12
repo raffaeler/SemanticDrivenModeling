@@ -16,16 +16,23 @@ namespace MaterializerLibrary
     public partial class SemanticConverter<T>
     {
         protected Dictionary<string, ScoredPropertyMapping<ModelNavigationNode>> _targetLookup = new();
-        private Stack<ICodeGenerationContext> _codeGenContext;
+        //private Stack<ICodeGenerationContext> _codeGenContext;
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
-            Console.WriteLine($"TesterConverter.Write> ");
-            OneToManyContext.Reset();   // move to ctor
-            _codeGenContext = new();
-            _codeGenContext.Push(new SimpleContext(typeof(T)));
-            ParameterExpression inputWriter = Expression.Parameter(typeof(Utf8JsonWriter), "writer");
+            //Console.WriteLine($"TesterConverter.Write> ");
+            //OneToManyContext.Reset();   // move to ctor
+            //_codeGenContext = new();
+            //_codeGenContext.Push(new SimpleContext(typeof(T)));
+            //ParameterExpression inputWriter = Expression.Parameter(typeof(Utf8JsonWriter), "writer");
 
+            var visitor = new SemanticSerializationVisitor<T>(_targetLookup, _conversionGenerator, _map);
+            visitor.Visit(_map.TargetModelTypeNode);
+            var expression = visitor.GetSerializationAction();
+            var transformDelegate = expression.Compile();
+            transformDelegate(writer, value);
+
+/*
             var visitor = new ModelTypeNodeVisitor();
             visitor.Visit(_map.TargetModelTypeNode, (modelTypeNode, path) =>
             {
@@ -179,8 +186,9 @@ namespace MaterializerLibrary
             var transform = finalContext.CreateTransform(inputWriter);
             var transformDelegate = transform.Compile();
             transformDelegate(writer, value);
+*/
         }
-
+/*
         private ModelNavigationNode FindFirstCollectionOnSourceModelPropertyNode(string targetPath)
         {
             ModelNavigationNode navigation;
@@ -263,6 +271,6 @@ namespace MaterializerLibrary
             private BlockExpression CreateBody() => Expression.Block(BodyVariables, Statements);
         }
 
-
+*/
     }
 }
