@@ -205,7 +205,7 @@ namespace MaterializerLibrary
             }
 
             var converterInstance = Expression.Constant(converter);
-            var castedConverterInstance = Expression.Convert(converterInstance, converterType);
+            var castedConverterInstance = converterInstance;// Expression.Convert(converterInstance, converterType);
 
             var fromMethod = converterType.GetMethod("From", new Type[] { sourceType });
             var conversionCall = Expression.Call(castedConverterInstance, fromMethod, sourceExpression);
