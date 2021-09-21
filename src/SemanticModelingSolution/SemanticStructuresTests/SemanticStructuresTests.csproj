@@ -28,7 +28,8 @@
         <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
         <ProjectReference Include="..\ModelsFromGithub\ModelsFromGithub.csproj" />
         <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
-        <ProjectReference Include="..\SimpleModels\SimpleModels.csproj" />
+        <ProjectReference Include="..\SimpleDomain1\SimpleDomain1.csproj" />
+        <ProjectReference Include="..\SimpleDomain2\SimpleDomain2.csproj" />
     </ItemGroup>
 
     <ItemGroup>

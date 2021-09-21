@@ -31,7 +31,7 @@ namespace SemanticLibrary
         /// <summary>
         /// The type owning this property
         /// </summary>
-        [JsonIgnore]
+        //[JsonIgnore]
         public ModelTypeNode Parent { get; set; }
 
         /// <summary>

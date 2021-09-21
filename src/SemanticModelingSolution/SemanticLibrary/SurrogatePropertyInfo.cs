@@ -42,5 +42,10 @@ namespace SemanticLibrary
             var propertyInfo = GetOriginalPropertyInfo();
             propertyInfo.SetValue(instance, value);
         }
+
+        public override string ToString()
+        {
+            return $"{PropertyType}.{Name}";
+        }
     }
 }

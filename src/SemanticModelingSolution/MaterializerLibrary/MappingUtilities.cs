@@ -62,13 +62,6 @@ namespace MaterializerLibrary
             return models;
         }
 
-        public ScoredTypeMapping CreateMappingsFor(ModelTypeNode source, IList<ModelTypeNode> candidateTargets)
-        {
-            var matcher = new ConceptMatchingRule(true);
-            matcher.ComputeMappings(source, candidateTargets);
-            return matcher.CandidateTypes.First();
-        }
-
 
         public IEnumerable<TTarget> TransformDeserialize<TSource, TTarget>(string sourceTypeName,
             IList<ModelTypeNode> source, IList<ModelTypeNode> target,
@@ -107,11 +100,28 @@ namespace MaterializerLibrary
             return targetObjects;
         }
 
+        public IEnumerable<TTarget> TransformSerialize<TSource, TTarget>(ScoredTypeMapping mapping,
+            IEnumerable<TSource> sourceObjects)
+        {
+            var settings = CreateSettings(mapping);
+
+            var json = SerializeByTransform<TSource>(sourceObjects, settings);
+            var targetObjects = (IEnumerable<TTarget>)DeserializePlain(json, typeof(TTarget[]));
+            return targetObjects;
+        }
+
         public ScoredTypeMapping GetMappings(string sourceTypeName, IList<ModelTypeNode> source, IList<ModelTypeNode> target)
         {
             var sourceType = source.First(t => t.Type.Name == sourceTypeName);  // i.e. "OnlineOrder"
             var mapping = CreateMappingsFor(sourceType, target);
             return mapping;
+        }
+
+        public ScoredTypeMapping CreateMappingsFor(ModelTypeNode source, IList<ModelTypeNode> candidateTargets)
+        {
+            var matcher = new ConceptMatchingRule(true);
+            matcher.ComputeMappings(source, candidateTargets);
+            return matcher.CandidateTypes.First();
         }
 
     }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SimpleDomain1
 {
@@ -13,18 +15,6 @@ namespace SimpleDomain1
             typeof(SimpleDomain1.Article),
             typeof(SimpleDomain1.Company),
             typeof(SimpleDomain1.Address),
-        };
-    }
-}
-
-namespace SimpleDomain2
-{
-    public static class Types
-    {
-        public static Type[] All = new Type[]
-        {
-            typeof(SimpleDomain2.OnlineOrder),
-            typeof(SimpleDomain2.OrderLine),
         };
     }
 }

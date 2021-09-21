@@ -20,15 +20,20 @@ namespace SemanticLibrary
     public class ModelNavigationNode : IEqualityComparer<ModelNavigationNode>, IName
     {
         private const string _dotPathSeparator = ".";
+
+        public ModelNavigationNode()
+        {
+        }
+
         public ModelNavigationNode(ModelPropertyNode modelPropertyNode, ModelNavigationNode previous)
         {
             ModelPropertyNode = modelPropertyNode;
             Previous = previous;
         }
 
-        public ModelPropertyNode ModelPropertyNode { get; }
-        public ModelNavigationNode Previous { get; }
-        public int Score { get; internal set; }
+        public ModelPropertyNode ModelPropertyNode { get; set; }
+        public ModelNavigationNode Previous { get; set; }
+        public int Score { get; set; }
         public string Name => ModelPropertyNode.Name;
 
         public string GetObjectMapPath()

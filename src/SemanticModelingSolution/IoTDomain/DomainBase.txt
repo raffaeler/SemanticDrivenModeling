@@ -1,0 +1,75 @@
+﻿# Definitions for the IoT domain
+
+# ========== Start of Units
+
+Units
+    :UnitOfMeasure
+    :Uom
+
+$ SI meter
+UnitLength
+    :Length
+    :Size
+    :Quantity
+    :Dimension
+
+$ SI second
+Time
+    :Elapsed
+
+$ SI Celsius
+Temperature
+    :T
+    :Temp
+    :Heat
+    :Celsius
+
+$ Relative Humidity %
+Humidity
+    :Rh :: https://en.wikipedia.org/wiki/Humidity
+
+$ Candela
+Luminosity
+    :Cd :: Candela
+
+$
+Noise
+    :dB :: Decibel
+
+$ Pressure
+    :hPa :: hectopascal
+
+
+$ Open/Close
+Binary
+    : Io
+    : Gpio
+
+BinaryOn
+    : Available
+    : On
+
+BinaryOff
+    : NotAvailable
+    : Off
+
+
+Negated
+    : Not
+
+# ========== End of Units
+
+Device
+    :Sensor
+    :Arduino
+    :Micro
+    :Microcontroller
+
+
+
+
+
+
+
+
+

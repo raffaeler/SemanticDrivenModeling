@@ -15,6 +15,7 @@ namespace DeserializationConsole
         static void Main(string[] args)
         {
             var p = new Program();
+            //p.SerializeAll();
             //new VerifyDeserialization().Test();
 
             //p.MappingVendorToSupplier();
@@ -26,6 +27,22 @@ namespace DeserializationConsole
             //p.MappingOnlineOrderToOrderUsingSerialization();
             p.MappingOrderToOnlineOrderUsingSerialization();
         }
+
+        public void SerializeAll()
+        {
+            var domain = new GeneratedCode.Domain();
+            var jsonDomainDefinitions = JsonSerializer.Serialize(domain);
+            File.WriteAllText("domainDefinitions.json", jsonDomainDefinitions);
+
+            var modelsDomain1 = new DomainTypesGraphVisitor(domain, SimpleDomain1.Types.All).Visit(null, null, null);
+            var jsonDomain1 = modelsDomain1.Serialize(domain);
+            File.WriteAllText("domain1types.json", jsonDomain1);
+
+            var modelsDomain2 = new DomainTypesGraphVisitor(domain, SimpleDomain2.Types.All).Visit(null, null, null);
+            var jsonDomain2 = modelsDomain2.Serialize(domain);
+            File.WriteAllText("domain2types.json", jsonDomain2);
+        }
+
 
         public void MappingVendorToSupplier()
         {
@@ -145,8 +162,16 @@ namespace DeserializationConsole
             var m2 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain2, domain);
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
+            var mapping = utilities.GetMappings("Order", m1, m2);
+
+            var jsonMapping = mapping.SerializeMapping(domain);
+            var mappingClone = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
+
             var targetObjects = utilities.TransformSerialize<SimpleDomain1.Order, SimpleDomain2.OnlineOrder>(
-                "Order", m1, m2, sourceObjects);
+                mappingClone, sourceObjects);
+
+            //var targetObjects = utilities.TransformSerialize<SimpleDomain1.Order, SimpleDomain2.OnlineOrder>(
+            //    "Order", m1, m2, sourceObjects);
         }
 
         private ConversionLibrary.IConversion _conversion = null;
