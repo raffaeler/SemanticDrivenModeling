@@ -14,6 +14,7 @@ namespace ApiServer
     {
         private readonly MetadataConfiguration _metadataConfiguration;
         private DomainBase _domain;
+        private Dictionary<string, ScoredTypeMapping> _mappings = new();
 
         public MetadataService(IOptions<MetadataConfiguration> metadataOptions)
         {
@@ -22,20 +23,44 @@ namespace ApiServer
             if(_metadataConfiguration.DomainDefinitionsFile == null)
                 throw new ArgumentException(nameof(MetadataConfiguration.DomainDefinitionsFile));
 
-            if(_metadataConfiguration.DomainTypesFileMap == null)
-                throw new ArgumentException(nameof(MetadataConfiguration.DomainTypesFileMap));
+            if(_metadataConfiguration.DomainTypes == null)
+                throw new ArgumentException(nameof(MetadataConfiguration.DomainTypes));
 
             if (!File.Exists(_metadataConfiguration.DomainDefinitionsFile))
             {
                 throw new System.Exception("The configuration does not contain a valid domain definition file for the domain");
             }
 
-            foreach(var value in _metadataConfiguration.DomainTypesFileMap.Values)
+            foreach(var value in _metadataConfiguration.DomainTypes.Values)
             {
                 if(!File.Exists(value))
                     throw new System.Exception("The configuration does not contain a valid domain definition file for the domain types");
             }
         }
+
+        public ScoredTypeMapping GetMapping(string fullTypeName)
+        {
+            if (!_mappings.TryGetValue(fullTypeName, out ScoredTypeMapping mapping))
+            {
+                if (!_metadataConfiguration.DomainTypes.TryGetValue(fullTypeName, out string filename))
+                {
+                    throw new Exception("Mapping not found. You can trigger auto-generation here");
+                }
+
+                mapping = DeserializeMapping(_domain, filename);
+                _mappings[fullTypeName] = mapping;
+            }
+
+            return mapping;
+        }
+
+        public ScoredTypeMapping DeserializeMapping(DomainBase domain, string mappingFilename)
+        {
+            var jsonMapping = File.ReadAllText(mappingFilename);
+            var mapping = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
+            return mapping;
+        }
+
 
         public DomainBase Domain
         {
@@ -48,7 +73,7 @@ namespace ApiServer
 
         public IList<ModelTypeNode> ReadModelTypeNodes(string domainName)
         {
-            if (!_metadataConfiguration.DomainTypesFileMap.TryGetValue(domainName, out string filename))
+            if (!_metadataConfiguration.DomainTypes.TryGetValue(domainName, out string filename))
             {
                 throw new Exception($"There is no entry in the configuration for {domainName}");
             }

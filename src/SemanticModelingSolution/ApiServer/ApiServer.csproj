@@ -8,6 +8,8 @@
     <Content Remove="Metadata\domain1types.json" />
     <Content Remove="Metadata\domain2types.json" />
     <Content Remove="Metadata\domainDefinitions.json" />
+    <Content Remove="Metadata\OnlineOrderToOrder.json" />
+    <Content Remove="Metadata\OrderToOnlineOrder.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +24,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Metadata\domainDefinitions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Metadata\OnlineOrderToOrder.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Metadata\OrderToOnlineOrder.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

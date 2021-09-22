@@ -23,8 +23,8 @@ namespace DeserializationConsole
             //p.MappingVendorToSupplier();
             //p.MappingSupplierToVendor();
 
-            //p.MappingOrderToOnlineOrder();
-            //p.MappingOnlineOrderToOrder();
+            //p.MappingOrderToOnlineOrderUsingDeserialization();
+            //p.MappingOnlineOrderToOrderUsingDeserialization();
 
             p.MappingOnlineOrderToOrderUsingSerialization();
             //p.MappingOrderToOnlineOrderUsingSerialization();
@@ -101,7 +101,7 @@ namespace DeserializationConsole
                 "Supplier", erp, coderushModel, sourceObjects);
         }
 
-        public void MappingOrderToOnlineOrder()
+        public void MappingOrderToOnlineOrderUsingDeserialization()
         {
             var domain = new GeneratedCode.Domain();
             var utilities = new MappingUtilities(domain);
@@ -121,7 +121,7 @@ namespace DeserializationConsole
         }
 
 
-        public void MappingOnlineOrderToOrder()
+        public void MappingOnlineOrderToOrderUsingDeserialization()
         {
             var domain = new GeneratedCode.Domain();
             var utilities = new MappingUtilities(domain);
