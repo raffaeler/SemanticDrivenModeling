@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -42,10 +43,10 @@ namespace MaterializerLibrary
 
         protected virtual JsonSerializerOptions SettingsVanilla => _jsonVanillaOptions;
 
-        protected virtual JsonSerializerOptions CreateSettings(ScoredTypeMapping scoredTypeMapping)
+        public virtual JsonSerializerOptions CreateSettings(ScoredTypeMapping scoredTypeMapping)
             => new JsonSerializerOptions()
             {
-                WriteIndented = true,
+                //WriteIndented = true,
                 Converters =
                 {
                     new SemanticConverterFactory(scoredTypeMapping),
@@ -124,5 +125,47 @@ namespace MaterializerLibrary
             return matcher.CandidateTypes.First();
         }
 
+        /// <summary>
+        /// Serialize the domain
+        /// </summary>
+        public void SerializeDomain(DomainBase domain, string filename)
+        {
+            var jsonDomainDefinitions = JsonSerializer.Serialize(domain);
+            File.WriteAllText(filename, jsonDomainDefinitions);
+        }
+
+        /// <summary>
+        /// Creates and serialize a list of ModelTypeModel, given the System.Type(s)
+        /// </summary>
+        public void SerializeTypeModel(DomainBase domain, Type[] types, string filename)
+        {
+            var modelsDomain = new DomainTypesGraphVisitor(domain, types).Visit(null, null, null);
+            var jsonDomain = modelsDomain.Serialize(domain);
+            File.WriteAllText(filename, jsonDomain);
+        }
+
+        /// <summary>
+        /// Calculates the automatic mappings and serialize them on disk
+        /// </summary>
+        public void SerializeMapping(DomainBase domain, string sourceTypeName,
+            IList<ModelTypeNode> source, IList<ModelTypeNode> target, string mappingFilename)
+        {
+            var utilities = new MappingUtilities(domain);
+
+            var mapping = utilities.GetMappings(sourceTypeName, source, target);
+            var jsonMapping = mapping.SerializeMapping(domain);
+            //var mappingClone = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
+            File.WriteAllText(mappingFilename, jsonMapping);
+        }
+
+        /// <summary>
+        /// Deserialize a list of mappings
+        /// </summary>
+        public ScoredTypeMapping DeserializeMapping(DomainBase domain, string mappingFilename)
+        {
+            var jsonMapping = File.ReadAllText(mappingFilename);
+            var mapping = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
+            return mapping;
+        }
     }
 }

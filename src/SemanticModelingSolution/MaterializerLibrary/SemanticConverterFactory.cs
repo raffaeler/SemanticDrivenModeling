@@ -23,22 +23,30 @@ namespace MaterializerLibrary
 
         public override bool CanConvert(Type typeToConvert)
         {
+#if DEBUG
             Console.Write($"SemanticConverterFactory.CanConvert> {typeToConvert.Name} ");
+#endif
             if (Map == null ||
                 (typeToConvert.FullName != Map.TargetModelTypeNode.Type.FullName &&
                 typeToConvert.FullName != Map.SourceModelTypeNode.Type.FullName))
             {
+#if DEBUG
                 Console.WriteLine("No");
+#endif
                 return false;
             }
 
+#if DEBUG
             Console.WriteLine("Yes");
+#endif
             return true;
         }
 
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
+#if DEBUG
             Console.WriteLine($"SemanticConverterFactory.CreateConverter> {typeToConvert.Name}");
+#endif
             var converterType = typeof(SemanticConverter<>).MakeGenericType(typeToConvert);
             //var converterType = typeof(VisualizeMappingFakeConverter<>).MakeGenericType(typeToConvert);
 

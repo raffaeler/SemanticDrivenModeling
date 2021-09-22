@@ -53,7 +53,9 @@ namespace MaterializerLibrary
             {
                 OnNotSupported = (converter, value) =>
                 {
+#if DEBUG
                     Console.WriteLine($"Conversion of a value from {value} To {converter.TargetType.Name} is not supported");
+#endif
                     return converter.TargetType.GetDefaultForType();
                 },
             };
@@ -92,14 +94,18 @@ namespace MaterializerLibrary
                             }
 
                             var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
+#endif
                         }
                         break;
 
                     case JsonTokenType.EndArray:
                         {
                             var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
+#endif
                             _sourcePath.Pop();
                         }
                         break;
@@ -128,14 +134,18 @@ namespace MaterializerLibrary
                                 _collectionElementStack.Push(sourcePath);
                             }
 
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
+#endif
                         }
                         break;
 
                     case JsonTokenType.EndObject:
                         {
                             var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
+#endif
                             var endObject = _sourcePath.Pop();
                             if (endObject.IsArrayElement)
                             {
@@ -156,7 +166,9 @@ namespace MaterializerLibrary
                             var currentProperty = reader.GetString();
                             _sourcePath.Push(new JsonSegment(currentProperty));
                             //var (sourcePath, nodeMapping) = GetSourcePathAndMapping();
+#if DEBUG
                             //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMapping, currentProperty);
+#endif
                         }
 
                         break;
@@ -175,7 +187,9 @@ namespace MaterializerLibrary
                                 reader.Skip();
                             }
 
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings);
+#endif
                             _sourcePath.Pop();
                             break;
                         }
@@ -194,7 +208,9 @@ namespace MaterializerLibrary
                                 reader.Skip();
                             }
 
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "(number)");
+#endif
                             _sourcePath.Pop();
                             break;
                         }
@@ -215,7 +231,9 @@ namespace MaterializerLibrary
                             }
 
 
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "null");
+#endif
                             _sourcePath.Pop();
                         }
                         break;
@@ -234,7 +252,9 @@ namespace MaterializerLibrary
                                 reader.Skip();
                             }
 
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "true");
+#endif
                             _sourcePath.Pop();
                         }
                         break;
@@ -253,7 +273,9 @@ namespace MaterializerLibrary
                                 reader.Skip();
                             }
 
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "false");
+#endif
                             _sourcePath.Pop();
                         }
                         break;
@@ -262,13 +284,15 @@ namespace MaterializerLibrary
                         {
                             Debug.Fail($"Unsupported JsonTokenType == {reader.TokenType}");
                             var (sourcePath, nodeMappings) = GetSourcePathAndMapping();
-                            if (nodeMappings != null && nodeMappings.Count > 0)
-                            {
-                                //...
-                            }
+                            //if (nodeMappings != null && nodeMappings.Count > 0)
+                            //{
+                            //    //...
+                            //}
 
                             reader.Skip();
+#if DEBUG
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
+#endif
                         }
                         break;
                 }
@@ -306,10 +330,10 @@ namespace MaterializerLibrary
                         Console.Write("".PadRight(25));
                     }
 
-                    Console.Write(sourcePath.PadRight(50));
 
                     var sourceType = nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType;
                     var targetType = nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType;
+                    Console.Write(sourcePath.PadRight(50));
                     Console.Write($"{sourceType.Name} -> {targetType.Name}".PadRight(30));
                     Console.Write(nodeMapping.Target.GetMapPath());
                     Console.WriteLine();
@@ -320,7 +344,6 @@ namespace MaterializerLibrary
                 Console.Write(sourcePath.PadRight(50));
                 Console.WriteLine();
             }
-
         }
 
         private (string sourcePath, List<ScoredPropertyMapping<ModelNavigationNode>> nodeMapping) GetSourcePathAndMapping()
@@ -463,8 +486,6 @@ namespace MaterializerLibrary
         }
 
         protected virtual T RootResult => (T)_objects[typeof(T).Name].Instance;
-        //protected virtual K CreateObject<K>() => Activator.CreateInstance<K>();
-        private object CreateInstance(Type type) => Activator.CreateInstance(type);
 
         private record CurrentInstance
         {

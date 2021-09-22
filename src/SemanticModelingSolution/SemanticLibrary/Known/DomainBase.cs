@@ -10,7 +10,7 @@ namespace SemanticLibrary
     /// where the concepts has a specifical meaning
     /// This class is used as the base class for every automatically generated Domain
     /// </summary>
-    public abstract class DomainBase
+    public class DomainBase
     {
         public virtual List<TermToConcept> Links { get; } = new()
         {

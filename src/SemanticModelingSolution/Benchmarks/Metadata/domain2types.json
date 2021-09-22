@@ -1,0 +1,725 @@
+{
+  "$id": "1",
+  "$values": [
+    {
+      "$id": "2",
+      "Type": {
+        "$id": "3",
+        "AssemblyName": "SimpleDomain2",
+        "Namespace": null,
+        "Name": "OnlineOrder",
+        "FullName": "SimpleDomain2.OnlineOrder",
+        "UniqueName": "SimpleDomain2.OnlineOrder"
+      },
+      "PropertyNodes": {
+        "$id": "4",
+        "$values": [
+          {
+            "$id": "5",
+            "Parent": {
+              "$ref": "2"
+            },
+            "PropertyInfo": {
+              "$id": "6",
+              "Name": "Id",
+              "PropertyType": {
+                "$id": "7",
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "Guid",
+                "FullName": "System.Guid",
+                "UniqueName": "System.Guid"
+              },
+              "ParentType": {
+                "$ref": "3"
+              }
+            },
+            "CoreType": {
+              "$id": "8",
+              "AssemblyName": "System.Private.CoreLib",
+              "Namespace": null,
+              "Name": "Guid",
+              "FullName": "System.Guid",
+              "UniqueName": "System.Guid"
+            },
+            "NavigationNode": null,
+            "PropertyKind": 0,
+            "TermToConcepts": {
+              "$id": "9",
+              "$values": [
+                {
+                  "$id": "10",
+                  "Concept": "UniqueIdentity",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Id",
+                  "Weight": 100
+                }
+              ]
+            }
+          },
+          {
+            "$id": "11",
+            "Parent": {
+              "$ref": "2"
+            },
+            "PropertyInfo": {
+              "$id": "12",
+              "Name": "Description",
+              "PropertyType": {
+                "$id": "13",
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "String",
+                "FullName": "System.String",
+                "UniqueName": "System.String"
+              },
+              "ParentType": {
+                "$ref": "3"
+              }
+            },
+            "CoreType": {
+              "$id": "14",
+              "AssemblyName": "System.Private.CoreLib",
+              "Namespace": null,
+              "Name": "String",
+              "FullName": "System.String",
+              "UniqueName": "System.String"
+            },
+            "NavigationNode": null,
+            "PropertyKind": 0,
+            "TermToConcepts": {
+              "$id": "15",
+              "$values": [
+                {
+                  "$id": "16",
+                  "Concept": "HumanDescription",
+                  "ContextConcept": "Any",
+                  "ConceptSpecifier": "None",
+                  "Term": "Description",
+                  "Weight": 100
+                }
+              ]
+            }
+          },
+          {
+            "$id": "17",
+            "Parent": {
+              "$ref": "2"
+            },
+            "PropertyInfo": {
+              "$id": "18",
+              "Name": "OrderLines",
+              "PropertyType": {
+                "$id": "19",
+                "AssemblyName": "System.Private.CoreLib",
+                "Namespace": null,
+                "Name": "List\u00601",
+                "FullName": "System.Collections.Generic.List\u00601[[SimpleDomain2.OrderLine, SimpleDomain2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+                "UniqueName": "System.Collections.Generic.List\u00601[[SimpleDomain2.OrderLine, SimpleDomain2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+              },
+              "ParentType": {
+                "$ref": "3"
+              }
+            },
+            "CoreType": {
+              "$id": "20",
+              "AssemblyName": "SimpleDomain2",
+              "Namespace": null,
+              "Name": "OrderLine",
+              "FullName": "SimpleDomain2.OrderLine",
+              "UniqueName": "SimpleDomain2.OrderLine"
+            },
+            "NavigationNode": {
+              "$id": "21",
+              "Type": {
+                "$id": "22",
+                "AssemblyName": "SimpleDomain2",
+                "Namespace": null,
+                "Name": "OrderLine",
+                "FullName": "SimpleDomain2.OrderLine",
+                "UniqueName": "SimpleDomain2.OrderLine"
+              },
+              "PropertyNodes": {
+                "$id": "23",
+                "$values": [
+                  {
+                    "$id": "24",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "25",
+                      "Name": "Id",
+                      "PropertyType": {
+                        "$id": "26",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "Guid",
+                        "FullName": "System.Guid",
+                        "UniqueName": "System.Guid"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "27",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "Guid",
+                      "FullName": "System.Guid",
+                      "UniqueName": "System.Guid"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "28",
+                      "$values": [
+                        {
+                          "$ref": "10"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "29",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "30",
+                      "Name": "ProductName",
+                      "PropertyType": {
+                        "$id": "31",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "String",
+                        "FullName": "System.String",
+                        "UniqueName": "System.String"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "32",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "String",
+                      "FullName": "System.String",
+                      "UniqueName": "System.String"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "33",
+                      "$values": [
+                        {
+                          "$id": "34",
+                          "Concept": "Product",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "None",
+                          "Term": "Product",
+                          "Weight": 100
+                        },
+                        {
+                          "$id": "35",
+                          "Concept": "Identity",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "None",
+                          "Term": "Name",
+                          "Weight": 100
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "36",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "37",
+                      "Name": "ProductCode",
+                      "PropertyType": {
+                        "$id": "38",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "String",
+                        "FullName": "System.String",
+                        "UniqueName": "System.String"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "39",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "String",
+                      "FullName": "System.String",
+                      "UniqueName": "System.String"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "40",
+                      "$values": [
+                        {
+                          "$ref": "34"
+                        },
+                        {
+                          "$id": "41",
+                          "Concept": "Identity",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "None",
+                          "Term": "Code",
+                          "Weight": 100
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "42",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "43",
+                      "Name": "Expiry",
+                      "PropertyType": {
+                        "$id": "44",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "DateTimeOffset",
+                        "FullName": "System.DateTimeOffset",
+                        "UniqueName": "System.DateTimeOffset"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "45",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "DateTimeOffset",
+                      "FullName": "System.DateTimeOffset",
+                      "UniqueName": "System.DateTimeOffset"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "46",
+                      "$values": [
+                        {
+                          "$id": "47",
+                          "Concept": "AbsoluteTime",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "None",
+                          "Term": "Expiry",
+                          "Weight": 100
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "48",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "49",
+                      "Name": "CustomerId",
+                      "PropertyType": {
+                        "$id": "50",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "Guid",
+                        "FullName": "System.Guid",
+                        "UniqueName": "System.Guid"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "51",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "Guid",
+                      "FullName": "System.Guid",
+                      "UniqueName": "System.Guid"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "52",
+                      "$values": [
+                        {
+                          "$id": "53",
+                          "Concept": "Company",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "Customer",
+                          "Term": "Customer",
+                          "Weight": 100
+                        },
+                        {
+                          "$ref": "10"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "54",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "55",
+                      "Name": "CustomerName",
+                      "PropertyType": {
+                        "$id": "56",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "String",
+                        "FullName": "System.String",
+                        "UniqueName": "System.String"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "57",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "String",
+                      "FullName": "System.String",
+                      "UniqueName": "System.String"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "58",
+                      "$values": [
+                        {
+                          "$ref": "53"
+                        },
+                        {
+                          "$ref": "35"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "59",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "60",
+                      "Name": "Street",
+                      "PropertyType": {
+                        "$id": "61",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "String",
+                        "FullName": "System.String",
+                        "UniqueName": "System.String"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "62",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "String",
+                      "FullName": "System.String",
+                      "UniqueName": "System.String"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "63",
+                      "$values": [
+                        {
+                          "$id": "64",
+                          "Concept": "Address",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "Street",
+                          "Term": "Street",
+                          "Weight": 100
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "65",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "66",
+                      "Name": "City",
+                      "PropertyType": {
+                        "$id": "67",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "String",
+                        "FullName": "System.String",
+                        "UniqueName": "System.String"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "68",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "String",
+                      "FullName": "System.String",
+                      "UniqueName": "System.String"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "69",
+                      "$values": [
+                        {
+                          "$id": "70",
+                          "Concept": "Address",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "City",
+                          "Term": "City",
+                          "Weight": 100
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "71",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "72",
+                      "Name": "State",
+                      "PropertyType": {
+                        "$id": "73",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "String",
+                        "FullName": "System.String",
+                        "UniqueName": "System.String"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "74",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "String",
+                      "FullName": "System.String",
+                      "UniqueName": "System.String"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "75",
+                      "$values": [
+                        {
+                          "$id": "76",
+                          "Concept": "Address",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "State",
+                          "Term": "State",
+                          "Weight": 100
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "77",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "78",
+                      "Name": "Country",
+                      "PropertyType": {
+                        "$id": "79",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "String",
+                        "FullName": "System.String",
+                        "UniqueName": "System.String"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "80",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "String",
+                      "FullName": "System.String",
+                      "UniqueName": "System.String"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "81",
+                      "$values": [
+                        {
+                          "$id": "82",
+                          "Concept": "Address",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "Country",
+                          "Term": "Country",
+                          "Weight": 100
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$id": "83",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "84",
+                      "Name": "Net",
+                      "PropertyType": {
+                        "$id": "85",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "Double",
+                        "FullName": "System.Double",
+                        "UniqueName": "System.Double"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "86",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "Double",
+                      "FullName": "System.Double",
+                      "UniqueName": "System.Double"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "87",
+                      "$values": []
+                    }
+                  },
+                  {
+                    "$id": "88",
+                    "Parent": {
+                      "$ref": "21"
+                    },
+                    "PropertyInfo": {
+                      "$id": "89",
+                      "Name": "Payment",
+                      "PropertyType": {
+                        "$id": "90",
+                        "AssemblyName": "System.Private.CoreLib",
+                        "Namespace": null,
+                        "Name": "Double",
+                        "FullName": "System.Double",
+                        "UniqueName": "System.Double"
+                      },
+                      "ParentType": {
+                        "$ref": "22"
+                      }
+                    },
+                    "CoreType": {
+                      "$id": "91",
+                      "AssemblyName": "System.Private.CoreLib",
+                      "Namespace": null,
+                      "Name": "Double",
+                      "FullName": "System.Double",
+                      "UniqueName": "System.Double"
+                    },
+                    "NavigationNode": null,
+                    "PropertyKind": 0,
+                    "TermToConcepts": {
+                      "$id": "92",
+                      "$values": [
+                        {
+                          "$id": "93",
+                          "Concept": "Money",
+                          "ContextConcept": "Any",
+                          "ConceptSpecifier": "None",
+                          "Term": "Payment",
+                          "Weight": 100
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "TermToConcepts": {
+                "$id": "94",
+                "$values": [
+                  {
+                    "$id": "95",
+                    "Concept": "Order",
+                    "ContextConcept": "Any",
+                    "ConceptSpecifier": "None",
+                    "Term": "Order",
+                    "Weight": 100
+                  },
+                  {
+                    "$id": "96",
+                    "Concept": "RelativePosition",
+                    "ContextConcept": "Any",
+                    "ConceptSpecifier": "Index",
+                    "Term": "Line",
+                    "Weight": 100
+                  }
+                ]
+              }
+            },
+            "PropertyKind": 5,
+            "TermToConcepts": {
+              "$id": "97",
+              "$values": []
+            }
+          }
+        ]
+      },
+      "TermToConcepts": {
+        "$id": "98",
+        "$values": [
+          {
+            "$id": "99",
+            "Concept": "Undefined",
+            "ContextConcept": "Any",
+            "ConceptSpecifier": "None",
+            "Term": "Online",
+            "Weight": 100
+          },
+          {
+            "$ref": "95"
+          }
+        ]
+      }
+    },
+    {
+      "$ref": "21"
+    }
+  ]
+}

@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDomain1", "SimpleDoma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDomain2", "SimpleDomain2\SimpleDomain2.csproj", "{40294124-69D1-4606-B037-09F08F85DD7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{32DF45FF-477B-4B0A-A289-F3ECC2D3B1D4}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SharedGenerators\SharedGenerators.projitems*{1b2882b1-8efa-4c83-95e5-2b6b764dc469}*SharedItemsImports = 13
@@ -124,6 +126,10 @@ Global
 		{40294124-69D1-4606-B037-09F08F85DD7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40294124-69D1-4606-B037-09F08F85DD7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40294124-69D1-4606-B037-09F08F85DD7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32DF45FF-477B-4B0A-A289-F3ECC2D3B1D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32DF45FF-477B-4B0A-A289-F3ECC2D3B1D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32DF45FF-477B-4B0A-A289-F3ECC2D3B1D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32DF45FF-477B-4B0A-A289-F3ECC2D3B1D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +151,7 @@ Global
 		{9240CF50-4141-4FF2-833C-933761DAA8F2} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{C53B9D04-1D28-499E-AAE0-CF112545DF9D} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
 		{40294124-69D1-4606-B037-09F08F85DD7E} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
+		{32DF45FF-477B-4B0A-A289-F3ECC2D3B1D4} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDC7C7E5-38C7-49A4-B565-A242960159E4}

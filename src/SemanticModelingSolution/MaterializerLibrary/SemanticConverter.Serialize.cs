@@ -18,6 +18,8 @@ namespace MaterializerLibrary
         protected Dictionary<string, ScoredPropertyMapping<ModelNavigationNode>> _targetLookup = new();
         //private Stack<ICodeGenerationContext> _codeGenContext;
 
+        private static Dictionary<Type, Action<Utf8JsonWriter, T>> _writerCache = new();
+
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
             //Console.WriteLine($"TesterConverter.Write> ");
@@ -25,11 +27,15 @@ namespace MaterializerLibrary
             //_codeGenContext = new();
             //_codeGenContext.Push(new SimpleContext(typeof(T)));
             //ParameterExpression inputWriter = Expression.Parameter(typeof(Utf8JsonWriter), "writer");
+            if (!_writerCache.TryGetValue(typeof(T), out var transformDelegate))
+            {
+                var visitor = new SemanticSerializationVisitor<T>(_targetLookup, _conversionGenerator, _map);
+                visitor.Visit(_map.TargetModelTypeNode);
+                var expression = visitor.GetSerializationAction();
+                transformDelegate = expression.Compile();
+                _writerCache[typeof(T)] = transformDelegate;
+            }
 
-            var visitor = new SemanticSerializationVisitor<T>(_targetLookup, _conversionGenerator, _map);
-            visitor.Visit(_map.TargetModelTypeNode);
-            var expression = visitor.GetSerializationAction();
-            var transformDelegate = expression.Compile();
             transformDelegate(writer, value);
 
 /*
