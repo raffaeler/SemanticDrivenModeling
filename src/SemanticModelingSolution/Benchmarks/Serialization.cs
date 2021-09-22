@@ -53,6 +53,9 @@ namespace Benchmarks
             _optionsOrdersToOnlineOrders = utilities.CreateSettings(_orderToOnlineOrder);
             _optionsOnlineOrdersToOrders = utilities.CreateSettings(_onlineOrderToOrder);
 
+            JsonSerializer.Serialize(_orders);
+            JsonSerializer.Serialize(_onlineOrders);
+
             // let the codegen cache the delegates
             JsonSerializer.Serialize(_orders, _optionsOrdersToOnlineOrders);
             JsonSerializer.Serialize(_onlineOrders, _optionsOnlineOrdersToOrders);
