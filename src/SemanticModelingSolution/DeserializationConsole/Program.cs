@@ -23,8 +23,8 @@ namespace DeserializationConsole
             //p.SerializeAll();
             //p.SerializeMappings();
 
-            p.OnlineOrder_To_Order_UsingDeserialization();
-            p.Order_To_OnlineOrder_UsingDeserialization();
+            //p.OnlineOrder_To_Order_UsingDeserialization();
+            //p.Order_To_OnlineOrder_UsingDeserialization();
 
             p.OnlineOrder_To_Order_UsingSerialization();
             p.Order_To_OnlineOrder_UsingSerialization();
