@@ -19,6 +19,7 @@
     <ItemGroup>
         <ProjectReference Include="..\ModelsFromGithub\ModelsFromGithub.csproj" />
         <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
+        <ProjectReference Include="..\SurrogateLibrary\SurrogateLibrary.csproj" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

@@ -45,7 +45,7 @@ namespace SemanticLibrary
 
         public override string ToString()
         {
-            return $"{PropertyType}.{Name}";
+            return $"{ParentType}.{Name}";
         }
     }
 }

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 
 using SemanticLibrary;
+using SurrogateLibrary;
 
 // Rules to enforce:
 // UniqueIdentity must match only on 1st level and equal concepts (cannot be a child)
@@ -99,6 +101,8 @@ namespace MappingConsole
 
         static void Main(string[] args)
         {
+            TestTypes();
+
             //Visit(new Type[] { typeof(Lot), typeof(Article) });
             //Visit(_domainTypes1);
             //Visit(_domainTypes2);
@@ -109,6 +113,44 @@ namespace MappingConsole
             //VisitCompare2a();
             //VisitCompare2b();
             //VisitCompare2c();
+        }
+
+        public int X1 { get; set; }
+        public int X2 { get; init; }
+        public int X3 { get; }
+        public int X4 { get; private set; }
+
+        public class TA { public TA A { get; set; } public TB B { get; set; } }
+        public class TB { public TA A { get; set; } public TB B { get; set; } }
+
+        private static void TestTypes()
+        {
+            var t1 = typeof(List<string>);
+            var t2 = typeof(IDictionary<string, Action<int>>);
+            var t3 = typeof(List<>);
+            var t4 = typeof(IDictionary<,>);
+            var t5 = typeof(string);
+            var t6 = typeof(Program);
+
+            var ts = new TypeSystem();
+
+            var s1 = ts.GetOrCreate(t1);
+            var s2 = ts.GetOrCreate(t2);
+            var s3 = ts.GetOrCreate(t3);
+            var s4 = ts.GetOrCreate(t4);
+            var s5 = ts.GetOrCreate(t5);
+            var s6 = ts.GetOrCreate(t6);
+            var s7 = ts.GetOrCreate(typeof(TA));
+
+            var options = new JsonSerializerOptions() { IgnoreReadOnlyProperties = true };
+            var json = JsonSerializer.Serialize(s1, options);
+            var x1 = JsonSerializer.Deserialize<SurrogateLibrary.SurrogateType>(json);
+
+            var tsJson = JsonSerializer.Serialize(ts, options);
+            var tsClone = JsonSerializer.Deserialize<TypeSystem>(tsJson);
+
+            var diff1 = ts.Types.Except(tsClone.Types).ToList();
+            var diff2 = tsClone.Types.Except(ts.Types).ToList();
         }
 
         static void VisitCompare2a()
