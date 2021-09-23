@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.Json;
 
 using MaterializerLibrary;
-
 using SemanticLibrary;
 
 namespace DeserializationConsole
@@ -24,11 +23,11 @@ namespace DeserializationConsole
             //p.SerializeAll();
             //p.SerializeMappings();
 
-            p.MappingOnlineOrderToOrderUsingDeserialization();
-            p.MappingOrderToOnlineOrderUsingDeserialization();
+            p.OnlineOrder_To_Order_UsingDeserialization();
+            p.Order_To_OnlineOrder_UsingDeserialization();
 
-            p.MappingOnlineOrderToOrderUsingSerialization();
-            p.MappingOrderToOnlineOrderUsingSerialization();
+            p.OnlineOrder_To_Order_UsingSerialization();
+            p.Order_To_OnlineOrder_UsingSerialization();
         }
 
         public void SerializeAll()
@@ -84,7 +83,7 @@ namespace DeserializationConsole
             return mappingFromOnlineOrder;
         }
 
-        public void MappingOnlineOrderToOrderUsingDeserialization()
+        public void OnlineOrder_To_Order_UsingDeserialization()
         {
             var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
             var jsonMapping = File.ReadAllText("Metadata\\OnlineOrderToOrder.json");
@@ -98,7 +97,7 @@ namespace DeserializationConsole
             var targetObjects = JsonSerializer.Deserialize<SimpleDomain1.Order[]>(sourceJson, jsonOptions);
         }
 
-        public void MappingOrderToOnlineOrderUsingDeserialization()
+        public void Order_To_OnlineOrder_UsingDeserialization()
         {
             var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
             var jsonMapping = File.ReadAllText("Metadata\\OrderToOnlineOrder.json");
@@ -112,7 +111,7 @@ namespace DeserializationConsole
             var targetObjects = JsonSerializer.Deserialize<SimpleDomain2.OnlineOrder[]>(sourceJson, jsonOptions);
         }
 
-        public void MappingOnlineOrderToOrderUsingSerialization()
+        public void OnlineOrder_To_Order_UsingSerialization()
         {
             var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
             var jsonMapping = File.ReadAllText("Metadata\\OnlineOrderToOrder.json");
@@ -126,7 +125,7 @@ namespace DeserializationConsole
             var targetObjects = JsonSerializer.Deserialize<SimpleDomain1.Order[]>(targetJson);
         }
 
-        public void MappingOrderToOnlineOrderUsingSerialization()
+        public void Order_To_OnlineOrder_UsingSerialization()
         {
             var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
             var jsonMapping = File.ReadAllText("Metadata\\OrderToOnlineOrder.json");
