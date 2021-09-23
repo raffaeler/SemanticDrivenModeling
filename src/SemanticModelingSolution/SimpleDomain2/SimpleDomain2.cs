@@ -8,7 +8,7 @@ namespace SimpleDomain2
 {
     public static class Samples
     {
-        public static IList<OnlineOrder> GetOrders()
+        public static IList<OnlineOrder> GetOnlineOrders()
         {
             var orders = new List<OnlineOrder>()
             {

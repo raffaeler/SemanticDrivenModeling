@@ -48,7 +48,7 @@ namespace Benchmarks
             _onlineOrderToOrder = utilities.DeserializeMapping(domain, "Metadata\\OnlineOrderToOrder.json");
 
             _orders = SimpleDomain1.Samples.GetOrders();
-            _onlineOrders = SimpleDomain2.Samples.GetOrders();
+            _onlineOrders = SimpleDomain2.Samples.GetOnlineOrders();
 
             _optionsOrdersToOnlineOrders = utilities.CreateSettings(_orderToOnlineOrder);
             _optionsOnlineOrdersToOrders = utilities.CreateSettings(_onlineOrderToOrder);

@@ -18,19 +18,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Serializations\domain1types.json">
+        <None Update="Metadata\domain1types.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Serializations\domain2types.json">
+        <None Update="Metadata\domain2types.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Serializations\domainDefinitions.json">
+        <None Update="Metadata\domainDefinitions.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Serializations\OnlineOrderToOrder.json">
+        <None Update="Metadata\OnlineOrderToOrder.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Serializations\OrderToOnlineOrder.json">
+        <None Update="Metadata\OrderToOnlineOrder.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>

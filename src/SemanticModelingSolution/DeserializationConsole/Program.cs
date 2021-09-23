@@ -15,19 +15,20 @@ namespace DeserializationConsole
         static void Main(string[] args)
         {
             var p = new Program();
+            //new VerifyDeserialization().Test();
+
+            //var v = new VendorTests();
+            //v.MappingVendorToSupplier();
+            //v.MappingSupplierToVendor();
+
             //p.SerializeAll();
             //p.SerializeMappings();
 
-            //new VerifyDeserialization().Test();
-
-            //p.MappingVendorToSupplier();
-            //p.MappingSupplierToVendor();
-
-            //p.MappingOrderToOnlineOrderUsingDeserialization();
-            //p.MappingOnlineOrderToOrderUsingDeserialization();
+            p.MappingOnlineOrderToOrderUsingDeserialization();
+            p.MappingOrderToOnlineOrderUsingDeserialization();
 
             p.MappingOnlineOrderToOrderUsingSerialization();
-            //p.MappingOrderToOnlineOrderUsingSerialization();
+            p.MappingOrderToOnlineOrderUsingSerialization();
         }
 
         public void SerializeAll()
@@ -45,12 +46,11 @@ namespace DeserializationConsole
             File.WriteAllText("domain2types.json", jsonDomain2);
         }
 
-
         public void SerializeMappings()
         {
-            var jsonDomainDefinitions = File.ReadAllText("Serializations\\domainDefinitions.json");
-            var jsonDomain1 = File.ReadAllText("Serializations\\domain1types.json");
-            var jsonDomain2 = File.ReadAllText("Serializations\\domain2types.json");
+            var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
+            var jsonDomain1 = File.ReadAllText("Metadata\\domain1types.json");
+            var jsonDomain2 = File.ReadAllText("Metadata\\domain2types.json");
 
             var domain = JsonSerializer.Deserialize<GeneratedCode.Domain>(jsonDomainDefinitions);
             var utilities = new MappingUtilities(domain);
@@ -62,155 +62,89 @@ namespace DeserializationConsole
             utilities.SerializeMapping(domain, "OnlineOrder", m2, m1, "OnlineOrderToOrder.json");
         }
 
-
-        public void MappingVendorToSupplier()
+        public ScoredTypeMapping PrepareOrderMappings()
         {
             var domain = new GeneratedCode.Domain();
             var utilities = new MappingUtilities(domain);
+            var m1 = utilities.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
+            var m2 = utilities.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
 
-            var erp = utilities.Prepare("ERP", ERP_Model.Types.All);
-            var coderushModel = utilities.Prepare("coderush", coderush.Types.All);
-            var northwind = utilities.Prepare("Northwind", NorthwindDataLayer.Types.All);
-
-            //TestMaterializer("Vendor", utilities, coderushModel, erp);
-
-            var sourceObjects = Samples.GetVendors1();
-            //var targetObjects = utilities.Transform<coderush.Models.Vendor, ERP_Model.Models.Supplier>(
-            //    "Vendor", coderushModel, erp, sourceObjects);
-
-            var targetObjects = utilities.TransformDeserialize<ERP_Model.Models.Supplier>(
-                "Vendor", coderushModel, erp, sourceObjects);
+            var mappingFromOrder = utilities.GetMappings("Order", m1, m2);
+            return mappingFromOrder;
         }
 
-        public void MappingSupplierToVendor()
+        public ScoredTypeMapping PrepareOnlineOrderMappings()
         {
             var domain = new GeneratedCode.Domain();
             var utilities = new MappingUtilities(domain);
+            var m1 = utilities.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
+            var m2 = utilities.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
 
-            var erp = utilities.Prepare("ERP", ERP_Model.Types.All);
-            var coderushModel = utilities.Prepare("coderush", coderush.Types.All);
-            var northwind = utilities.Prepare("Northwind", NorthwindDataLayer.Types.All);
+            var mappingFromOnlineOrder = utilities.GetMappings("OnlineOrder", m2, m1);
+            return mappingFromOnlineOrder;
+        }
 
-            //TestMaterializer("Supplier", utilities, erp, coderushModel);
+        public void MappingOnlineOrderToOrderUsingDeserialization()
+        {
+            var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
+            var jsonMapping = File.ReadAllText("Metadata\\OnlineOrderToOrder.json");
 
-            var sourceObjects = Samples.GetSupplier1();
-            //var targetObjects = utilities.Transform<ERP_Model.Models.Supplier, coderush.Models.Vendor>(
-            //    "Supplier", erp, coderushModel, sourceObjects);
+            var domain = JsonSerializer.Deserialize<GeneratedCode.Domain>(jsonDomainDefinitions);
+            var mapping = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
+            var jsonOptions = GetJsonOptions(mapping);
 
-            var targetObjects = utilities.TransformDeserialize<coderush.Models.Vendor>(
-                "Supplier", erp, coderushModel, sourceObjects);
+            var sourceObjects = SimpleDomain2.Samples.GetOnlineOrders();
+            var sourceJson = JsonSerializer.Serialize(sourceObjects);
+            var targetObjects = JsonSerializer.Deserialize<SimpleDomain1.Order[]>(sourceJson, jsonOptions);
         }
 
         public void MappingOrderToOnlineOrderUsingDeserialization()
         {
-            var domain = new GeneratedCode.Domain();
-            var utilities = new MappingUtilities(domain);
-            var m1 = utilities.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
-            var m2 = utilities.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
+            var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
+            var jsonMapping = File.ReadAllText("Metadata\\OrderToOnlineOrder.json");
 
-            //TestMaterializer("Order", utilities, m1, m2);
+            var domain = JsonSerializer.Deserialize<GeneratedCode.Domain>(jsonDomainDefinitions);
+            var mapping = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
+            var jsonOptions = GetJsonOptions(mapping);
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
-            //var targetObjects = utilities.Transform<SimpleDomain1.Order, SimpleDomain2.OnlineOrder>(
-            //    "Order", m1, m2, sourceObjects);
-
-            var targetObjects = utilities.TransformDeserialize<SimpleDomain2.OnlineOrder>(
-                "Order", m1, m2, sourceObjects);
-
-            //var targetObjects = utilities.OrderToOnlineOrder(m1, m2, sourceObjects);
-        }
-
-
-        public void MappingOnlineOrderToOrderUsingDeserialization()
-        {
-            var domain = new GeneratedCode.Domain();
-            var utilities = new MappingUtilities(domain);
-            var m1 = utilities.Prepare("SimpleDomain1", SimpleDomain1.Types.All);
-            var m2 = utilities.Prepare("SimpleDomain2", SimpleDomain2.Types.All);
-
-            //TestMaterializer("OnlineOrder", utilities, m2, m1);
-
-            var sourceObjects = SimpleDomain2.Samples.GetOrders();
-            //var targetObjects = utilities.Transform<SimpleDomain2.OnlineOrder, SimpleDomain1.Order>(
-            //    "OnlineOrder", m2, m1, sourceObjects);
-
-            var targetObjects = utilities.TransformDeserialize<SimpleDomain1.Order>(
-                "OnlineOrder", m2, m1, sourceObjects);
-            //var targetObjects = utilities.OnlineOrderToOrder(m2, m1, sourceObjects);
-
-            //var finalJson = utilities.SerializePlain(targetObjects);
-        }
-
-
-        public void TestMaterializer(string sourceItem, MappingUtilities utilities, IList<ModelTypeNode> source, IList<ModelTypeNode> target)
-        {
-            var sourceModel = source.First(t => t.Type.Name == sourceItem);
-            var mapping = utilities.CreateMappingsFor(sourceModel, target);
-
-            var materializer = new Materializer();
-            materializer.Materialize(mapping);
+            var sourceJson = JsonSerializer.Serialize(sourceObjects);
+            var targetObjects = JsonSerializer.Deserialize<SimpleDomain2.OnlineOrder[]>(sourceJson, jsonOptions);
         }
 
         public void MappingOnlineOrderToOrderUsingSerialization()
         {
-            var jsonDomainDefinitions = File.ReadAllText("Serializations\\domainDefinitions.json");
-            var jsonDomain1 = File.ReadAllText("Serializations\\domain1types.json");
-            var jsonDomain2 = File.ReadAllText("Serializations\\domain2types.json");
-
+            var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
+            var jsonMapping = File.ReadAllText("Metadata\\OnlineOrderToOrder.json");
 
             var domain = JsonSerializer.Deserialize<GeneratedCode.Domain>(jsonDomainDefinitions);
-            var utilities = new MappingUtilities(domain);
-            var m1 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain1, domain);
-            var m2 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain2, domain);
+            var mapping = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
+            var jsonOptions = GetJsonOptions(mapping);
 
-            var mapping = utilities.GetMappings("OnlineOrder", m2, m1);
-
-            var sourceObjects = SimpleDomain2.Samples.GetOrders();
-            var targetObjects = utilities.TransformSerialize<SimpleDomain2.OnlineOrder, SimpleDomain1.Order>(
-                mapping, sourceObjects);
+            var sourceObjects = SimpleDomain2.Samples.GetOnlineOrders();
+            var targetJson = JsonSerializer.Serialize(sourceObjects, jsonOptions);
+            var targetObjects = JsonSerializer.Deserialize<SimpleDomain1.Order[]>(targetJson);
         }
 
         public void MappingOrderToOnlineOrderUsingSerialization()
         {
-            var jsonDomainDefinitions = File.ReadAllText("Serializations\\domainDefinitions.json");
-            var jsonDomain1 = File.ReadAllText("Serializations\\domain1types.json");
-            var jsonDomain2 = File.ReadAllText("Serializations\\domain2types.json");
-
+            var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
+            var jsonMapping = File.ReadAllText("Metadata\\OrderToOnlineOrder.json");
 
             var domain = JsonSerializer.Deserialize<GeneratedCode.Domain>(jsonDomainDefinitions);
-            var utilities = new MappingUtilities(domain);
-            var m1 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain1, domain);
-            var m2 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain2, domain);
-
-            var mapping = utilities.GetMappings("Order", m1, m2);
+            var mapping = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
+            var jsonOptions = GetJsonOptions(mapping);
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
-            var targetObjects = utilities.TransformSerialize<SimpleDomain1.Order, SimpleDomain2.OnlineOrder>(
-                mapping, sourceObjects);
-
-            //var targetObjects = utilities.TransformSerialize<SimpleDomain1.Order, SimpleDomain2.OnlineOrder>(
-            //    "Order", m1, m2, sourceObjects);
+            var targetJson = JsonSerializer.Serialize(sourceObjects, jsonOptions);
+            var targetObjects = JsonSerializer.Deserialize<SimpleDomain2.OnlineOrder[]>(targetJson);
         }
 
-        private ConversionLibrary.IConversion _conversion = null;
+        private JsonSerializerOptions GetJsonOptions(ScoredTypeMapping mapping) => new JsonSerializerOptions()
+            {
+                Converters = { new SemanticConverterFactory(mapping), },
+            };
 
-        private void Simulate(Utf8JsonWriter writer, SimpleDomain2.OnlineOrder item)
-        {
-            // 1. read the value from the object
-            double value1 = item.OrderLines[0].Net;
-
-            // 2. convert if needed
-            string value2 = ((ConversionLibrary.Converters.ToStringConversion)_conversion)
-                .From(value1);
-
-            // 3. write to json
-            writer.WriteStringValue(value2);
-
-    //        ((Article)inputObject).ExpirationDate = reader.TokenType == JsonTokenType.Null
-    //? default(DateTime)
-    //: ((ToDateTimeConversion)_conversion).From(reader.GetDateTimeOffset());
-
-        }
 
     }
 }

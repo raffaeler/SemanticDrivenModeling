@@ -50,7 +50,7 @@ namespace Benchmarks
 
             var orders = SimpleDomain1.Samples.GetOrders();
             _orders = JsonSerializer.Serialize(orders);
-            var onlineOrders = SimpleDomain2.Samples.GetOrders();
+            var onlineOrders = SimpleDomain2.Samples.GetOnlineOrders();
             _onlineOrders = JsonSerializer.Serialize(onlineOrders);
 
             _optionsOrdersToOnlineOrders = utilities.CreateSettings(_orderToOnlineOrder);

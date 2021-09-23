@@ -89,6 +89,16 @@ namespace MaterializerLibrary
             return targetObjects;
         }
 
+        public IEnumerable<TTarget> TransformDeserialize<TTarget>(ScoredTypeMapping mapping,
+            IEnumerable<object> sourceObjects)
+        {
+            var settings = CreateSettings(mapping);
+
+            var json = SerializePlain(sourceObjects);
+            var targetObjects = (IEnumerable<TTarget>)DeserializeByTransform(json, typeof(TTarget[]), settings);
+            return targetObjects;
+        }
+
         public IEnumerable<TTarget> TransformSerialize<TSource, TTarget>(string sourceTypeName,
             IList<ModelTypeNode> source, IList<ModelTypeNode> target,
             IEnumerable<TSource> sourceObjects)

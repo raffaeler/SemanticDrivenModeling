@@ -36,13 +36,13 @@
         <None Update="Samples\Relationships.txt">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Serializations\domain1types.json">
+        <None Update="Metadata\domain1types.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Serializations\domain2types.json">
+        <None Update="Metadata\domain2types.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Serializations\domainDefinitions.json">
+        <None Update="Metadata\domainDefinitions.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
