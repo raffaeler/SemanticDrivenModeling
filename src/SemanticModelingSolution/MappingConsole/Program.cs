@@ -159,8 +159,17 @@ namespace MappingConsole
 
             var diff1 = ts.Types.Except(tsClone.Types).ToList();
             var diff2 = tsClone.Types.Except(ts.Types).ToList();
-            var comp = tsClone.Types[1].Properties.Equals(ts.Types[1].Properties);
+            var compProp = tsClone.Types[1].Properties.Equals(ts.Types[1].Properties);
+            var comp = ts == tsClone;
+            Debug.Assert(comp);
 
+
+
+
+        }
+
+        static void EqualityBrokenInCSharp()
+        {
             // equality is broken in C#
             var l1 = new ListEx<int>(new int[] { 1, 2 });
             var l2 = new ListEx<int>(new int[] { 1, 2 });
@@ -169,7 +178,6 @@ namespace MappingConsole
             var c1 = l1 == l2;      // true
             var c2 = r1 == r2;      // false :-(
             var c3 = r1.Equals(r2); // true
-
         }
 
         static void VisitCompare2a()

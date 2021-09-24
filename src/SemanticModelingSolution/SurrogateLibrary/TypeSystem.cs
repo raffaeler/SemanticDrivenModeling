@@ -79,12 +79,18 @@ namespace SurrogateLibrary
 
         public SurrogateType GetOrCreate(Type type)
         {
+            if (type == null) return null;
             var unique = SurrogateType.GetFullName(type);
             if (!_typesByUniqueName.TryGetValue(unique, out SurrogateType surrogate))
             {
                 var newIndex = Interlocked.Increment(ref _typeIndex);
+                var (flags, inner1, inner2) = type.Classify();
+                var innerSurrogate1 = GetOrCreate(inner1);
+                var innerSurrogate2 = GetOrCreate(inner2);
+
                 surrogate = new SurrogateType(newIndex,
-                    type.Assembly.GetName().Name, type.Namespace, type.Name, unique, null);
+                    type.Assembly.GetName().Name, type.Namespace, type.Name, unique,
+                    flags, innerSurrogate1?.Index ?? 0, innerSurrogate2?.Index ?? 0, null);
                 _types[newIndex] = surrogate;
                 _typesByUniqueName[surrogate.UniqueName] = surrogate;
 
