@@ -20,6 +20,14 @@ namespace SurrogateLibrary
         private UInt64 _typeIndex = 0;
         private UInt64 _propertyIndex = 0;
 
+        /// <summary>
+        /// This is used in the basic types belonging to CoreLib to replace
+        /// the assembly name. This may change in different .NET implementations
+        /// but it is meaningless to classify our type system
+        /// On other types the AssemblyName is used to create the type with Type.GetType.
+        /// </summary>
+        public static readonly string PlaceholderForSystemAssemblyName = null;
+
         public TypeSystem()
         {
             _types = new();
@@ -95,7 +103,7 @@ namespace SurrogateLibrary
                 _typesByUniqueName[surrogate.UniqueName] = surrogate;
 
                 // Don't walk the graph when a type belongs to the System library
-                ListEx<SurrogatePropertyInfo> properties = new();
+                ListEx<UInt64> propertyIndexes = new();
                 if (!type.Namespace.StartsWith("System"))
                 {
                     var allProperties = type.GetProperties(DefaultBindings);
@@ -104,17 +112,31 @@ namespace SurrogateLibrary
                         if (!pi.CanRead || !pi.CanWrite) continue;
                         var sp = pi.ToSurrogate(Interlocked.Increment(ref _propertyIndex), this, newIndex);
                         _properties[sp.Index] = sp;
-                        properties.Add(sp);
+                        propertyIndexes.Add(sp.Index);
                     }
                 }
 
-                surrogate._properties = properties;
+                surrogate._propertyIndexes = propertyIndexes;
             }
 
             return surrogate;
         }
 
-        public SurrogateType Get(UInt64 index) => Types[index];
+        public SurrogateType GetSurrogateType(UInt64 index) => index == 0 ? null : Types[index];
+        public bool TryGetSurrogateType(UInt64 index, out SurrogateType surrogateType)
+            => Types.TryGetValue(index, out surrogateType);
+
+        public SurrogatePropertyInfo GetSurrogatePropertyInfo(UInt64 index) => Properties[index];
+        public bool TryGetSurrogatePropertyInfo(UInt64 index, out SurrogatePropertyInfo surrogatePropertyInfo)
+            => Properties.TryGetValue(index, out surrogatePropertyInfo);
+
+        public void UpdateCache()
+        {
+            foreach (var type in Types.Values)
+            {
+                type.UpdateCache(this);
+            }
+        }
 
         public override string ToString()
         {

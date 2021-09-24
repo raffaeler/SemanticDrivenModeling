@@ -19,6 +19,8 @@
     <ItemGroup>
         <ProjectReference Include="..\ModelsFromGithub\ModelsFromGithub.csproj" />
         <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
+        <ProjectReference Include="..\SimpleDomain1\SimpleDomain1.csproj" />
+        <ProjectReference Include="..\SimpleDomain2\SimpleDomain2.csproj" />
         <ProjectReference Include="..\SurrogateLibrary\SurrogateLibrary.csproj" />
     </ItemGroup>
 

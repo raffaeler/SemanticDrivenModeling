@@ -20,14 +20,14 @@ namespace SurrogateLibrary
         public static SurrogateType GetPropertyType(this SurrogatePropertyInfo surrogatePropertyInfo,
             TypeSystem typeSystem)
         {
-            var surrogateType = typeSystem.Get(surrogatePropertyInfo.PropertyTypeIndex);
+            var surrogateType = typeSystem.GetSurrogateType(surrogatePropertyInfo.PropertyTypeIndex);
             return surrogateType;
         }
 
         public static SurrogateType GetOwnerType(this SurrogatePropertyInfo surrogatePropertyInfo,
             TypeSystem typeSystem)
         {
-            var surrogateType = typeSystem.Get(surrogatePropertyInfo.OwnerTypeIndex);
+            var surrogateType = typeSystem.GetSurrogateType(surrogatePropertyInfo.OwnerTypeIndex);
             return surrogateType;
         }
 
@@ -77,6 +77,8 @@ namespace SurrogateLibrary
             var parentType = GetOwnerType(surrogatePropertyInfo, typeSystem);
             return $"{parentType}.{surrogatePropertyInfo.Name}";
         }
+
+
 
     }
 }
