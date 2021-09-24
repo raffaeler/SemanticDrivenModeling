@@ -9,11 +9,11 @@ namespace SurrogateLibrary
 {
     public static class Extensions
     {
-        public static SurrogatePropertyInfo ToSurrogate(this PropertyInfo propertyInfo,
+        public static SurrogatePropertyInfo ToSurrogate(this PropertyInfo propertyInfo, UInt64 index,
             TypeSystem typeSystem, UInt64 ownerTypeIndex)
         {
             var propertyType = typeSystem.GetOrCreate(propertyInfo.PropertyType);
-            var property = new SurrogatePropertyInfo(propertyInfo.Name, propertyType.Index, ownerTypeIndex);
+            var property = new SurrogatePropertyInfo(index, propertyInfo.Name, propertyType.Index, ownerTypeIndex);
             return property;
         }
 
@@ -31,13 +31,13 @@ namespace SurrogateLibrary
             return surrogateType;
         }
 
-        public static SurrogatePropertyInfo GetSurrogateProperty(this SurrogateType ownerType,
-            TypeSystem typeSystem, string propertyName)
-        {
-            var property = ownerType.GetProperty(propertyName);
-            var propertyType = typeSystem.GetOrCreate(property.PropertyType);
-            return new SurrogatePropertyInfo(property.Name, propertyType.Index, ownerType.Index);
-        }
+        //public static SurrogatePropertyInfo GetSurrogateProperty(this SurrogateType ownerType,
+        //    TypeSystem typeSystem, string propertyName)
+        //{
+        //    var property = ownerType.GetProperty(propertyName);
+        //    var propertyType = typeSystem.GetOrCreate(property.PropertyType);
+        //    return new SurrogatePropertyInfo(property.Name, propertyType.Index, ownerType.Index);
+        //}
 
         public static PropertyInfo GetOriginalPropertyInfo(this SurrogatePropertyInfo surrogatePropertyInfo,
             TypeSystem typeSystem)

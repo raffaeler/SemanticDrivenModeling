@@ -9,6 +9,7 @@ namespace SurrogateLibrary
     public static class KnownTypes
     {
         public const UInt64 MaxIndexForBasicTypes = 100;
+        public const UInt64 MaxIndexForBasicProperties = 1000;
 
         private static IList<SurrogateType> _basicTypes;
         public static IList<SurrogateType> BasicTypes => _basicTypes ??= CreateBasicTypes();
