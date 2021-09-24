@@ -35,7 +35,7 @@ namespace MappingConsole
                 IgnoreReadOnlyProperties = true,
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
             };
-           
+
             TypeSystem ts = new TypeSystem();
             ts.GetOrCreate(typeof(SimpleDomain1.Order));
             ts.UpdateCache();
@@ -43,9 +43,15 @@ namespace MappingConsole
             var tsJson = JsonSerializer.Serialize(ts, options);
             var tsClone = JsonSerializer.Deserialize<TypeSystem>(tsJson);
             Debug.Assert(ts != tsClone);
-            
+
             tsClone.UpdateCache();
             Debug.Assert(ts == tsClone);
+
+            if (!ts.TryGetSurrogateTypeByName("SimpleDomain1.Order", out var entryPoint)) Debug.Fail("not found");
+            foreach (var p in entryPoint.Properties)
+            {
+                Console.WriteLine(p.ToString());
+            }
 
         }
 
@@ -87,9 +93,6 @@ namespace MappingConsole
             var compProp = tsClone.Types[1].Properties.Equals(ts.Types[1].Properties);
             var comp = ts == tsClone;
             Debug.Assert(comp);
-
-
-
 
         }
 

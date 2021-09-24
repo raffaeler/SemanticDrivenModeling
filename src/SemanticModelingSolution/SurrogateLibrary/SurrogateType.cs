@@ -11,7 +11,7 @@ namespace SurrogateLibrary
     public record SurrogateType
     {
         private Type _type;
-        private ListEx<SurrogatePropertyInfo> _properties = new();
+        private ListExShallow<SurrogatePropertyInfo> _properties = new();
 
         internal ListEx<UInt64> _propertyIndexes;
 
@@ -41,6 +41,10 @@ namespace SurrogateLibrary
         public string AssemblyName { get; init; }
         public string Namespace { get; init; }
         public string Name { get; init; }
+
+        /// <summary>
+        /// In this type system, FullName must be unique as it used in dictionaries
+        /// </summary>
         public string FullName { get; init; }
         public TypeFields TypeFields1 { get; init; }
         public UInt64 InnerTypeIndex1 { get; init; }
@@ -56,7 +60,7 @@ namespace SurrogateLibrary
         public IReadOnlyList<SurrogatePropertyInfo> Properties
         {
             get => _properties;
-            private set => _properties = value == null ? null : new ListEx<SurrogatePropertyInfo>(value);
+            private set => _properties = value == null ? null : new ListExShallow<SurrogatePropertyInfo>(value);
         }
 
         [System.Text.Json.Serialization.JsonIgnore]
@@ -64,14 +68,6 @@ namespace SurrogateLibrary
 
         [System.Text.Json.Serialization.JsonIgnore]
         public SurrogateType InnerType2 { get; private set; }
-
-        /// <summary>
-        /// This is used in dictionaries to ensure uniqueness
-        /// It was "AssemblyQualifiedName" and replaced with "FullName" to avoid dependencies on the assembly name
-        /// By using "FullName", if this is used to create a type, it will succeed only if the assembly is already in memory
-        /// We now use the GetUniqueTypeName() extension method in order to rollback, if needed, to "AssemblyQualifiedName"
-        /// </summary>
-        public string UniqueName => FullName;
 
         public bool IsBasicType => this.Index < KnownTypes.MaxIndexForBasicTypes;
 

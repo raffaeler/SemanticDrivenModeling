@@ -8,17 +8,11 @@ namespace SurrogateLibrary.Helpers
 {
     public class ListEx<T> : List<T>, IEquatable<ListEx<T>>
     {
-        public ListEx() : base()
-        {
-        }
+        public ListEx() : base() { }
 
-        public ListEx(int capacity) : base(capacity)
-        {
-        }
+        public ListEx(int capacity) : base(capacity) { }
 
-        public ListEx(IEnumerable<T> collection) : base(collection)
-        {
-        }
+        public ListEx(IEnumerable<T> collection) : base(collection) { }
 
         public static bool operator ==(ListEx<T> obj1, ListEx<T> obj2)
         {
@@ -26,10 +20,7 @@ namespace SurrogateLibrary.Helpers
             return obj1.Equals(obj2);
         }
 
-        public static bool operator !=(ListEx<T> obj1, ListEx<T> obj2)
-        {
-            return !(obj1 == obj2);
-        }
+        public static bool operator !=(ListEx<T> obj1, ListEx<T> obj2) => !(obj1 == obj2);
 
         /// <summary>
         /// https://stackoverflow.com/a/8094931/492913
@@ -47,10 +38,7 @@ namespace SurrogateLibrary.Helpers
             }
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as ListEx<T>);
-        }
+        public override bool Equals(object obj) => Equals(obj as ListEx<T>);
 
         public bool Equals(ListEx<T> other)
         {

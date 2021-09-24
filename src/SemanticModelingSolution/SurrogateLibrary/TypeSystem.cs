@@ -15,7 +15,7 @@ namespace SurrogateLibrary
     public record TypeSystem
     {
         private ConcurrentDictionaryEx<UInt64, SurrogateType> _types;
-        private ConcurrentDictionaryEx<string, SurrogateType> _typesByUniqueName;
+        private ConcurrentDictionaryEx<string, SurrogateType> _typesByFullName;
         private ConcurrentDictionaryEx<UInt64, SurrogatePropertyInfo> _properties;
         private UInt64 _typeIndex = 0;
         private UInt64 _propertyIndex = 0;
@@ -31,7 +31,7 @@ namespace SurrogateLibrary
         public TypeSystem()
         {
             _types = new();
-            _typesByUniqueName = new();
+            _typesByFullName = new();
             _properties = new();
             foreach (var type in KnownTypes.BasicTypes)
             {
@@ -40,7 +40,7 @@ namespace SurrogateLibrary
                     throw new ArgumentException($"The basic types key index must never exceed {KnownTypes.MaxIndexForBasicTypes}");
                 }
                 _types[type.Index] = type;
-                _typesByUniqueName[type.UniqueName] = type;
+                _typesByFullName[type.FullName] = type;
             }
 
             _typeIndex = KnownTypes.MaxIndexForBasicTypes;
@@ -56,11 +56,11 @@ namespace SurrogateLibrary
         {
             _types = new ConcurrentDictionaryEx<UInt64, SurrogateType>(types);
             _properties = new ConcurrentDictionaryEx<UInt64, SurrogatePropertyInfo>(properties);
-            _typesByUniqueName = new ConcurrentDictionaryEx<string, SurrogateType>();
+            _typesByFullName = new ConcurrentDictionaryEx<string, SurrogateType>();
             UInt64 typeIndex = 0;
             foreach (var type in types.Values)
             {
-                _typesByUniqueName[type.UniqueName] = type;
+                _typesByFullName[type.FullName] = type;
                 typeIndex = Math.Max(typeIndex, type.Index);
             }
 
@@ -83,13 +83,13 @@ namespace SurrogateLibrary
 
         public IReadOnlyDictionary<UInt64, SurrogateType> Types => _types;
         public IReadOnlyDictionary<UInt64, SurrogatePropertyInfo> Properties => _properties;
-        public IReadOnlyDictionary<string, SurrogateType> TypesByUniqueName => _typesByUniqueName;
+        public IReadOnlyDictionary<string, SurrogateType> TypesByFullName => _typesByFullName;
 
         public SurrogateType GetOrCreate(Type type)
         {
             if (type == null) return null;
             var unique = SurrogateType.GetFullName(type);
-            if (!_typesByUniqueName.TryGetValue(unique, out SurrogateType surrogate))
+            if (!_typesByFullName.TryGetValue(unique, out SurrogateType surrogate))
             {
                 var newIndex = Interlocked.Increment(ref _typeIndex);
                 var (flags, inner1, inner2) = type.Classify();
@@ -100,7 +100,7 @@ namespace SurrogateLibrary
                     type.Assembly.GetName().Name, type.Namespace, type.Name, unique,
                     flags, innerSurrogate1?.Index ?? 0, innerSurrogate2?.Index ?? 0, null);
                 _types[newIndex] = surrogate;
-                _typesByUniqueName[surrogate.UniqueName] = surrogate;
+                _typesByFullName[surrogate.FullName] = surrogate;
 
                 // Don't walk the graph when a type belongs to the System library
                 ListEx<UInt64> propertyIndexes = new();
@@ -123,8 +123,11 @@ namespace SurrogateLibrary
         }
 
         public SurrogateType GetSurrogateType(UInt64 index) => index == 0 ? null : Types[index];
+
         public bool TryGetSurrogateType(UInt64 index, out SurrogateType surrogateType)
             => Types.TryGetValue(index, out surrogateType);
+        public bool TryGetSurrogateTypeByName(string fullName, out SurrogateType surrogateType) =>
+            TypesByFullName.TryGetValue(fullName, out surrogateType);
 
         public SurrogatePropertyInfo GetSurrogatePropertyInfo(UInt64 index) => Properties[index];
         public bool TryGetSurrogatePropertyInfo(UInt64 index, out SurrogatePropertyInfo surrogatePropertyInfo)
@@ -136,11 +139,16 @@ namespace SurrogateLibrary
             {
                 type.UpdateCache(this);
             }
+
+            foreach (var prop in Properties.Values)
+            {
+                prop.UpdateCache(this);
+            }
         }
 
         public override string ToString()
         {
-            Debug.Assert(_types.Count == _typesByUniqueName.Count);
+            Debug.Assert(_types.Count == _typesByFullName.Count);
 
             var basicTypes = Types.Count(t => t.Key < KnownTypes.MaxIndexForBasicTypes);
             var otherTypes = Types.Count(t => t.Key > KnownTypes.MaxIndexForBasicTypes);
