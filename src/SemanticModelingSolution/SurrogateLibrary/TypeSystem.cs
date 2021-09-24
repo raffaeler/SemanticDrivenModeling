@@ -114,7 +114,7 @@ namespace SurrogateLibrary
 
             var basicTypes = Types.Count(t => t.Key < KnownTypes.MaxIndexForBasicTypes);
             var otherTypes = Types.Count(t => t.Key > KnownTypes.MaxIndexForBasicTypes);
-            return $"Basic Types={basicTypes}, Other s={otherTypes}, LastIndex={_typeIndex}";
+            return $"Basic types={basicTypes}, Other types={otherTypes}, Properties={Properties.Count}, LastTypeIndex={_typeIndex}, LastPropIndex={_propertyIndex}";
         }
     }
 }
