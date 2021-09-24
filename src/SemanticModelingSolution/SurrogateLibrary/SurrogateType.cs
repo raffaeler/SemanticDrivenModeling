@@ -11,8 +11,7 @@ namespace SurrogateLibrary
     public record SurrogateType
     {
         private Type _type;
-        private string _fullName;
-        internal List<SurrogatePropertyInfo> _properties;
+        internal ListEx<SurrogatePropertyInfo> _properties;
 
         /// <summary>
         /// Only Basic Types
@@ -23,28 +22,29 @@ namespace SurrogateLibrary
             AssemblyName = type.Assembly.GetName().Name;
             Namespace = type.Namespace;
             Name = type.Name;
-            _properties = new List<SurrogatePropertyInfo>();
+            FullName = GetFullName(type);
+            _properties = new ListEx<SurrogatePropertyInfo>();
         }
 
         [System.Text.Json.Serialization.JsonConstructor]
         public SurrogateType(UInt64 index, string assemblyName, 
-            string @namespace, string name, IReadOnlyList<SurrogatePropertyInfo> properties) =>
-            (Index, AssemblyName, Namespace, Name, Properties) =
-            (index, assemblyName, @namespace, name, properties);
+            string @namespace, string name, string fullName, IReadOnlyList<SurrogatePropertyInfo> properties) =>
+            (Index, AssemblyName, Namespace, Name, FullName, Properties) =
+            (index, assemblyName, @namespace, name, fullName, properties);
 
         public UInt64 Index {  get; init; }
         public string AssemblyName { get; init; }
         public string Namespace { get; init; }
         public string Name { get; init; }
+        public string FullName { get; init; }
+
         public IReadOnlyList<SurrogatePropertyInfo> Properties
         {
             get => _properties;
-            init => _properties = value == null ? null : new List<SurrogatePropertyInfo>(value);
+            init => _properties = value == null ? null : new ListEx<SurrogatePropertyInfo>(value);
         }
 
-        public string FullName => _fullName ??= GetUniqueName(Namespace, Name);
-
-        public static string GetUniqueName(string @namespace, string name) => $"{@namespace}.{name}";
+        public static string GetFullName(Type type) => type.ToStringEx(true);
 
         /// <summary>
         /// This is used in dictionaries to ensure uniqueness

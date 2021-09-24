@@ -7,6 +7,7 @@ using System.Text.Json;
 
 using SemanticLibrary;
 using SurrogateLibrary;
+using SurrogateLibrary.Helpers;
 
 // Rules to enforce:
 // UniqueIdentity must match only on 1st level and equal concepts (cannot be a child)
@@ -132,6 +133,13 @@ namespace MappingConsole
             var t5 = typeof(string);
             var t6 = typeof(Program);
 
+            var q1 = t1.ToStringEx(true);
+            var q2 = t2.ToStringEx(true);
+            var q3 = t3.ToStringEx(true);
+            var q4 = t4.ToStringEx(true);
+            var q5 = t5.ToStringEx(true);
+            var q6 = t6.ToStringEx(true);
+
             var ts = new TypeSystem();
 
             var s1 = ts.GetOrCreate(t1);
@@ -151,6 +159,17 @@ namespace MappingConsole
 
             var diff1 = ts.Types.Except(tsClone.Types).ToList();
             var diff2 = tsClone.Types.Except(ts.Types).ToList();
+            var comp = tsClone.Types[1].Properties.Equals(ts.Types[1].Properties);
+
+            // equality is broken in C#
+            var l1 = new ListEx<int>(new int[] { 1, 2 });
+            var l2 = new ListEx<int>(new int[] { 1, 2 });
+            var r1 = (IReadOnlyList<int>)l1;
+            var r2 = (IReadOnlyList<int>)l2;
+            var c1 = l1 == l2;      // true
+            var c2 = r1 == r2;      // false :-(
+            var c3 = r1.Equals(r2); // true
+
         }
 
         static void VisitCompare2a()

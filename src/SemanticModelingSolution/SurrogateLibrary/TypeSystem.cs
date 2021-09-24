@@ -8,13 +8,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using SurrogateLibrary.Helpers;
+
 namespace SurrogateLibrary
 {
-    public class TypeSystem
+    public record TypeSystem
     {
-        private ConcurrentDictionary<UInt64, SurrogateType> _types;
-        private ConcurrentDictionary<string, SurrogateType> _typesByUniqueName;
-        private ConcurrentDictionary<UInt64, SurrogatePropertyInfo> _properties;
+        private ConcurrentDictionaryEx<UInt64, SurrogateType> _types;
+        private ConcurrentDictionaryEx<string, SurrogateType> _typesByUniqueName;
+        private ConcurrentDictionaryEx<UInt64, SurrogatePropertyInfo> _properties;
         private UInt64 _typeIndex = 0;
         private UInt64 _propertyIndex = 0;
 
@@ -44,9 +46,9 @@ namespace SurrogateLibrary
         public TypeSystem(IReadOnlyDictionary<UInt64, SurrogateType> types,
             IReadOnlyDictionary<UInt64, SurrogatePropertyInfo> properties)
         {
-            _types = new ConcurrentDictionary<UInt64, SurrogateType>(types);
-            _properties = new ConcurrentDictionary<UInt64, SurrogatePropertyInfo>(properties);
-            _typesByUniqueName = new ConcurrentDictionary<string, SurrogateType>();
+            _types = new ConcurrentDictionaryEx<UInt64, SurrogateType>(types);
+            _properties = new ConcurrentDictionaryEx<UInt64, SurrogatePropertyInfo>(properties);
+            _typesByUniqueName = new ConcurrentDictionaryEx<string, SurrogateType>();
             UInt64 typeIndex = 0;
             foreach (var type in types.Values)
             {
@@ -77,17 +79,17 @@ namespace SurrogateLibrary
 
         public SurrogateType GetOrCreate(Type type)
         {
-            var unique = SurrogateType.GetUniqueName(type.Namespace, type.Name);
+            var unique = SurrogateType.GetFullName(type);
             if (!_typesByUniqueName.TryGetValue(unique, out SurrogateType surrogate))
             {
                 var newIndex = Interlocked.Increment(ref _typeIndex);
                 surrogate = new SurrogateType(newIndex,
-                    type.Assembly.GetName().Name, type.Namespace, type.Name, null);
+                    type.Assembly.GetName().Name, type.Namespace, type.Name, unique, null);
                 _types[newIndex] = surrogate;
                 _typesByUniqueName[surrogate.UniqueName] = surrogate;
 
                 // Don't walk the graph when a type belongs to the System library
-                List<SurrogatePropertyInfo> properties = new();
+                ListEx<SurrogatePropertyInfo> properties = new();
                 if (!type.Namespace.StartsWith("System"))
                 {
                     var allProperties = type.GetProperties(DefaultBindings);
