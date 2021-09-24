@@ -9,22 +9,22 @@ namespace SurrogateLibrary
 {
     public static class Extensions
     {
-        public static SurrogatePropertyInfo ToSurrogate(this PropertyInfo propertyInfo, UInt64 index,
+        public static SurrogateProperty ToSurrogate(this PropertyInfo propertyInfo, UInt64 index,
             TypeSystem typeSystem, UInt64 ownerTypeIndex)
         {
             var propertyType = typeSystem.GetOrCreate(propertyInfo.PropertyType);
-            var property = new SurrogatePropertyInfo(index, propertyInfo.Name, propertyType.Index, ownerTypeIndex);
+            var property = new SurrogateProperty(index, propertyInfo.Name, propertyType.Index, ownerTypeIndex);
             return property;
         }
 
-        public static SurrogateType GetPropertyType(this SurrogatePropertyInfo surrogatePropertyInfo,
+        public static SurrogateType GetPropertyType(this SurrogateProperty surrogatePropertyInfo,
             TypeSystem typeSystem)
         {
             var surrogateType = typeSystem.GetSurrogateType(surrogatePropertyInfo.PropertyTypeIndex);
             return surrogateType;
         }
 
-        public static SurrogateType GetOwnerType(this SurrogatePropertyInfo surrogatePropertyInfo,
+        public static SurrogateType GetOwnerType(this SurrogateProperty surrogatePropertyInfo,
             TypeSystem typeSystem)
         {
             var surrogateType = typeSystem.GetSurrogateType(surrogatePropertyInfo.OwnerTypeIndex);
@@ -39,7 +39,7 @@ namespace SurrogateLibrary
         //    return new SurrogatePropertyInfo(property.Name, propertyType.Index, ownerType.Index);
         //}
 
-        public static PropertyInfo GetOriginalPropertyInfo(this SurrogatePropertyInfo surrogatePropertyInfo,
+        public static PropertyInfo GetOriginalPropertyInfo(this SurrogateProperty surrogatePropertyInfo,
             TypeSystem typeSystem)
         {
             if (surrogatePropertyInfo._propertyInfo == null)
@@ -56,7 +56,7 @@ namespace SurrogateLibrary
             return surrogatePropertyInfo._propertyInfo;
         }
 
-        public static object GetValue(this SurrogatePropertyInfo surrogatePropertyInfo,
+        public static object GetValue(this SurrogateProperty surrogatePropertyInfo,
             TypeSystem typeSystem, object instance)
         {
             var propertyInfo = GetOriginalPropertyInfo(surrogatePropertyInfo, typeSystem);
@@ -64,14 +64,14 @@ namespace SurrogateLibrary
             return value;
         }
 
-        public static void SetValue(this SurrogatePropertyInfo surrogatePropertyInfo,
+        public static void SetValue(this SurrogateProperty surrogatePropertyInfo,
             TypeSystem typeSystem, object instance, object value)
         {
             var propertyInfo = GetOriginalPropertyInfo(surrogatePropertyInfo, typeSystem);
             propertyInfo.SetValue(instance, value);
         }
 
-        public static string ToString(this SurrogatePropertyInfo surrogatePropertyInfo,
+        public static string ToString(this SurrogateProperty surrogatePropertyInfo,
             TypeSystem typeSystem)
         {
             var parentType = GetOwnerType(surrogatePropertyInfo, typeSystem);

@@ -16,7 +16,7 @@ namespace SurrogateLibrary
     {
         private ConcurrentDictionaryEx<UInt64, SurrogateType> _types;
         private ConcurrentDictionaryEx<string, SurrogateType> _typesByFullName;
-        private ConcurrentDictionaryEx<UInt64, SurrogatePropertyInfo> _properties;
+        private ConcurrentDictionaryEx<UInt64, SurrogateProperty> _properties;
         private UInt64 _typeIndex = 0;
         private UInt64 _propertyIndex = 0;
 
@@ -52,10 +52,10 @@ namespace SurrogateLibrary
 
         [System.Text.Json.Serialization.JsonConstructor]
         public TypeSystem(IReadOnlyDictionary<UInt64, SurrogateType> types,
-            IReadOnlyDictionary<UInt64, SurrogatePropertyInfo> properties)
+            IReadOnlyDictionary<UInt64, SurrogateProperty> properties)
         {
             _types = new ConcurrentDictionaryEx<UInt64, SurrogateType>(types);
-            _properties = new ConcurrentDictionaryEx<UInt64, SurrogatePropertyInfo>(properties);
+            _properties = new ConcurrentDictionaryEx<UInt64, SurrogateProperty>(properties);
             _typesByFullName = new ConcurrentDictionaryEx<string, SurrogateType>();
             UInt64 typeIndex = 0;
             foreach (var type in types.Values)
@@ -82,7 +82,7 @@ namespace SurrogateLibrary
         }
 
         public IReadOnlyDictionary<UInt64, SurrogateType> Types => _types;
-        public IReadOnlyDictionary<UInt64, SurrogatePropertyInfo> Properties => _properties;
+        public IReadOnlyDictionary<UInt64, SurrogateProperty> Properties => _properties;
         public IReadOnlyDictionary<string, SurrogateType> TypesByFullName => _typesByFullName;
 
         public SurrogateType GetOrCreate(Type type)
@@ -129,8 +129,8 @@ namespace SurrogateLibrary
         public bool TryGetSurrogateTypeByName(string fullName, out SurrogateType surrogateType) =>
             TypesByFullName.TryGetValue(fullName, out surrogateType);
 
-        public SurrogatePropertyInfo GetSurrogatePropertyInfo(UInt64 index) => Properties[index];
-        public bool TryGetSurrogatePropertyInfo(UInt64 index, out SurrogatePropertyInfo surrogatePropertyInfo)
+        public SurrogateProperty GetSurrogatePropertyInfo(UInt64 index) => Properties[index];
+        public bool TryGetSurrogatePropertyInfo(UInt64 index, out SurrogateProperty surrogatePropertyInfo)
             => Properties.TryGetValue(index, out surrogatePropertyInfo);
 
         public void UpdateCache()

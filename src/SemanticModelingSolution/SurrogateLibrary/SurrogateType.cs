@@ -11,7 +11,7 @@ namespace SurrogateLibrary
     public record SurrogateType
     {
         private Type _type;
-        private ListExShallow<SurrogatePropertyInfo> _properties = new();
+        private ListExShallow<SurrogateProperty> _properties = new();
 
         internal ListEx<UInt64> _propertyIndexes;
 
@@ -57,10 +57,10 @@ namespace SurrogateLibrary
         }
 
         [System.Text.Json.Serialization.JsonIgnore]
-        public IReadOnlyList<SurrogatePropertyInfo> Properties
+        public IReadOnlyList<SurrogateProperty> Properties
         {
             get => _properties;
-            private set => _properties = value == null ? null : new ListExShallow<SurrogatePropertyInfo>(value);
+            private set => _properties = value == null ? null : new ListExShallow<SurrogateProperty>(value);
         }
 
         [System.Text.Json.Serialization.JsonIgnore]
