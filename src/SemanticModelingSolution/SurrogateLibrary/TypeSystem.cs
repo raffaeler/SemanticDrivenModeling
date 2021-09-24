@@ -129,9 +129,9 @@ namespace SurrogateLibrary
         public bool TryGetSurrogateTypeByName(string fullName, out SurrogateType surrogateType) =>
             TypesByFullName.TryGetValue(fullName, out surrogateType);
 
-        public SurrogateProperty GetSurrogatePropertyInfo(UInt64 index) => Properties[index];
-        public bool TryGetSurrogatePropertyInfo(UInt64 index, out SurrogateProperty surrogatePropertyInfo)
-            => Properties.TryGetValue(index, out surrogatePropertyInfo);
+        public SurrogateProperty GetSurrogateProperty(UInt64 index) => Properties[index];
+        public bool TryGetSurrogateProperty(UInt64 index, out SurrogateProperty surrogateProperty)
+            => Properties.TryGetValue(index, out surrogateProperty);
 
         public void UpdateCache()
         {

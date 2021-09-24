@@ -48,7 +48,7 @@ namespace MappingConsole
             Debug.Assert(ts == tsClone);
 
             if (!ts.TryGetSurrogateTypeByName("SimpleDomain1.Order", out var entryPoint)) Debug.Fail("not found");
-            foreach (var p in entryPoint.Properties)
+            foreach (var p in entryPoint.Properties.Values)
             {
                 Console.WriteLine(p.ToString());
             }

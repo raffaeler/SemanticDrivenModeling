@@ -11,7 +11,8 @@ namespace SurrogateLibrary
     public record SurrogateType
     {
         private Type _type;
-        private ListExShallow<SurrogateProperty> _properties = new();
+        private DictionaryExShallow<UInt64, SurrogateProperty> _properties = new();
+        private DictionaryExShallow<UInt64, SurrogateProperty> _incoming = new();
 
         internal ListEx<UInt64> _propertyIndexes;
 
@@ -57,11 +58,10 @@ namespace SurrogateLibrary
         }
 
         [System.Text.Json.Serialization.JsonIgnore]
-        public IReadOnlyList<SurrogateProperty> Properties
-        {
-            get => _properties;
-            private set => _properties = value == null ? null : new ListExShallow<SurrogateProperty>(value);
-        }
+        public IReadOnlyDictionary<UInt64, SurrogateProperty> Properties => _properties;
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IReadOnlyDictionary<UInt64, SurrogateProperty> Incoming => _incoming;
 
         [System.Text.Json.Serialization.JsonIgnore]
         public SurrogateType InnerType1 { get; private set; }
@@ -81,7 +81,15 @@ namespace SurrogateLibrary
             _properties.Clear();
             foreach (var property in PropertyIndexes)
             {
-                _properties.Add(typeSystem.GetSurrogatePropertyInfo(property));
+                var prop = typeSystem.GetSurrogateProperty(property);
+                _properties[prop.Index] = prop;
+            }
+
+            foreach (var property in typeSystem.Properties)
+            {
+                var prop = property.Value;
+                if (prop.PropertyTypeIndex == Index)
+                    _incoming[prop.Index] = prop;
             }
         }
 
