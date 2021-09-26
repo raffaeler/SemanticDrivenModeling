@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 
 using SurrogateLibrary.Helpers;
 
@@ -31,7 +32,7 @@ namespace SurrogateLibrary
             _propertyIndexes = new ListEx<UInt64>();
         }
 
-        [System.Text.Json.Serialization.JsonConstructor]
+        [JsonConstructor]
         public SurrogateType(UInt64 index, string assemblyName,
             string @namespace, string name, string fullName, TypeFields typeFields1, UInt64 innerTypeIndex1, UInt64 innerTypeIndex2,
             IReadOnlyList<UInt64> propertyIndexes) =>
@@ -57,16 +58,16 @@ namespace SurrogateLibrary
             init => _propertyIndexes = value == null ? null : new ListEx<UInt64>(value);
         }
 
-        [System.Text.Json.Serialization.JsonIgnore]
+        [JsonIgnore]
         public IReadOnlyDictionary<UInt64, SurrogateProperty> Properties => _properties;
 
-        [System.Text.Json.Serialization.JsonIgnore]
+        [JsonIgnore]
         public IReadOnlyDictionary<UInt64, SurrogateProperty> Incoming => _incoming;
 
-        [System.Text.Json.Serialization.JsonIgnore]
+        [JsonIgnore]
         public SurrogateType InnerType1 { get; private set; }
 
-        [System.Text.Json.Serialization.JsonIgnore]
+        [JsonIgnore]
         public SurrogateType InnerType2 { get; private set; }
 
         public bool IsBasicType => this.Index < KnownTypes.MaxIndexForBasicTypes;
@@ -144,7 +145,7 @@ namespace SurrogateLibrary
 
         public override string ToString()
         {
-            return FullName;
+            return $"[{Index}] {FullName}";
         }
     }
 }

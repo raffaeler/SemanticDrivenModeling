@@ -12,6 +12,12 @@ using System.Diagnostics;
 
 namespace MappingConsole
 {
+    public class TA { public TA A { get; set; } public TB B { get; set; } public int X { get; set; } }
+    public class TB { public TA A { get; set; } public TB B { get; set; } public int Y { get; set; } }
+
+    public record XX1(int id, YY1 y);
+    public record YY1(int id, ZZ1 z);
+    public record ZZ1(int id, string Name);
     internal class TypeTests
     {
         public int X1 { get; set; }
@@ -19,11 +25,16 @@ namespace MappingConsole
         public int X3 { get; }
         public int X4 { get; private set; }
 
-        public class TA { public TA A { get; set; } public TB B { get; set; } }
-        public class TB { public TA A { get; set; } public TB B { get; set; } }
 
         public void Run()
         {
+            // record "with" => shallow copy
+            //var z1 = new XX1(1, new YY1(1, new ZZ1(1, "x1")));
+            //var z2 = z1 with { id=2 };
+            //Debug.Assert(z1 != z2);
+            //Debug.Assert(object.ReferenceEquals(z1.y, z2.y));
+            //Debug.Assert(object.ReferenceEquals(z1.y.z, z2.y.z));
+
             //Test1();
             Test2();
         }
@@ -38,6 +49,7 @@ namespace MappingConsole
 
             TypeSystem ts = new TypeSystem();
             ts.GetOrCreate(typeof(SimpleDomain1.Order));
+            ts.GetOrCreate(typeof(TA));
             ts.UpdateCache();
 
             var tsJson = JsonSerializer.Serialize(ts, options);
@@ -47,12 +59,38 @@ namespace MappingConsole
             tsClone.UpdateCache();
             Debug.Assert(ts == tsClone);
 
-            if (!ts.TryGetSurrogateTypeByName("SimpleDomain1.Order", out var entryPoint)) Debug.Fail("not found");
-            foreach (var p in entryPoint.Properties.Values)
+            if (!ts.TryGetSurrogateTypeByName("SimpleDomain1.Order", out var entryPointOrder)) Debug.Fail("not found");
+            if (!ts.TryGetSurrogateTypeByName("MappingConsole.TA", out var entryPointTA)) Debug.Fail("not found");
+            foreach (var p in entryPointOrder.Properties.Values)
             {
                 Console.WriteLine(p.ToString());
             }
 
+            //var allPropertiesTA = entryPointTA.FlatHierarchyProperties().ToList();
+            var allPropertiesOrder = entryPointOrder.FlatHierarchyProperties().ToList();
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            foreach (var p in allPropertiesOrder)
+            {
+                Console.WriteLine(p.GetLast().Path);
+            }
+
+            var path5 = allPropertiesOrder[5];
+            var json5 = JsonSerializer.Serialize(path5);
+            var path5clone = JsonSerializer.Deserialize<NavigationProperty>(json5);
+            path5clone.UpdateCache(ts);
+
+
+            LinkedList<int> x = new LinkedList<int>();
+            x.AddLast(1);
+            x.AddLast(2);
+            x.AddLast(3);
+            x.AddLast(4);
+            var json = JsonSerializer.Serialize(x);
+            var x2 = JsonSerializer.Deserialize<LinkedList<int>>(json);
         }
 
         private void Test1()

@@ -34,5 +34,10 @@ namespace SurrogateLibrary
             PropertyType = typeSystem.GetSurrogateType(PropertyTypeIndex);
         }
 
+        public override string ToString()
+        {
+            //return $"[{Index}] {PropertyType.Name} {OwnerType.Name}.{Name}";
+            return $"[{Index}] {OwnerType.Name}.{Name}";
+        }
     }
 }

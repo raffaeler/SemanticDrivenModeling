@@ -129,7 +129,7 @@ namespace SurrogateLibrary
         public bool TryGetSurrogateTypeByName(string fullName, out SurrogateType surrogateType) =>
             TypesByFullName.TryGetValue(fullName, out surrogateType);
 
-        public SurrogateProperty GetSurrogateProperty(UInt64 index) => Properties[index];
+        public SurrogateProperty GetSurrogateProperty(UInt64 index) => index == 0 ? null : Properties[index];
         public bool TryGetSurrogateProperty(UInt64 index, out SurrogateProperty surrogateProperty)
             => Properties.TryGetValue(index, out surrogateProperty);
 
