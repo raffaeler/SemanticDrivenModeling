@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SurrogateLibrary
 {
-    public record NavigationProperty
+    public class NavigationProperty : IEquatable<NavigationProperty>
     {
         public NavigationProperty(NavigationProperty previous, SurrogateProperty property)
         {
@@ -32,14 +32,21 @@ namespace SurrogateLibrary
         public NavigationProperty Previous { get; private set; }
 
         public UInt64 PropertyIndex { get; private set; }
+
         [JsonIgnore]
         public SurrogateProperty Property { get; private set; }
+
         public UInt64 TypeIndex { get; private set; }
+
         [JsonIgnore]
         public SurrogateType Type { get; private set; }
 
         public NavigationProperty Next { get; private set; }
+
+        [JsonIgnore]
         public string Path { get; private set; }
+
+        [JsonIgnore]
         public string Name => Property != null ? Property.Name : Type?.Name;
 
         public void SetNext(NavigationProperty next) => this.Next = next;
@@ -136,7 +143,7 @@ namespace SurrogateLibrary
             NavigationProperty cloned = null;
             while (temp != null)
             {
-                var currentClone = temp with { };
+                var currentClone = temp.Clone();//temp with { };
                 if (cloned != null)
                 {
                     cloned.Next = currentClone;
@@ -222,6 +229,42 @@ namespace SurrogateLibrary
             }
 
             return sb.ToString();
+        }
+
+        /*
+        
+        Methods stolen from the record automatic generation
+        IEquatable<NavigationProperty>
+
+        */
+
+        protected virtual Type EqualityContract =>  typeof(NavigationProperty);
+
+        public virtual bool Equals(NavigationProperty? other)
+        {
+            return (object)this == other ||
+                ((object)other != null &&
+                EqualityContract == other!.EqualityContract &&
+                EqualityComparer<NavigationProperty>.Default.Equals(Previous, other!.Previous) &&
+                EqualityComparer<ulong>.Default.Equals(PropertyIndex, other!.PropertyIndex) &&
+                EqualityComparer<SurrogateProperty>.Default.Equals(Property, other!.Property) &&
+                EqualityComparer<ulong>.Default.Equals(TypeIndex, other!.TypeIndex) &&
+                EqualityComparer<SurrogateType>.Default.Equals(Type, other!.Type) &&
+                EqualityComparer<NavigationProperty>.Default.Equals(Next, other!.Next) &&
+                EqualityComparer<string>.Default.Equals(Path, other!.Path));
+        }
+
+        public virtual NavigationProperty Clone() => new NavigationProperty(this);
+
+        protected NavigationProperty(NavigationProperty original)
+        {
+            Previous = original.Previous;
+            PropertyIndex = original.PropertyIndex;
+            Property = original.Property;
+            TypeIndex = original.TypeIndex;
+            Type = original.Type;
+            Next = original.Next;
+            Path = original.Path;
         }
     }
 }
