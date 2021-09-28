@@ -50,7 +50,7 @@ namespace SurrogateLibrary.Helpers
             return type;
         }
 
-        public static object GetDefaultForType(this Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
+        public static object GetDefaultValue(this Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
 
 
         public static bool IsBasicType(Type type) => BasicTypes.Contains(type);

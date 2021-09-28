@@ -14,10 +14,10 @@ namespace SurrogateLibrary
         Enum,
         OneToManyEnum,
 
-        OneToOneToDomain,
-        OneToManyToDomain,
+        OneToOne,
+        OneToMany,
 
-        OneToOneToUnknown,
-        OneToManyToUnknown,
+        //OneToOneToUnknown,
+        //OneToManyToUnknown,
     }
 }
