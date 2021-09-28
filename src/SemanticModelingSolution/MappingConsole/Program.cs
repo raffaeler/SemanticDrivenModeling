@@ -98,7 +98,8 @@ namespace MappingConsole
 
         static void Main(string[] args)
         {
-            new TypeTests().Run();
+            //new TypeTests().Run();
+            new SemanticTests().Run();
 
             //Visit(new Type[] { typeof(Lot), typeof(Article) });
             //Visit(_domainTypes1);
@@ -106,12 +107,12 @@ namespace MappingConsole
 
             //var models1 = Visit(_domainTypes1, new[] { typeof(ERP_Model.Models.Supplier) });
 
-            VisitCompare1();
+            //VisitCompare1();
             //VisitCompare2a();
             //VisitCompare2b();
             //VisitCompare2c();
         }
-
+/*
         static void VisitCompare2a()
         {
             var domain = new GeneratedCode.Domain();
@@ -207,7 +208,7 @@ namespace MappingConsole
         }
 
 
-
+*/
 
     }
 }

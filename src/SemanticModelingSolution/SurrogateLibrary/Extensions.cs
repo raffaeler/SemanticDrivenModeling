@@ -61,6 +61,17 @@ namespace SurrogateLibrary
         //    return new SurrogatePropertyInfo(property.Name, propertyType.Index, ownerType.Index);
         //}
 
+        public static SurrogateType<T> GetCoreType<T>(this SurrogateType<T> type)
+        {
+            var coreType = type;
+            if (type.IsCollection() || type.IsDictionary())
+            {
+                if (coreType.InnerType1 != null) coreType = coreType.InnerType1;
+            }
+
+            return coreType;
+        }
+
         public static PropertyInfo GetOriginalPropertyInfo(this SurrogateProperty surrogatePropertyInfo,
             ITypeSystem typeSystem)
         {

@@ -13,15 +13,30 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\ModelsFromGithub\ModelsFromGithub.csproj" />
         <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
+        <ProjectReference Include="..\SemanticInfo\SemanticInfo.csproj" />
         <ProjectReference Include="..\SimpleDomain1\SimpleDomain1.csproj" />
         <ProjectReference Include="..\SimpleDomain2\SimpleDomain2.csproj" />
         <ProjectReference Include="..\SurrogateLibrary\SurrogateLibrary.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Metadata\domain1types.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Metadata\domain2types.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Metadata\domainDefinitions.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Metadata\OnlineOrderToOrder.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Metadata\OrderToOnlineOrder.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
