@@ -80,7 +80,7 @@ namespace MappingConsole
             GC.Collect();
             foreach (var p in allPropertiesOrder)
             {
-                Console.WriteLine(p.Root.Path);
+                Console.WriteLine(p.Root.GetLeaf().Path);
             }
 
             var path5 = allPropertiesOrder[5];
