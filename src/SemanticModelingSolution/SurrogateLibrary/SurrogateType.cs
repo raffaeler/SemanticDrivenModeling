@@ -74,6 +74,28 @@ namespace SurrogateLibrary
 
         public static string GetFullName(Type type) => type.ToStringEx(true);
 
+        /// <summary>
+        /// This only works when the Type is already loaded in memory
+        /// otherwise an Exception will be thrown;
+        /// </summary>
+        public Type GetOriginalType()
+        {
+            var assemblyName = AssemblyName == TypeSystem.PlaceholderForSystemAssemblyName
+                ? null : AssemblyName;
+            return _type ??= TypeHelper.GetEntityType(FullName, assemblyName);
+        }
+
+        public bool Is(Type type)
+        {
+            if (FullName == GetFullName(type)) return true;
+            return false;
+        }
+
+        public override string ToString()
+        {
+            return $"[{Index}] {FullName}";
+        }
+
         internal void UpdateCache(TypeSystem typeSystem)
         {
             InnerType1 = typeSystem.GetSurrogateType(InnerTypeIndex1);
@@ -92,60 +114,6 @@ namespace SurrogateLibrary
                 if (prop.PropertyTypeIndex == Index)
                     _incoming[prop.Index] = prop;
             }
-        }
-
-        /// <summary>
-        /// This only works when the Type is already loaded in memory
-        /// otherwise an Exception will be thrown;
-        /// </summary>
-        public Type GetOriginalType()
-        {
-            var assemblyName = AssemblyName == TypeSystem.PlaceholderForSystemAssemblyName
-                ? null : AssemblyName;
-            return _type ??= TypeHelper.GetEntityType(FullName, assemblyName);
-        }
-
-        public object CreateInstance() => Activator.CreateInstance(GetOriginalType());
-
-        public object GetDefaultForType()
-        {
-            var type = GetOriginalType();
-            return type.IsValueType ? Activator.CreateInstance(type) : null;
-        }
-
-        public PropertyInfo GetProperty(string propertyName)
-        {
-            var type = GetOriginalType();
-            var property = type.GetProperty(propertyName);
-            if (property == null) throw new InvalidOperationException($"Cannot find the method '{propertyName}' in '{FullName}'");
-            return property;
-        }
-
-        public MethodInfo GetMethod(string methodName)
-        {
-            var type = GetOriginalType();
-            var method = type.GetMethod(methodName);
-            if (method == null) throw new InvalidOperationException($"Cannot find the method '{methodName}' in '{FullName}'");
-            return method;
-        }
-
-        public MethodInfo GetMethod(string methodName, Type[] parameterTypes)
-        {
-            var type = GetOriginalType();
-            var method = type.GetMethod(methodName, parameterTypes);
-            if (method == null) throw new InvalidOperationException($"Cannot find the method '{methodName}' in '{FullName}'");
-            return method;
-        }
-
-        public bool Is(Type type)
-        {
-            if (FullName == type.FullName) return true;
-            return false;
-        }
-
-        public override string ToString()
-        {
-            return $"[{Index}] {FullName}";
         }
     }
 }

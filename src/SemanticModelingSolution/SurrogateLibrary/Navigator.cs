@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace SurrogateLibrary
 {
-    public class Navigator
+    [Obsolete("Currently unused")]
+    internal class Navigator
     {
         public Navigator(TypeSystem typeSystem, SurrogateType rootType)
         {
