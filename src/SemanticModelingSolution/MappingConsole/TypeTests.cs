@@ -66,8 +66,8 @@ namespace MappingConsole
                 Console.WriteLine(p.ToString());
             }
 
-            //var allPropertiesTA = entryPointTA.FlatHierarchyProperties().ToList();
-            var allPropertiesOrder = entryPointOrder.FlatHierarchyProperties().ToList();
+            //var allPropertiesTA = entryPointTA.FlattenHierarchy().ToList();
+            var allPropertiesOrder = entryPointOrder.FlattenHierarchy().ToList();
             GC.Collect();
             GC.Collect();
             GC.Collect();
@@ -75,22 +75,20 @@ namespace MappingConsole
             GC.Collect();
             foreach (var p in allPropertiesOrder)
             {
-                Console.WriteLine(p.GetLast().Path);
+                Console.WriteLine(p.GetLeaf().Path);
             }
 
             var path5 = allPropertiesOrder[5];
+            path5.UpdateCache(ts);
             var json5 = JsonSerializer.Serialize(path5);
-            var path5clone = JsonSerializer.Deserialize<NavigationProperty>(json5);
+            var path5clone = JsonSerializer.Deserialize<NavigationPath>(json5);
             path5clone.UpdateCache(ts);
+            Debug.Assert(path5 == path5clone);
+            Debug.Assert(path5.Equals(path5clone));
+            var hc5 = path5.GetHashCode();
+            var hc5clone = path5clone.GetHashCode();
 
 
-            LinkedList<int> x = new LinkedList<int>();
-            x.AddLast(1);
-            x.AddLast(2);
-            x.AddLast(3);
-            x.AddLast(4);
-            var json = JsonSerializer.Serialize(x);
-            var x2 = JsonSerializer.Deserialize<LinkedList<int>>(json);
         }
 
         private void Test1()

@@ -7,16 +7,23 @@ using System.Threading.Tasks;
 
 namespace SurrogateLibrary
 {
-    public class NavigationProperty : IEquatable<NavigationProperty>
+    /// <summary>
+    /// This class represents the complete path from a Type down
+    /// to a leaf property in a graph
+    /// </summary>
+    public class NavigationPath : IEquatable<NavigationPath>
     {
-        public NavigationProperty(NavigationProperty previous, SurrogateProperty property)
+        private NavigationPath _root;
+        private NavigationPath _leaf;
+
+        public NavigationPath(NavigationPath previous, SurrogateProperty property)
         {
             this.Previous = previous;
             this.PropertyIndex = property.Index;
             this.Property = property;
         }
 
-        public NavigationProperty(NavigationProperty previous, SurrogateType type)
+        public NavigationPath(NavigationPath previous, SurrogateType type)
         {
             this.Previous = previous;
             this.TypeIndex = type.Index;
@@ -24,24 +31,27 @@ namespace SurrogateLibrary
         }
 
         [JsonConstructor]
-        public NavigationProperty(UInt64 propertyIndex, UInt64 typeIndex, NavigationProperty next) =>
+        public NavigationPath(UInt64 propertyIndex, UInt64 typeIndex, NavigationPath next) =>
             (PropertyIndex, TypeIndex, Next) =
             (propertyIndex, typeIndex, next);
-
-        [JsonIgnore]
-        public NavigationProperty Previous { get; private set; }
 
         public UInt64 PropertyIndex { get; private set; }
 
         [JsonIgnore]
         public SurrogateProperty Property { get; private set; }
 
+
         public UInt64 TypeIndex { get; private set; }
 
         [JsonIgnore]
         public SurrogateType Type { get; private set; }
 
-        public NavigationProperty Next { get; private set; }
+
+        [JsonIgnore]
+        public NavigationPath Previous { get; private set; }
+
+        public NavigationPath Next { get; private set; }
+
 
         [JsonIgnore]
         public string Path { get; private set; }
@@ -49,9 +59,9 @@ namespace SurrogateLibrary
         [JsonIgnore]
         public string Name => Property != null ? Property.Name : Type?.Name;
 
-        public void SetNext(NavigationProperty next) => this.Next = next;
+        public void SetNext(NavigationPath next) => this.Next = next;
 
-        private void OnEach(Func<NavigationProperty, bool> func)
+        private void OnEach(Func<NavigationPath, bool> func)
         {
             var temp = GetRoot();
             while (temp != null)
@@ -61,7 +71,7 @@ namespace SurrogateLibrary
             }
         }
 
-        private void OnAllBefore(NavigationProperty start, Func<NavigationProperty, bool> func)
+        private void OnAllBefore(NavigationPath start, Func<NavigationPath, bool> func)
         {
             var temp = start;
             while (temp != null)
@@ -71,7 +81,7 @@ namespace SurrogateLibrary
             }
         }
 
-        private void OnAllAfter(NavigationProperty start, Func<NavigationProperty, bool> func)
+        private void OnAllAfter(NavigationPath start, Func<NavigationPath, bool> func)
         {
             var temp = start;
             while (temp != null)
@@ -91,13 +101,16 @@ namespace SurrogateLibrary
                 nav.Path = null;
                 return true;
             });
+
+            _root = null;
+            _leaf = null;
         }
 
         public void UpdateCache(TypeSystem typeSystem)
         {
             var sb = new StringBuilder();
 
-            NavigationProperty previous = null;
+            NavigationPath previous = null;
             OnEach(nav =>
             {
                 // update Property and Type
@@ -117,30 +130,34 @@ namespace SurrogateLibrary
             });
         }
 
-        public NavigationProperty GetRoot()
+        public NavigationPath GetRoot()
         {
-            var temp = this;
+            if (_root != null && _root.Previous == null) return _root;
+
+            _root = this;
             while (true)
             {
-                if (temp.Previous == null) return temp;
-                temp = temp.Previous;
+                if (_root.Previous == null) return _root;
+                _root = _root.Previous;
             }
         }
 
-        public NavigationProperty GetLast()
+        public NavigationPath GetLeaf()
         {
-            var temp = this;
+            if(_leaf != null && _leaf.Next == null) return _leaf;
+
+            _leaf = this;
             while (true)
             {
-                if (temp.Next == null) return temp;
-                temp = temp.Next;
+                if (_leaf.Next == null) return _leaf;
+                _leaf = _leaf.Next;
             }
         }
 
-        public NavigationProperty CloneRoot()
+        public NavigationPath CloneRoot()
         {
             var temp = GetRoot();
-            NavigationProperty cloned = null;
+            NavigationPath cloned = null;
             while (temp != null)
             {
                 var currentClone = temp.Clone();//temp with { };
@@ -234,29 +251,77 @@ namespace SurrogateLibrary
         /*
         
         Methods stolen from the record automatic generation
-        IEquatable<NavigationProperty>
+        IEquatable<NavigationPath>
 
         */
 
-        protected virtual Type EqualityContract =>  typeof(NavigationProperty);
+        protected virtual Type EqualityContract => typeof(NavigationPath);
 
-        public virtual bool Equals(NavigationProperty? other)
+        public static bool operator ==(NavigationPath left, NavigationPath right)
+            => (object)left == right || (left?.Equals(right) ?? false);
+
+        public static bool operator !=(NavigationPath left, NavigationPath right)
+            => !(left == right);
+
+        public override bool Equals(object obj) => Equals(obj as NavigationPath);
+
+
+        /// <summary>
+        /// Fence to avoid re-entrancy
+        /// </summary>
+        private bool _isInEquals;
+
+        /// <summary>
+        /// Added fence-testing to avoid re-entrancy
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public virtual bool Equals(NavigationPath other)
         {
-            return (object)this == other ||
+            if (_isInEquals) return true;
+            _isInEquals = true;
+
+            var result = (object)this == other ||
                 ((object)other != null &&
                 EqualityContract == other!.EqualityContract &&
-                EqualityComparer<NavigationProperty>.Default.Equals(Previous, other!.Previous) &&
+                EqualityComparer<NavigationPath>.Default.Equals(Previous, other!.Previous) &&
                 EqualityComparer<ulong>.Default.Equals(PropertyIndex, other!.PropertyIndex) &&
                 EqualityComparer<SurrogateProperty>.Default.Equals(Property, other!.Property) &&
                 EqualityComparer<ulong>.Default.Equals(TypeIndex, other!.TypeIndex) &&
                 EqualityComparer<SurrogateType>.Default.Equals(Type, other!.Type) &&
-                EqualityComparer<NavigationProperty>.Default.Equals(Next, other!.Next) &&
+                EqualityComparer<NavigationPath>.Default.Equals(Next, other!.Next) &&
                 EqualityComparer<string>.Default.Equals(Path, other!.Path));
+
+            _isInEquals = false;
+            return result;
         }
 
-        public virtual NavigationProperty Clone() => new NavigationProperty(this);
+        /// <summary>
+        /// This is obtained from the record code generation
+        /// but removing the following properties from the computation:
+        /// - Previous, Next: they are just convenient ways to navigate the path but do not change the
+        ///   uniqueness of the path itself
+        /// - Property and Type are already computed with their index counterpart
+        /// In theory we could just rely on the Path property but this is computed by UpdateCache
+        /// therefore it is better to rely on the others as well.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return ((((((
+                EqualityComparer<System.Type>.Default.GetHashCode(EqualityContract) * -1521134295
+                /*+ EqualityComparer<NavigationPath>.Default.GetHashCode(Previous)*/) * -1521134295
+                + EqualityComparer<ulong>.Default.GetHashCode(PropertyIndex)) * -1521134295
+                /*+ EqualityComparer<SurrogateProperty>.Default.GetHashCode(Property)*/) * -1521134295
+                + EqualityComparer<ulong>.Default.GetHashCode(TypeIndex)) * -1521134295
+                /*+ EqualityComparer<SurrogateType>.Default.GetHashCode(Type)*/) * -1521134295
+                /*+ EqualityComparer<NavigationPath>.Default.GetHashCode(Next)*/) * -1521134295
+                + EqualityComparer<string>.Default.GetHashCode(Path);
 
-        protected NavigationProperty(NavigationProperty original)
+        }
+
+        public virtual NavigationPath Clone() => new NavigationPath(this);
+
+        protected NavigationPath(NavigationPath original)
         {
             Previous = original.Previous;
             PropertyIndex = original.PropertyIndex;
@@ -266,5 +331,6 @@ namespace SurrogateLibrary
             Next = original.Next;
             Path = original.Path;
         }
+
     }
 }
