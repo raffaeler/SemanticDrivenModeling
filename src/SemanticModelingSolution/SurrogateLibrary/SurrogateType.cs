@@ -24,7 +24,7 @@ namespace SurrogateLibrary
         {
             var (flags, _, _) = type.Classify();
             Index = index;
-            AssemblyName = TypeSystem.PlaceholderForSystemAssemblyName; //type.Assembly.GetName().Name;
+            AssemblyName = ITypeSystem.PlaceholderForSystemAssemblyName; //type.Assembly.GetName().Name;
             Namespace = type.Namespace;
             Name = type.Name;
             FullName = GetFullName(type);
@@ -80,7 +80,7 @@ namespace SurrogateLibrary
         /// </summary>
         public Type GetOriginalType()
         {
-            var assemblyName = AssemblyName == TypeSystem.PlaceholderForSystemAssemblyName
+            var assemblyName = AssemblyName == ITypeSystem.PlaceholderForSystemAssemblyName
                 ? null : AssemblyName;
             return _type ??= TypeHelper.GetEntityType(FullName, assemblyName);
         }
@@ -96,7 +96,7 @@ namespace SurrogateLibrary
             return $"[{Index}] {FullName}";
         }
 
-        internal void UpdateCache(TypeSystem typeSystem)
+        internal void UpdateCache(ITypeSystem typeSystem)
         {
             InnerType1 = typeSystem.GetSurrogateType(InnerTypeIndex1);
             InnerType2 = typeSystem.GetSurrogateType(InnerTypeIndex2);

@@ -8,7 +8,7 @@ namespace SurrogateLibrary
 {
     public static class SurrogateTypeExtensions
     {
-        public static SurrogateType GetInnerType1(this SurrogateType surrogateType, TypeSystem typeSystem)
+        public static SurrogateType GetInnerType1(this SurrogateType surrogateType, ITypeSystem typeSystem)
         {
             if (surrogateType.InnerTypeIndex1 == 0) return null;
             var result = typeSystem.GetSurrogateType(surrogateType.InnerTypeIndex1);

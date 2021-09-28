@@ -8,7 +8,7 @@ namespace SurrogateLibrary
 {
     public static class GraphFlattener
     {
-        public static IList<NavigationPath> FlattenHierarchy(this SurrogateType type, TypeSystem typeSystem = null)
+        public static IList<NavigationPath> FlattenHierarchy(this SurrogateType type, ITypeSystem typeSystem = null)
         {
             List<NavigationPath> result = new();
             var nav = new NavigationPath(null, type);

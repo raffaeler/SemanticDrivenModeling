@@ -106,7 +106,7 @@ namespace SurrogateLibrary
             _leaf = null;
         }
 
-        public void UpdateCache(TypeSystem typeSystem)
+        public void UpdateCache(ITypeSystem typeSystem)
         {
             var sb = new StringBuilder();
 

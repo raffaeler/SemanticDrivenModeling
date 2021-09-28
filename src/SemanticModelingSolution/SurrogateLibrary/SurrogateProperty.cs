@@ -60,7 +60,7 @@ namespace SurrogateLibrary
             return PropertyKind.OneToOne;
         }
 
-        internal void UpdateCache(TypeSystem typeSystem)
+        internal void UpdateCache(ITypeSystem typeSystem)
         {
             OwnerType = typeSystem.GetSurrogateType(OwnerTypeIndex);
             PropertyType = typeSystem.GetSurrogateType(PropertyTypeIndex);

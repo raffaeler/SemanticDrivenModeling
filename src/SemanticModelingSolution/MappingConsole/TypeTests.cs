@@ -18,6 +18,10 @@ namespace MappingConsole
     public record XX1(int id, YY1 y);
     public record YY1(int id, ZZ1 z);
     public record ZZ1(int id, string Name);
+
+    public record Info(int Id, string Name);
+
+
     internal class TypeTests
     {
         public int X1 { get; set; }
@@ -36,7 +40,8 @@ namespace MappingConsole
             //Debug.Assert(object.ReferenceEquals(z1.y.z, z2.y.z));
 
             //Test1();
-            Test2();
+            Test1WithInfo();
+            //Test2();
         }
 
         private void Test2()
@@ -132,6 +137,50 @@ namespace MappingConsole
 
         }
 
+        private void Test1WithInfo()
+        {
+            var t1 = typeof(List<string>);
+            var t2 = typeof(IDictionary<string, Action<int>>);
+            var t3 = typeof(List<>);
+            var t4 = typeof(IDictionary<,>);
+            var t5 = typeof(string);
+            var t6 = typeof(Program);
+
+            var q1 = t1.ToStringEx(true);
+            var q2 = t2.ToStringEx(true);
+            var q3 = t3.ToStringEx(true);
+            var q4 = t4.ToStringEx(true);
+            var q5 = t5.ToStringEx(true);
+            var q6 = t6.ToStringEx(true);
+
+            var ts = new TypeSystem<Info>();
+
+            var s1 = ts.GetOrCreate(t1);
+            var s2 = ts.GetOrCreate(t2);
+            var s3 = ts.GetOrCreate(t3);
+            var s4 = ts.GetOrCreate(t4);
+            var s5 = ts.GetOrCreate(t5);
+            var s6 = ts.GetOrCreate(t6);
+            var s7 = ts.GetOrCreate(typeof(TA));
+            s6.SetInfo(new Info(10, "boh"));
+            s7.SetInfo(new Info(1, "Raf"));
+
+            var options = new JsonSerializerOptions() { /*IgnoreReadOnlyProperties = true*/ };
+            var json = JsonSerializer.Serialize(s7, options);
+            var x1 = JsonSerializer.Deserialize<SurrogateLibrary.SurrogateType<Info>>(json);
+
+            var tsJson = JsonSerializer.Serialize(ts, options);
+            var tsClone = JsonSerializer.Deserialize<TypeSystem<Info>>(tsJson);
+
+            var diff1 = ts.Types.Except(tsClone.Types).ToList();
+            var diff2 = tsClone.Types.Except(ts.Types).ToList();
+            var compProp = tsClone.Types[1].Properties.Equals(ts.Types[1].Properties);
+            var compTypes = tsClone.Types.Equals(ts.Types);
+            var compTypeNames = tsClone.TypesByFullName.Equals(ts.TypesByFullName);
+            var comp = ts == tsClone;
+            Debug.Assert(comp);
+
+        }
         static void EqualityBrokenInCSharp()
         {
             // equality is broken in C#
