@@ -57,7 +57,13 @@ namespace SurrogateLibrary
         public string Path { get; private set; }
 
         [JsonIgnore]
+        public string PathAlt { get; private set; }
+
+        [JsonIgnore]
         public string Name => Property != null ? Property.Name : Type?.Name;
+
+        [JsonIgnore]
+        public string NameAlt => HasMultiplicity ? "$" : Name;
 
         public void SetNext(NavigationSegment<T> next) => this.Next = next;
 
@@ -91,6 +97,25 @@ namespace SurrogateLibrary
             }
         }
 
+        [JsonIgnore]
+        public bool IsLeaf => this.Next == null;
+
+        [JsonIgnore]
+        public bool IsRoot => this.Previous == null;
+
+        /// <summary>
+        /// True for properties that has a collection or dictionary as return type
+        /// </summary>
+        [JsonIgnore]
+        public bool IsOneToMany => this.Property != null &&
+            (this.Property.PropertyType.IsCollection() || this.Property.PropertyType.IsDictionary());
+
+        /// <summary>
+        /// True when the segment is the n-th element of a collection
+        /// </summary>
+        [JsonIgnore]
+        public bool HasMultiplicity => !IsRoot && this.Type != null;
+
         public void ClearCache()
         {
             OnEach(nav =>
@@ -109,6 +134,7 @@ namespace SurrogateLibrary
         public void UpdateCache(ITypeSystem<T> typeSystem)
         {
             var sb = new StringBuilder();
+            var sbAlt = new StringBuilder();
 
             NavigationSegment<T> previous = null;
             OnEach(nav =>
@@ -127,14 +153,22 @@ namespace SurrogateLibrary
                     }
                 }
 
-                // update path
-                sb.Append(nav.Name);
-                nav.Path = sb.ToString();
-                if (nav.Next != null) sb.Append(".");
-
                 // update Previous
                 nav.Previous = previous;
                 previous = nav;
+
+                // update path
+                sb.Append(nav.Name);
+                nav.Path = sb.ToString();
+
+                sbAlt.Append(nav.NameAlt);
+                nav.PathAlt = sbAlt.ToString();
+
+                if (nav.Next != null)
+                {
+                    sb.Append(".");
+                    sbAlt.Append(".");
+                }
 
                 return true;
             });
@@ -154,7 +188,7 @@ namespace SurrogateLibrary
 
         public NavigationSegment<T> GetLeaf()
         {
-            if(_leaf != null && _leaf.Next == null) return _leaf;
+            if (_leaf != null && _leaf.Next == null) return _leaf;
 
             _leaf = this;
             while (true)
