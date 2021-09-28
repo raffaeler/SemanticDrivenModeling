@@ -46,7 +46,7 @@ namespace SurrogateLibrary
         public T Info { get; internal set; }
 
 
-        internal void UpdateCache(TypeSystemBase<T> typeSystem)
+        public void UpdateCache(TypeSystemBase<T> typeSystem)
         {
             InnerType1 = typeSystem.GetSurrogateType(InnerTypeIndex1);
             InnerType2 = typeSystem.GetSurrogateType(InnerTypeIndex2);

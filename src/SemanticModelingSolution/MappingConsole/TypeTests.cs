@@ -96,6 +96,7 @@ namespace MappingConsole
 
         }
 
+        // moved in the test assembly
         private void Test1()
         {
             var t1 = typeof(List<string>);
@@ -137,6 +138,7 @@ namespace MappingConsole
 
         }
 
+        // moved in the test assembly
         private void Test1WithInfo()
         {
             var t1 = typeof(List<string>);
@@ -181,6 +183,7 @@ namespace MappingConsole
             Debug.Assert(comp);
 
         }
+
         static void EqualityBrokenInCSharp()
         {
             // equality is broken in C#
