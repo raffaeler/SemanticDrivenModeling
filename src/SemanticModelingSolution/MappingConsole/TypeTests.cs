@@ -39,9 +39,9 @@ namespace MappingConsole
             //Debug.Assert(object.ReferenceEquals(z1.y, z2.y));
             //Debug.Assert(object.ReferenceEquals(z1.y.z, z2.y.z));
 
-            //Test1();
+            Test1();
             Test1WithInfo();
-            //Test2();
+            Test2();
         }
 
         private void Test2()
@@ -86,7 +86,7 @@ namespace MappingConsole
             var path5 = allPropertiesOrder[5];
             path5.UpdateCache(ts);
             var json5 = JsonSerializer.Serialize(path5);
-            var path5clone = JsonSerializer.Deserialize<NavigationPath>(json5);
+            var path5clone = JsonSerializer.Deserialize<NavigationPath<SurrogateLibrary.VoidType>>(json5);
             path5clone.UpdateCache(ts);
             Debug.Assert(path5 == path5clone);
             Debug.Assert(path5.Equals(path5clone));
@@ -124,7 +124,7 @@ namespace MappingConsole
 
             var options = new JsonSerializerOptions() { IgnoreReadOnlyProperties = true };
             var json = JsonSerializer.Serialize(s1, options);
-            var x1 = JsonSerializer.Deserialize<SurrogateLibrary.SurrogateType>(json);
+            var x1 = JsonSerializer.Deserialize<SurrogateLibrary.SurrogateType<SurrogateLibrary.VoidType>>(json);
 
             var tsJson = JsonSerializer.Serialize(ts, options);
             var tsClone = JsonSerializer.Deserialize<TypeSystem>(tsJson);

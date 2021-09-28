@@ -12,8 +12,6 @@ namespace SurrogateLibrary
     public record SurrogateType
     {
         private Type _type;
-        private DictionaryExShallow<UInt64, SurrogateProperty> _properties = new();
-        private DictionaryExShallow<UInt64, SurrogateProperty> _incoming = new();
 
         internal ListEx<UInt64> _propertyIndexes;
 
@@ -24,7 +22,7 @@ namespace SurrogateLibrary
         {
             var (flags, _, _) = type.Classify();
             Index = index;
-            AssemblyName = ITypeSystem.PlaceholderForSystemAssemblyName; //type.Assembly.GetName().Name;
+            AssemblyName = KnownConstants.PlaceholderForSystemAssemblyName; //type.Assembly.GetName().Name;
             Namespace = type.Namespace;
             Name = type.Name;
             FullName = GetFullName(type);
@@ -58,19 +56,7 @@ namespace SurrogateLibrary
             init => _propertyIndexes = value == null ? null : new ListEx<UInt64>(value);
         }
 
-        [JsonIgnore]
-        public IReadOnlyDictionary<UInt64, SurrogateProperty> Properties => _properties;
-
-        [JsonIgnore]
-        public IReadOnlyDictionary<UInt64, SurrogateProperty> Incoming => _incoming;
-
-        [JsonIgnore]
-        public SurrogateType InnerType1 { get; private set; }
-
-        [JsonIgnore]
-        public SurrogateType InnerType2 { get; private set; }
-
-        public bool IsBasicType => this.Index < KnownTypes.MaxIndexForBasicTypes;
+        public bool IsBasicType => this.Index < KnownConstants.MaxIndexForBasicTypes;
 
         public static string GetFullName(Type type) => type.ToStringEx(true);
 
@@ -80,7 +66,7 @@ namespace SurrogateLibrary
         /// </summary>
         public Type GetOriginalType()
         {
-            var assemblyName = AssemblyName == ITypeSystem.PlaceholderForSystemAssemblyName
+            var assemblyName = AssemblyName == KnownConstants.PlaceholderForSystemAssemblyName
                 ? null : AssemblyName;
             return _type ??= TypeHelper.GetEntityType(FullName, assemblyName);
         }
@@ -96,24 +82,5 @@ namespace SurrogateLibrary
             return $"[{Index}] {FullName}";
         }
 
-        internal void UpdateCache(ITypeSystem typeSystem)
-        {
-            InnerType1 = typeSystem.GetSurrogateType(InnerTypeIndex1);
-            InnerType2 = typeSystem.GetSurrogateType(InnerTypeIndex2);
-
-            _properties.Clear();
-            foreach (var property in PropertyIndexes)
-            {
-                var prop = typeSystem.GetSurrogateProperty(property);
-                _properties[prop.Index] = prop;
-            }
-
-            foreach (var property in typeSystem.Properties)
-            {
-                var prop = property.Value;
-                if (prop.PropertyTypeIndex == Index)
-                    _incoming[prop.Index] = prop;
-            }
-        }
     }
 }

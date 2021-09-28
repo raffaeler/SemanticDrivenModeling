@@ -12,9 +12,9 @@ using SurrogateLibrary.Helpers;
 
 namespace SurrogateLibrary
 {
-    public abstract record TypeSystemBase<T>: ITypeSystem
-        //where TType : SurrogateType
-        //where TProperty : SurrogateProperty
+    public abstract record TypeSystemBase<T>: ITypeSystem<T>, ITypeSystem
+    //where TType : SurrogateType
+    //where TProperty : SurrogateProperty
     {
         private readonly ITypeSystemFactory<T> _factory;
         private ConcurrentDictionaryEx<UInt64, SurrogateType<T>> _types;
@@ -31,16 +31,16 @@ namespace SurrogateLibrary
             _properties = new();
             foreach (var type in CreateBasicTypes())
             {
-                if (type.Index > KnownTypes.MaxIndexForBasicTypes)
+                if (type.Index > KnownConstants.MaxIndexForBasicTypes)
                 {
-                    throw new ArgumentException($"The basic types key index must never exceed {KnownTypes.MaxIndexForBasicTypes}");
+                    throw new ArgumentException($"The basic types key index must never exceed {KnownConstants.MaxIndexForBasicTypes}");
                 }
                 _types[type.Index] = type;
                 _typesByFullName[type.FullName] = type;
             }
 
-            _typeIndex = KnownTypes.MaxIndexForBasicTypes;
-            _propertyIndex = KnownTypes.MaxIndexForBasicProperties;
+            _typeIndex = KnownConstants.MaxIndexForBasicTypes;
+            _propertyIndex = KnownConstants.MaxIndexForBasicProperties;
         }
 
         public BindingFlags DefaultBindings { get; set; } =
@@ -69,7 +69,7 @@ namespace SurrogateLibrary
 
             if (properties.Count == 0)
             {
-                _propertyIndex = KnownTypes.MaxIndexForBasicProperties;
+                _propertyIndex = KnownConstants.MaxIndexForBasicProperties;
             }
             else
             {
@@ -85,7 +85,7 @@ namespace SurrogateLibrary
         public SurrogateType<T> GetOrCreate(Type type)
         {
             if (type == null) return null;
-            var unique = SurrogateType.GetFullName(type);
+            var unique = SurrogateType<T>.GetFullName(type);
             if (!_typesByFullName.TryGetValue(unique, out SurrogateType<T> surrogate))
             {
                 var newIndex = Interlocked.Increment(ref _typeIndex);
@@ -127,10 +127,6 @@ namespace SurrogateLibrary
             return property;
         }
 
-        SurrogateType ITypeSystem.GetSurrogateType(UInt64 index) => index == 0 ? null : Types[index];
-        SurrogateProperty ITypeSystem.GetSurrogateProperty(UInt64 index) => index == 0 ? null : Properties[index];
-        IReadOnlyDictionary<UInt64, SurrogateProperty> ITypeSystem.Properties { get; }
-
         public SurrogateType<T> GetSurrogateType(UInt64 index) => index == 0 ? null : Types[index];
         public bool TryGetSurrogateType(UInt64 index, out SurrogateType<T> surrogateType)
             => Types.TryGetValue(index, out surrogateType);
@@ -159,8 +155,8 @@ namespace SurrogateLibrary
         {
             Debug.Assert(_types.Count == _typesByFullName.Count);
 
-            var basicTypes = Types.Count(t => t.Key < KnownTypes.MaxIndexForBasicTypes);
-            var otherTypes = Types.Count(t => t.Key > KnownTypes.MaxIndexForBasicTypes);
+            var basicTypes = Types.Count(t => t.Key < KnownConstants.MaxIndexForBasicTypes);
+            var otherTypes = Types.Count(t => t.Key > KnownConstants.MaxIndexForBasicTypes);
             return $"Basic types={basicTypes}, Other types={otherTypes}, Properties={Properties.Count}, LastTypeIndex={_typeIndex}, LastPropIndex={_propertyIndex}";
         }
 
@@ -190,5 +186,17 @@ namespace SurrogateLibrary
 
             return result;
         }
+
+
+        SurrogateType<T> ITypeSystem<T>.GetSurrogateType(UInt64 index) => index == 0 ? null : Types[index];
+        SurrogateProperty<T> ITypeSystem<T>.GetSurrogateProperty(UInt64 index) => index == 0 ? null : Properties[index];
+        IReadOnlyDictionary<UInt64, SurrogateProperty<T>> ITypeSystem<T>.Properties { get; }
+
+
+        SurrogateType ITypeSystem.GetSurrogateType(UInt64 index) => index == 0 ? null : Types[index];
+        SurrogateProperty ITypeSystem.GetSurrogateProperty(UInt64 index) => index == 0 ? null : Properties[index];
+        IReadOnlyDictionary<UInt64, SurrogateProperty> ITypeSystem.Properties { get; }
+
+
     }
 }

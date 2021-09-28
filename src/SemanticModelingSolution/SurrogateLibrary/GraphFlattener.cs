@@ -8,10 +8,10 @@ namespace SurrogateLibrary
 {
     public static class GraphFlattener
     {
-        public static IList<NavigationPath> FlattenHierarchy(this SurrogateType type, ITypeSystem typeSystem = null)
+        public static IList<NavigationPath<T>> FlattenHierarchy<T>(this SurrogateType<T> type, ITypeSystem<T> typeSystem = null)
         {
-            List<NavigationPath> result = new();
-            var nav = new NavigationPath(null, type);
+            List<NavigationPath<T>> result = new();
+            var nav = new NavigationPath<T>(null, type);
             Descend(result, nav, type);
 
             foreach (var navigationPath in result)
@@ -22,7 +22,7 @@ namespace SurrogateLibrary
             return result;
         }
 
-        private static bool Descend(List<NavigationPath> result, NavigationPath nav, SurrogateType type)
+        private static bool Descend<T>(List<NavigationPath<T>> result, NavigationPath<T> nav, SurrogateType<T> type)
         {
             var res = false;
             foreach (var propInfo in type.Properties)
@@ -41,16 +41,16 @@ namespace SurrogateLibrary
                     continue;
                 }
 
-                var next = new NavigationPath(nav, property);
+                var next = new NavigationPath<T>(nav, property);
                 nav.SetNext(next);
                 nav = next;
 
-                SurrogateType descendType;
+                SurrogateType<T> descendType;
                 if (property.PropertyType.IsCollection())
                 {
                     descendType = property.PropertyType.InnerType1;
 
-                    var next2 = new NavigationPath(next, descendType);
+                    var next2 = new NavigationPath<T>(next, descendType);
                     next.SetNext(next2);
                     nav = next2;
                 }

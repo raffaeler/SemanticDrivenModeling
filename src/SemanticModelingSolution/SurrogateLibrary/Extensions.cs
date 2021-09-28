@@ -39,8 +39,8 @@ namespace SurrogateLibrary
         //    return surrogateType;
         //}
 
-        public static SurrogateType GetOwnerType(this SurrogateProperty surrogatePropertyInfo,
-            ITypeSystem typeSystem)
+        public static SurrogateType<T> GetOwnerType<T>(this SurrogateProperty<T> surrogatePropertyInfo,
+            ITypeSystem<T> typeSystem)
         {
             var surrogateOwnerType = typeSystem.GetSurrogateType(surrogatePropertyInfo.OwnerTypeIndex);
             return surrogateOwnerType;

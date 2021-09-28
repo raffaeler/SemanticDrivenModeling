@@ -11,19 +11,19 @@ namespace SurrogateLibrary
     /// This class represents the complete path from a Type down
     /// to a leaf property in a graph
     /// </summary>
-    public class NavigationPath : IEquatable<NavigationPath>
+    public class NavigationPath<T> : IEquatable<NavigationPath<T>>
     {
-        private NavigationPath _root;
-        private NavigationPath _leaf;
+        private NavigationPath<T> _root;
+        private NavigationPath<T> _leaf;
 
-        public NavigationPath(NavigationPath previous, SurrogateProperty property)
+        public NavigationPath(NavigationPath<T> previous, SurrogateProperty<T> property)
         {
             this.Previous = previous;
             this.PropertyIndex = property.Index;
             this.Property = property;
         }
 
-        public NavigationPath(NavigationPath previous, SurrogateType type)
+        public NavigationPath(NavigationPath<T> previous, SurrogateType<T> type)
         {
             this.Previous = previous;
             this.TypeIndex = type.Index;
@@ -31,26 +31,26 @@ namespace SurrogateLibrary
         }
 
         [JsonConstructor]
-        public NavigationPath(UInt64 propertyIndex, UInt64 typeIndex, NavigationPath next) =>
+        public NavigationPath(UInt64 propertyIndex, UInt64 typeIndex, NavigationPath<T> next) =>
             (PropertyIndex, TypeIndex, Next) =
             (propertyIndex, typeIndex, next);
 
         public UInt64 PropertyIndex { get; private set; }
 
         [JsonIgnore]
-        public SurrogateProperty Property { get; private set; }
+        public SurrogateProperty<T> Property { get; private set; }
 
 
         public UInt64 TypeIndex { get; private set; }
 
         [JsonIgnore]
-        public SurrogateType Type { get; private set; }
+        public SurrogateType<T> Type { get; private set; }
 
 
         [JsonIgnore]
-        public NavigationPath Previous { get; private set; }
+        public NavigationPath<T> Previous { get; private set; }
 
-        public NavigationPath Next { get; private set; }
+        public NavigationPath<T> Next { get; private set; }
 
 
         [JsonIgnore]
@@ -59,9 +59,9 @@ namespace SurrogateLibrary
         [JsonIgnore]
         public string Name => Property != null ? Property.Name : Type?.Name;
 
-        public void SetNext(NavigationPath next) => this.Next = next;
+        public void SetNext(NavigationPath<T> next) => this.Next = next;
 
-        private void OnEach(Func<NavigationPath, bool> func)
+        private void OnEach(Func<NavigationPath<T>, bool> func)
         {
             var temp = GetRoot();
             while (temp != null)
@@ -71,7 +71,7 @@ namespace SurrogateLibrary
             }
         }
 
-        private void OnAllBefore(NavigationPath start, Func<NavigationPath, bool> func)
+        private void OnAllBefore(NavigationPath<T> start, Func<NavigationPath<T>, bool> func)
         {
             var temp = start;
             while (temp != null)
@@ -81,7 +81,7 @@ namespace SurrogateLibrary
             }
         }
 
-        private void OnAllAfter(NavigationPath start, Func<NavigationPath, bool> func)
+        private void OnAllAfter(NavigationPath<T> start, Func<NavigationPath<T>, bool> func)
         {
             var temp = start;
             while (temp != null)
@@ -106,11 +106,11 @@ namespace SurrogateLibrary
             _leaf = null;
         }
 
-        public void UpdateCache(ITypeSystem typeSystem)
+        public void UpdateCache(ITypeSystem<T> typeSystem)
         {
             var sb = new StringBuilder();
 
-            NavigationPath previous = null;
+            NavigationPath<T> previous = null;
             OnEach(nav =>
             {
                 if (typeSystem != null)
@@ -140,7 +140,7 @@ namespace SurrogateLibrary
             });
         }
 
-        public NavigationPath GetRoot()
+        public NavigationPath<T> GetRoot()
         {
             if (_root != null && _root.Previous == null) return _root;
 
@@ -152,7 +152,7 @@ namespace SurrogateLibrary
             }
         }
 
-        public NavigationPath GetLeaf()
+        public NavigationPath<T> GetLeaf()
         {
             if(_leaf != null && _leaf.Next == null) return _leaf;
 
@@ -164,10 +164,10 @@ namespace SurrogateLibrary
             }
         }
 
-        public NavigationPath CloneRoot()
+        public NavigationPath<T> CloneRoot()
         {
             var temp = GetRoot();
-            NavigationPath cloned = null;
+            NavigationPath<T> cloned = null;
             while (temp != null)
             {
                 var currentClone = temp.Clone();//temp with { };
@@ -185,7 +185,7 @@ namespace SurrogateLibrary
             return cloned;
         }
 
-        public bool PointsBack(SurrogateProperty property)
+        public bool PointsBack(SurrogateProperty<T> property)
         {
             var temp = this;
             while (temp != null)
@@ -206,7 +206,7 @@ namespace SurrogateLibrary
             return false;
         }
 
-        public bool ContainsBack(SurrogateProperty property)
+        public bool ContainsBack(SurrogateProperty<T> property)
         {
             var temp = this;
             while (temp != null)
@@ -218,7 +218,7 @@ namespace SurrogateLibrary
             return false;
         }
 
-        public bool ContainsForward(SurrogateProperty property)
+        public bool ContainsForward(SurrogateProperty<T> property)
         {
             var temp = this;
             while (temp != null)
@@ -265,15 +265,15 @@ namespace SurrogateLibrary
 
         */
 
-        protected virtual Type EqualityContract => typeof(NavigationPath);
+        protected virtual Type EqualityContract => typeof(NavigationPath<T>);
 
-        public static bool operator ==(NavigationPath left, NavigationPath right)
+        public static bool operator ==(NavigationPath<T> left, NavigationPath<T> right)
             => (object)left == right || (left?.Equals(right) ?? false);
 
-        public static bool operator !=(NavigationPath left, NavigationPath right)
+        public static bool operator !=(NavigationPath<T> left, NavigationPath<T> right)
             => !(left == right);
 
-        public override bool Equals(object obj) => Equals(obj as NavigationPath);
+        public override bool Equals(object obj) => Equals(obj as NavigationPath<T>);
 
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace SurrogateLibrary
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public virtual bool Equals(NavigationPath other)
+        public virtual bool Equals(NavigationPath<T> other)
         {
             if (_isInEquals) return true;
             _isInEquals = true;
@@ -294,12 +294,12 @@ namespace SurrogateLibrary
             var result = (object)this == other ||
                 ((object)other != null &&
                 EqualityContract == other!.EqualityContract &&
-                EqualityComparer<NavigationPath>.Default.Equals(Previous, other!.Previous) &&
+                EqualityComparer<NavigationPath<T>>.Default.Equals(Previous, other!.Previous) &&
                 EqualityComparer<ulong>.Default.Equals(PropertyIndex, other!.PropertyIndex) &&
-                EqualityComparer<SurrogateProperty>.Default.Equals(Property, other!.Property) &&
+                EqualityComparer<SurrogateProperty<T>>.Default.Equals(Property, other!.Property) &&
                 EqualityComparer<ulong>.Default.Equals(TypeIndex, other!.TypeIndex) &&
-                EqualityComparer<SurrogateType>.Default.Equals(Type, other!.Type) &&
-                EqualityComparer<NavigationPath>.Default.Equals(Next, other!.Next) &&
+                EqualityComparer<SurrogateType<T>>.Default.Equals(Type, other!.Type) &&
+                EqualityComparer<NavigationPath<T>>.Default.Equals(Next, other!.Next) &&
                 EqualityComparer<string>.Default.Equals(Path, other!.Path));
 
             _isInEquals = false;
@@ -329,9 +329,9 @@ namespace SurrogateLibrary
 
         }
 
-        public virtual NavigationPath Clone() => new NavigationPath(this);
+        public virtual NavigationPath<T> Clone() => new NavigationPath<T>(this);
 
-        protected NavigationPath(NavigationPath original)
+        protected NavigationPath(NavigationPath<T> original)
         {
             Previous = original.Previous;
             PropertyIndex = original.PropertyIndex;
