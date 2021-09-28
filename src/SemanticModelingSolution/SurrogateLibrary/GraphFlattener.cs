@@ -8,21 +8,24 @@ namespace SurrogateLibrary
 {
     public static class GraphFlattener
     {
-        public static IList<NavigationPath<T>> FlattenHierarchy<T>(this SurrogateType<T> type, ITypeSystem<T> typeSystem = null)
+        public static IList<NavigationPath<T, K>> FlattenHierarchy<T, K>(this SurrogateType<T> type,
+            K defaultValue, ITypeSystem<T> typeSystem = null)
         {
-            List<NavigationPath<T>> result = new();
-            var nav = new NavigationPath<T>(null, type);
-            Descend(result, nav, type);
+            List<NavigationSegment<T>> paths = new();
+            var nav = new NavigationSegment<T>(null, type);
+            Descend(paths, nav, type);
 
-            foreach (var navigationPath in result)
+            List<NavigationPath<T, K>> result = new();
+            foreach (var navigationPath in paths)
             {
                 navigationPath.UpdateCache(typeSystem);
+                result.Add(new NavigationPath<T, K>(navigationPath, defaultValue));
             }
 
             return result;
         }
 
-        private static bool Descend<T>(List<NavigationPath<T>> result, NavigationPath<T> nav, SurrogateType<T> type)
+        private static bool Descend<T>(List<NavigationSegment<T>> result, NavigationSegment<T> nav, SurrogateType<T> type)
         {
             var res = false;
             foreach (var propInfo in type.Properties)
@@ -41,7 +44,7 @@ namespace SurrogateLibrary
                     continue;
                 }
 
-                var next = new NavigationPath<T>(nav, property);
+                var next = new NavigationSegment<T>(nav, property);
                 nav.SetNext(next);
                 nav = next;
 
@@ -50,7 +53,7 @@ namespace SurrogateLibrary
                 {
                     descendType = property.PropertyType.InnerType1;
 
-                    var next2 = new NavigationPath<T>(next, descendType);
+                    var next2 = new NavigationSegment<T>(next, descendType);
                     next.SetNext(next2);
                     nav = next2;
                 }
@@ -63,7 +66,7 @@ namespace SurrogateLibrary
 
                 if (!found)
                 {
-                    var cloned = nav.CloneRoot();
+                    var cloned = nav.CloneAndReturnLeaf().GetRoot();
 
                     //these lines are useful only when debugging
                     //List<NavigationProperty> items = new();
@@ -77,7 +80,7 @@ namespace SurrogateLibrary
                     //var paths = items.Select(s => s.Property == null ? s.Type.Name : s.Property.Name);
                     //Console.WriteLine($"{string.Join(".", paths)}");
                     //cloned.UpdateCache();
-                    result.Add(cloned.GetRoot());
+                    result.Add(cloned);
                 }
 
                 nav = nav.Previous;
