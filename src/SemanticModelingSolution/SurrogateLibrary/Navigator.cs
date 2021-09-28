@@ -8,13 +8,14 @@ namespace SurrogateLibrary
 {
     public class Navigator
     {
-        public Navigator(TypeSystem typeSystem)
+        public Navigator(TypeSystem typeSystem, SurrogateType rootType)
         {
             TypeSystem = typeSystem;
+            RootType = rootType;
         }
 
         public TypeSystem TypeSystem { get; init; }
-
+        public SurrogateType RootType { get; init; }
 
     }
 }

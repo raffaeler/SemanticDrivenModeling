@@ -113,9 +113,19 @@ namespace SurrogateLibrary
             NavigationPath previous = null;
             OnEach(nav =>
             {
-                // update Property and Type
-                nav.Property = typeSystem.GetSurrogateProperty(nav.PropertyIndex);
-                nav.Type = typeSystem.GetSurrogateType(nav.TypeIndex);
+                if (typeSystem != null)
+                {
+                    // update Property and Type
+                    nav.Property = typeSystem.GetSurrogateProperty(nav.PropertyIndex);
+                    nav.Type = typeSystem.GetSurrogateType(nav.TypeIndex);
+                }
+                else
+                {
+                    if (nav.Property == null && nav.Type == null)
+                    {
+                        throw new InvalidOperationException($"UpdateCache was called with a null TypeSystem. This is legal only when the Property or Type properties are already set");
+                    }
+                }
 
                 // update path
                 sb.Append(nav.Name);
