@@ -15,11 +15,11 @@ namespace SurrogateLibrary
         private Action<SurrogateProperty<T>, string> _onEndCollection;
 
         public void Visit(SurrogateType<T> type,
-            Action<SurrogateType<T>, string> onBeginType,
-            Action<SurrogateType<T>, string> onEndType,
-            Action<SurrogateProperty<T>, string> onProperty,
-            Action<SurrogateProperty<T>, string> onBeginCollection,
-            Action<SurrogateProperty<T>, string> onEndCollection)
+            Action<SurrogateType<T>, string> onBeginType = null,
+            Action<SurrogateType<T>, string> onEndType = null,
+            Action<SurrogateProperty<T>, string> onProperty = null,
+            Action<SurrogateProperty<T>, string> onBeginCollection = null,
+            Action<SurrogateProperty<T>, string> onEndCollection = null)
         {
             _onBeginType = onBeginType;
             _onEndType = onEndType;
@@ -30,27 +30,27 @@ namespace SurrogateLibrary
             VisitType(type, type.Name);
         }
 
-        public virtual void OnBeginVisitModelTypeNode(SurrogateType<T> type, string path)
+        public virtual void OnBeginVisitType(SurrogateType<T> type, string path)
         {
             _onBeginType?.Invoke(type, path);
         }
 
-        public virtual void OnEndVisitModelTypeNode(SurrogateType<T> type, string path)
+        public virtual void OnEndVisitType(SurrogateType<T> type, string path)
         {
             _onEndType?.Invoke(type, path);
         }
 
-        public virtual void OnVisitModelPropertyNode(SurrogateProperty<T> property, string path)
+        public virtual void OnVisitProperty(SurrogateProperty<T> property, string path)
         {
             _onProperty?.Invoke(property, path);
         }
 
-        public virtual void OnBeginVisitCollectionPropertyNode(SurrogateProperty<T> property, string path)
+        public virtual void OnBeginVisitCollectionProperty(SurrogateProperty<T> property, string path)
         {
             _onBeginCollection?.Invoke(property, path);
         }
 
-        public virtual void OnEndVisitCollectionPropertyNode(SurrogateProperty<T> property, string path)
+        public virtual void OnEndVisitCollectionProperty(SurrogateProperty<T> property, string path)
         {
             _onEndCollection?.Invoke(property, path);
         }
@@ -58,13 +58,13 @@ namespace SurrogateLibrary
 
         private void VisitType(SurrogateType<T> type, string path)
         {
-            OnBeginVisitModelTypeNode(type, path);
+            OnBeginVisitType(type, path);
             foreach (var prop in type.Properties.Values)
             {
                 VisitPropertyTypeNode(prop, path);
             }
 
-            OnEndVisitModelTypeNode(type, path);
+            OnEndVisitType(type, path);
         }
 
         private void VisitPropertyTypeNode(SurrogateProperty<T> property, string path)
@@ -80,11 +80,11 @@ namespace SurrogateLibrary
             if (isOneToMany)
             {
                 collectionPath = path;
-                OnBeginVisitCollectionPropertyNode(property, collectionPath);
+                OnBeginVisitCollectionProperty(property, collectionPath);
                 path += ".$";
             }
 
-            OnVisitModelPropertyNode(property, path);
+            OnVisitProperty(property, path);
             if (isOneToMany || kind == PropertyKind.OneToOne)
             {
                 var navType = property.PropertyType;
@@ -94,7 +94,7 @@ namespace SurrogateLibrary
 
             if (isOneToMany)
             {
-                OnEndVisitCollectionPropertyNode(property, collectionPath);
+                OnEndVisitCollectionProperty(property, collectionPath);
             }
 
         }

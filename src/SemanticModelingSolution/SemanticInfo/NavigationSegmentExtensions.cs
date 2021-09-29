@@ -8,7 +8,7 @@ using SurrogateLibrary;
 
 namespace SemanticLibrary
 {
-    internal static class NavigationSegmentExtensions
+    public static class NavigationSegmentExtensions
     {
         private const string _dotPathSeparator = ".";
 

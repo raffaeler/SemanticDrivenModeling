@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurrogateLibrary.Tests", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticInfo", "SemanticInfo\SemanticInfo.csproj", "{6522E072-FB97-4B2A-BBCD-9B088A85929F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaterializerLibrary2", "MaterializerLibrary2\MaterializerLibrary2.csproj", "{4E582D21-923F-4EC6-9192-2F14A24D2178}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SharedGenerators\SharedGenerators.projitems*{1b2882b1-8efa-4c83-95e5-2b6b764dc469}*SharedItemsImports = 13
@@ -148,6 +150,10 @@ Global
 		{6522E072-FB97-4B2A-BBCD-9B088A85929F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6522E072-FB97-4B2A-BBCD-9B088A85929F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6522E072-FB97-4B2A-BBCD-9B088A85929F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E582D21-923F-4EC6-9192-2F14A24D2178}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E582D21-923F-4EC6-9192-2F14A24D2178}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E582D21-923F-4EC6-9192-2F14A24D2178}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E582D21-923F-4EC6-9192-2F14A24D2178}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,6 +177,7 @@ Global
 		{40294124-69D1-4606-B037-09F08F85DD7E} = {945852E0-BFB0-4F1B-B569-D096455B0C7B}
 		{32DF45FF-477B-4B0A-A289-F3ECC2D3B1D4} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{B17E8DAB-1820-4F98-A80E-604236B525B9} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
+		{4E582D21-923F-4EC6-9192-2F14A24D2178} = {93AC4280-6486-45AA-BF1C-991FCB3CD06F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDC7C7E5-38C7-49A4-B565-A242960159E4}

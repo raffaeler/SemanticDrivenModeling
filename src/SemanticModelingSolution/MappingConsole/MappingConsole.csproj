@@ -8,11 +8,12 @@
     <Import Project="..\SharedGenerators\SharedGenerators.projitems" Label="Shared" />
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.9.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" PrivateAssets="all" />
 
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\MaterializerLibrary2\MaterializerLibrary2.csproj" />
         <ProjectReference Include="..\ModelsFromGithub\ModelsFromGithub.csproj" />
         <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
         <ProjectReference Include="..\SemanticInfo\SemanticInfo.csproj" />

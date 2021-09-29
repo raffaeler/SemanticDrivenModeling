@@ -32,14 +32,14 @@ namespace SemanticLibrary
             //_logOnlyValidated = true;
         }
 
-        public IList<TypePairEvaluation> ComputeMappings(SurrogateType<Metadata> source,
+        public IList<Mapping> ComputeMappings(SurrogateType<Metadata> source,
             int minimumScore = MinimumScoreForTypes)
         {
             var targets = _targetTypeSystem.Types.Values.Where(t => !t.IsBasicType);
 
             var candidateTypes = targets
                 .Where(t => t.Info != null)
-                .Select(target => new TypePairEvaluation(
+                .Select(target => new Mapping(
                     source, target, new Evaluation(GetTypeScore(source, target))))
                 .OrderByDescending(t => t.Evaluation.Score)
                 .Where(o => o.Evaluation.Score > MinimumScoreForTypes)
@@ -63,7 +63,7 @@ namespace SemanticLibrary
             return candidateTypes;
         }
 
-        internal string DumpMappings(TypePairEvaluation candidateModelType)
+        internal string DumpMappings(Mapping candidateModelType)
         {
             var sb = new StringBuilder();
             var source = candidateModelType.Source;

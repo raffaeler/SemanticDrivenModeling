@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace SurrogateLibrary.Helpers
+namespace SurrogateLibrary
 {
     public static class TypeHelper
     {

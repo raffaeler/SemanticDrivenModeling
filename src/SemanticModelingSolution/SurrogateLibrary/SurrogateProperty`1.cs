@@ -26,25 +26,25 @@ namespace SurrogateLibrary
 
         public PropertyKind GetKind()
         {
-            if (OwnerType == null) throw new InvalidOperationException($"Calling UpdateCache is required before this method");
+            if (PropertyType == null) throw new InvalidOperationException($"Calling UpdateCache is required before this method");
 
-            if (OwnerType.IsBasicType) return PropertyKind.BasicType;
-            if (OwnerType.IsEnum()) return PropertyKind.Enum;
-            if (OwnerType.IsCollection() || OwnerType.IsDictionary())
+            if (PropertyType.IsBasicType) return PropertyKind.BasicType;
+            if (PropertyType.IsEnum()) return PropertyKind.Enum;
+            if (PropertyType.IsCollection() || PropertyType.IsDictionary())
             {
-                if (OwnerType.InnerType1 == null)
+                if (PropertyType.InnerType1 == null)
                 {
                     // non-generic or array
                     return PropertyKind.OneToMany;
                 }
 
-                if (OwnerType.InnerType1.IsBasicType)
+                if (PropertyType.InnerType1.IsBasicType)
                 {
                     // non-generic or array
                     return PropertyKind.OneToManyBasicType;
                 }
 
-                if (OwnerType.InnerType1.IsEnum())
+                if (PropertyType.InnerType1.IsEnum())
                 {
                     // non-generic or array
                     return PropertyKind.OneToManyEnum;

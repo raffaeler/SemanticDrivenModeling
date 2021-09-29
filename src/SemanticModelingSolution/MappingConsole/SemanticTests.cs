@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+using MaterializerLibrary;
+
 using SemanticLibrary;
 
 using SurrogateLibrary;
@@ -19,11 +21,13 @@ namespace MappingConsole
         private TypeSystem<Metadata> _targetTypeSystem;
         private SurrogateType<Metadata> _source;
         private SurrogateType<Metadata> _target;
+        private Mapping _currentMapping;
 
         public void Run()
         {
             AssignSemantic();
             ComputeMappings();
+            SerializeWithMapping();
         }
 
         private void AssignSemantic()
@@ -48,7 +52,20 @@ namespace MappingConsole
         {
             var matcher = new ConceptMatchingRule(_sourceTypeSystem, _targetTypeSystem, true);
             var mappings = matcher.ComputeMappings(_source);
-            var topScoredType = mappings.First();
+            _currentMapping = mappings.First();
+        }
+
+        private void SerializeWithMapping()
+        {
+            var settings = new JsonSerializerOptions()
+            {
+                Converters = { new SemanticConverterFactory(_sourceTypeSystem, _targetTypeSystem, _currentMapping), },
+            };
+
+            var sourceObjects = SimpleDomain1.Samples.GetOrders();
+            var json = JsonSerializer.Serialize(sourceObjects, settings);
+            var targetObjects = (IEnumerable<SimpleDomain2.OnlineOrder>)
+                JsonSerializer.Deserialize(json, typeof(SimpleDomain2.OnlineOrder[]));
         }
 
 
