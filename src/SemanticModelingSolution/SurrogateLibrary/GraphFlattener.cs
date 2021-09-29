@@ -8,18 +8,16 @@ namespace SurrogateLibrary
 {
     public static class GraphFlattener
     {
-        public static IList<NavigationPath<T, K>> FlattenHierarchy<T, K>(this SurrogateType<T> type,
-            K defaultValue, ITypeSystem<T> typeSystem = null)
+        public static IList<NavigationSegment<T>> FlattenHierarchy<T>(this SurrogateType<T> type,
+            ITypeSystem<T> typeSystem = null)
         {
-            List<NavigationSegment<T>> paths = new();
+            List<NavigationSegment<T>> result = new();
             var nav = new NavigationSegment<T>(null, type);
-            Descend(paths, nav, type);
+            Descend(result, nav, type);
 
-            List<NavigationPath<T, K>> result = new();
-            foreach (var navigationPath in paths)
+            foreach (var navigationPath in result)
             {
                 navigationPath.UpdateCache(typeSystem);
-                result.Add(new NavigationPath<T, K>(navigationPath, defaultValue));
             }
 
             return result;

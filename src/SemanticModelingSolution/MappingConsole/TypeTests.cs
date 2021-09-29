@@ -72,7 +72,7 @@ namespace MappingConsole
             }
 
             //var allPropertiesTA = entryPointTA.FlattenHierarchy().ToList();
-            var allPropertiesOrder = entryPointOrder.FlattenHierarchy(10).ToList();
+            var allPropertiesOrder = entryPointOrder.FlattenHierarchy().ToList();
             GC.Collect();
             GC.Collect();
             GC.Collect();
@@ -80,14 +80,14 @@ namespace MappingConsole
             GC.Collect();
             foreach (var p in allPropertiesOrder)
             {
-                Console.WriteLine(p.Root.GetLeaf().Path);
+                Console.WriteLine(p.GetLeaf().Path);
             }
 
             var path5 = allPropertiesOrder[5];
-            path5.Root.UpdateCache(ts);
+            path5.UpdateCache(ts);
             var json5 = JsonSerializer.Serialize(path5);
-            var path5clone = JsonSerializer.Deserialize<NavigationPath<SurrogateLibrary.VoidType, int>>(json5);
-            path5clone.Root.UpdateCache(ts);
+            var path5clone = JsonSerializer.Deserialize<NavigationSegment<VoidType>>(json5);
+            path5clone.UpdateCache(ts);
             Debug.Assert(path5 == path5clone);
             Debug.Assert(path5.Equals(path5clone));
             var hc5 = path5.GetHashCode();

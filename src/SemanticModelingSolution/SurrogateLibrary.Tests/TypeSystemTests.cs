@@ -14,6 +14,11 @@ namespace SurrogateLibrary.Tests
         public class TB { public TA A { get; set; } public TB B { get; set; } public int Y { get; set; } }
         public record Info(int Id, string Name);
 
+        public record EvaluationMock(int Score);
+        public record NavigationPairMock(NavigationSegment<VoidType> Source, NavigationSegment<VoidType> Target,
+            EvaluationMock Evaluation);
+
+
 
         [TestMethod]
         public void TestTyped()
@@ -95,17 +100,17 @@ namespace SurrogateLibrary.Tests
             ts.UpdateCache();
             if (!ts.TryGetSurrogateTypeByName("SimpleDomain1.Order", out var entryPointOrder)) Assert.Fail("not found");
 
-            var allPropertiesOrder = entryPointOrder.FlattenHierarchy(10).ToList();
+            var allPropertiesOrder = entryPointOrder.FlattenHierarchy().ToList();
 
-            var paths = allPropertiesOrder.Select(p => p.Root.GetLeaf().Path).ToList();
+            var paths = allPropertiesOrder.Select(p => p.GetLeaf().Path).ToList();
             Assert.IsTrue(paths.All(p => p.StartsWith("Order.")));
             Assert.IsTrue(paths.All(p => p.Length > 6));
 
             var path5 = allPropertiesOrder[5];
-            path5.Root.UpdateCache(ts);
+            path5.UpdateCache(ts);
             var json5 = JsonSerializer.Serialize(path5);
-            var path5clone = JsonSerializer.Deserialize<NavigationPath<SurrogateLibrary.VoidType, int>>(json5);
-            path5clone.Root.UpdateCache(ts);
+            var path5clone = JsonSerializer.Deserialize<NavigationSegment<VoidType>>(json5);
+            path5clone.UpdateCache(ts);
             Assert.AreEqual(path5, path5clone);
             Assert.IsTrue(path5.Equals(path5clone));
             var hc5 = path5.GetHashCode();
