@@ -21,7 +21,7 @@ namespace DeserializationConsole
             //v.MappingSupplierToVendor();
 
             //p.SerializeAll();
-            //p.SerializeMappings();
+            p.SerializeMappings();
 
             //p.OnlineOrder_To_Order_UsingDeserialization();
             //p.Order_To_OnlineOrder_UsingDeserialization();

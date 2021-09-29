@@ -65,6 +65,9 @@ namespace SurrogateLibrary
         [JsonIgnore]
         public string NameAlt => HasMultiplicity ? "$" : Name;
 
+        [JsonIgnore]
+        public T Info => Property != null ? Property.Info : Type.Info;
+
         public void SetNext(NavigationSegment<T> next) => this.Next = next;
 
         private void OnEach(Func<NavigationSegment<T>, bool> func)
@@ -274,22 +277,23 @@ namespace SurrogateLibrary
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            if (Previous != null)
-            {
-                sb.Append(Previous.ToStringCurrent());
-                sb.Append(" <= ");
-            }
+            //StringBuilder sb = new StringBuilder();
+            //if (Previous != null)
+            //{
+            //    sb.Append(Previous.ToStringCurrent());
+            //    sb.Append(" <= ");
+            //}
 
-            sb.Append(ToStringCurrent());
+            //sb.Append(ToStringCurrent());
 
-            if (Next != null)
-            {
-                sb.Append(" => ");
-                sb.Append(Next.ToStringCurrent());
-            }
+            //if (Next != null)
+            //{
+            //    sb.Append(" => ");
+            //    sb.Append(Next.ToStringCurrent());
+            //}
 
-            return sb.ToString();
+            //return sb.ToString();
+            return Path;
         }
 
         /*

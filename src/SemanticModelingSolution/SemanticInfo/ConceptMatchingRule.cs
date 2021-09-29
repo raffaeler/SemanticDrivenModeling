@@ -16,35 +16,40 @@ namespace SemanticLibrary
         public const int MinimumScoreForTypes = 50;
         private readonly bool _enableVerboseLogOnConsole;
         private readonly bool _logOnlyValidated;
-        private TypeSystem<Metadata> _typeSystem;
+        private TypeSystem<Metadata> _sourceTypeSystem;
+        private TypeSystem<Metadata> _targetTypeSystem;
 
-        public ConceptMatchingRule(TypeSystem<Metadata> typeSystem, bool enableVerboseLogOnConsole)
+        public ConceptMatchingRule(
+            TypeSystem<Metadata> sourceTypeSystem,
+            TypeSystem<Metadata> targetTypeSystem,
+            bool enableVerboseLogOnConsole)
         {
-            _typeSystem = typeSystem;
+            _sourceTypeSystem = sourceTypeSystem;
+            _targetTypeSystem = targetTypeSystem;
+
             _enableVerboseLogOnConsole = enableVerboseLogOnConsole;
             _logOnlyValidated = false;
             //_logOnlyValidated = true;
         }
 
-        public IReadOnlyCollection<TypePairEvaluation> CandidateTypes { get; private set; }
-
-        public void ComputeMappings(
-            SurrogateType<Metadata> source,
-            IEnumerable<SurrogateType<Metadata>> targets,
+        public IList<TypePairEvaluation> ComputeMappings(SurrogateType<Metadata> source,
             int minimumScore = MinimumScoreForTypes)
         {
+            var targets = _targetTypeSystem.Types.Values.Where(t => !t.IsBasicType);
+
             var candidateTypes = targets
+                .Where(t => t.Info != null)
                 .Select(target => new TypePairEvaluation(
                     source, target, new Evaluation(GetTypeScore(source, target))))
                 .OrderByDescending(t => t.Evaluation.Score)
                 .Where(o => o.Evaluation.Score > MinimumScoreForTypes)
                 .ToList();
 
-            var flattenedSource = GraphFlattener.FlattenHierarchy(source, _typeSystem);
+            var flattenedSource = GraphFlattener.FlattenHierarchy(source, _sourceTypeSystem);
 
             foreach (var candidate in candidateTypes)
             {
-                var flattenedTarget = GraphFlattener.FlattenHierarchy(candidate.Target, _typeSystem);
+                var flattenedTarget = GraphFlattener.FlattenHierarchy(candidate.Target, _targetTypeSystem);
 
                 var matcher = new AutomaticMapper(0, true);
                 IList<NavigationPair> mappings = matcher.GetScoredMappings(
@@ -55,7 +60,7 @@ namespace SemanticLibrary
                 Console.WriteLine(DumpMappings(candidate));
             }
 
-            this.CandidateTypes = candidateTypes;
+            return candidateTypes;
         }
 
         internal string DumpMappings(TypePairEvaluation candidateModelType)
@@ -96,14 +101,14 @@ namespace SemanticLibrary
 
             foreach (var mapping in mappings)
             {
-                var sourceTerms = mapping.Source.Property.Info.TermToConcepts.Select(ttc => ttc.Term);
-                var targetTerms = mapping.Target.Property.Info.TermToConcepts.Select(ttc => ttc.Term);
+                var sourceTerms = mapping.Source.Info.TermToConcepts.Select(ttc => ttc.Term);
+                var targetTerms = mapping.Target.Info.TermToConcepts.Select(ttc => ttc.Term);
 
                 var intersection = sourceTerms.Intersect(targetTerms);
                 var firstMatch = intersection.FirstOrDefault();
                 if (firstMatch != null)
                 {
-                    return mappings.First(m => m.Source.Property.Info.TermToConcepts.Select(ttc => ttc.Term).Contains(firstMatch));
+                    return mappings.First(m => m.Source.Info.TermToConcepts.Select(ttc => ttc.Term).Contains(firstMatch));
                 }
             }
 
@@ -127,21 +132,21 @@ namespace SemanticLibrary
             var source = sourceRoot.GetLeaf();
             var target = targetRoot.GetLeaf();
 
-            var sourceContexts = source.Property.GetOwnerType(_typeSystem).Info.CandidateConcepts;
-            var targetContexts = target.Property.GetOwnerType(_typeSystem).Info.CandidateConcepts;
+            var sourceContexts = source.Property.GetOwnerType(_sourceTypeSystem).Info.CandidateConcepts;
+            var targetContexts = target.Property.GetOwnerType(_sourceTypeSystem).Info.CandidateConcepts;
             var isValidated = ValidateContexts(source, target);
 
             if (_enableVerboseLogOnConsole) VerboseLog(source, target, isValidated);
 
             int score = 0;
-            foreach (var targetTtc in target.Property.Info.TermToConcepts)
+            foreach (var targetTtc in target.Info.TermToConcepts)
             {
-                foreach (var sourceTtc in source.Property.Info.TermToConcepts)
+                foreach (var sourceTtc in source.Info.TermToConcepts)
                 {
                     //score += GetScore(false, sourceTtc, targetTtc, sourceContexts, targetContexts);
                     score += GetPropertyScore(
-                        source.Property.Info.TermToConcepts.Count,
-                        target.Property.Info.TermToConcepts.Count,
+                        source.Info.TermToConcepts.Count,
+                        target.Info.TermToConcepts.Count,
                         sourceTtc, targetTtc, sourceContexts, targetContexts);
                 }
             }
@@ -151,10 +156,10 @@ namespace SemanticLibrary
                 List<Concept> src = new();
                 List<Concept> tgt = new();
                 src.AddRange(sourceContexts);
-                src.AddRange(source.Property.Info.TermToConcepts.Select(ttc => ttc.Concept));
+                src.AddRange(source.Info.TermToConcepts.Select(ttc => ttc.Concept));
 
                 tgt.AddRange(targetContexts);
-                tgt.AddRange(target.Property.Info.TermToConcepts.Select(ttc => ttc.Concept));
+                tgt.AddRange(target.Info.TermToConcepts.Select(ttc => ttc.Concept));
                 var intersectionCount = src.Intersect(tgt).Count();
                 score += 30 * (intersectionCount / tgt.Count);
             }
@@ -273,8 +278,8 @@ namespace SemanticLibrary
             var target = targetRoot.GetLeaf();
 
             // unique identity must be on both or nothing
-            var ttcSourceUniqueIdentity = source.Property.Info.TermToConcepts.Any(t => t.Concept == KnownBaseConcepts.UniqueIdentity);
-            var ttcTargetUniqueIdentity = target.Property.Info.TermToConcepts.Any(t => t.Concept == KnownBaseConcepts.UniqueIdentity);
+            var ttcSourceUniqueIdentity = source.Info.TermToConcepts.Any(t => t.Concept == KnownBaseConcepts.UniqueIdentity);
+            var ttcTargetUniqueIdentity = target.Info.TermToConcepts.Any(t => t.Concept == KnownBaseConcepts.UniqueIdentity);
             if (ttcSourceUniqueIdentity != ttcTargetUniqueIdentity)
             {
                 return false;
@@ -290,7 +295,7 @@ namespace SemanticLibrary
             while (tempTarget != null)
             {
                 var matchesSource = false;
-                foreach (var targetTtc in tempTarget.Property.Info.TermToConcepts)
+                foreach (var targetTtc in tempTarget.Info.TermToConcepts)
                 {
                     // verify whether any of the sources matches the current target
                     foreach (var sourceTtc in sourceTtcs)

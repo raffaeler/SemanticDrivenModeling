@@ -18,5 +18,9 @@ namespace SemanticLibrary
     public record NavigationPair(NavigationSegment<Metadata> Source, NavigationSegment<Metadata> Target,
         Evaluation Evaluation)
     {
+        public override string ToString()
+        {
+            return $"NavigationPair: {Source.GetLeaf()} => {Target.GetLeaf()} ({Evaluation.Score})";
+        }
     }
 }
