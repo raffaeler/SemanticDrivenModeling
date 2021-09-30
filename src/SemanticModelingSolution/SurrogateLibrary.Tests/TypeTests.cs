@@ -122,6 +122,66 @@ namespace SurrogateLibrary.Tests
             Assert.IsTrue(orderClone.Equals(order));
         }
 
+        [TestMethod]
+        public void CollectionsAndCollected()
+        {
+            var ts = new TypeSystem<Info>();
+            var order = ts.GetOrCreate(typeof(SimpleDomain1.Order));
+            ts.UpdateCache();
+
+            var orderItemsProperty = order.Properties.Values.Where(o => o.Name == "OrderItems").Single();
+            var collectionType = orderItemsProperty.PropertyType;
+            var collectedType = collectionType.InnerType1;
+            var coreType = collectionType.GetCoreType();
+
+            var orderItemsKind = orderItemsProperty.GetKind();
+            var orderItemsIsCollection = collectionType.IsCollection();
+            var collectedIsCollection = collectedType.IsCollection();
+            var coreTypeIsCollection = coreType.IsCollection();
+
+            Assert.IsTrue(orderItemsKind == PropertyKind.OneToMany);
+            Assert.IsTrue(orderItemsIsCollection);
+            Assert.IsFalse(collectedIsCollection);
+            Assert.IsFalse(coreTypeIsCollection);
+        }
+
+        [TestMethod]
+        public void Navigation()
+        {
+            var ts = new TypeSystem<Info>();
+            var order = ts.GetOrCreate(typeof(SimpleDomain1.Order));
+            ts.UpdateCache();
+
+            var orderItemsProperty = order.Properties.Values.Where(o => o.Name == "OrderItems").Single();
+            var collectionType = orderItemsProperty.PropertyType;
+            var collectedType = collectionType.InnerType1;
+            var coreType = collectionType.GetCoreType();
+
+            var orderItemsKind = orderItemsProperty.GetKind();
+            var orderItemsIsCollection = collectionType.IsCollection();
+            var collectedIsCollection = collectedType.IsCollection();
+            var coreTypeIsCollection = coreType.IsCollection();
+
+            var navigations = GraphFlattener.FlattenHierarchy(order, ts);
+            NavigationSegment<Info> street = navigations
+                .Select(n => n.GetLeaf())
+                .Where(n => n.Property != null && n.Property.Name == "Street")
+                .Single();
+
+            Assert.IsFalse(street.IsOneToMany);
+            var address = street.Previous;
+            Assert.IsTrue(address.IsOneToOne);
+            var customer = address.Previous;
+            Assert.IsTrue(customer.IsOneToOne);
+            var orderItem = customer.Previous;
+            Assert.IsTrue(orderItem.IsCollectedItem);
+            var orderItems = orderItem.Previous;
+            Assert.IsTrue(orderItems.IsOneToMany);
+            var order2 = orderItems.Previous;
+            Assert.IsTrue(order2.IsRoot);
+        }
+
+
 
     }
 }

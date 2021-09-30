@@ -5,18 +5,20 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
+using SurrogateLibrary.Helpers;
+
 namespace SemanticLibrary
 {
     public record Metadata
     {
         public Metadata()
         {
-            TermToConcepts = new List<TermToConcept>();
+            TermToConcepts = new ListEx<TermToConcept>();
         }
 
         [JsonConstructor]
         public Metadata(IList<TermToConcept> termToConcepts) =>
-            TermToConcepts = termToConcepts;
+            TermToConcepts = new ListEx<TermToConcept>(termToConcepts);
 
         public IList<TermToConcept> TermToConcepts { get; init; }
 

@@ -63,7 +63,7 @@ namespace SurrogateLibrary
         public string Name => Property != null ? Property.Name : Type?.Name;
 
         [JsonIgnore]
-        public string NameAlt => HasMultiplicity ? "$" : Name;
+        public string NameAlt => IsCollectedItem ? "$" : Name;
 
         [JsonIgnore]
         public T Info => Property != null ? Property.Info : Type.Info;
@@ -113,11 +113,15 @@ namespace SurrogateLibrary
         public bool IsOneToMany => this.Property != null &&
             (this.Property.PropertyType.IsCollection() || this.Property.PropertyType.IsDictionary());
 
+        [JsonIgnore]
+        public bool IsOneToOne => this.Property != null && !this.Property.PropertyType.IsBasicType && !IsOneToMany;
+
         /// <summary>
         /// True when the segment is the n-th element of a collection
         /// </summary>
         [JsonIgnore]
-        public bool HasMultiplicity => !IsRoot && this.Type != null;
+        public bool IsCollectedItem => this.Type != null && this.Previous != null
+            && this.Previous.IsOneToMany;
 
         public void ClearCache()
         {

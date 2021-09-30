@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using SurrogateLibrary;
+using SurrogateLibrary.Helpers;
 
 namespace SemanticLibrary
 {
@@ -34,7 +35,7 @@ namespace SemanticLibrary
         /// <param name="target"></param>
         /// <param name="getScore">The scoring function</param>
         /// <param name="onSelectEquallyScored">The function that resolves the ambiguities when multiple properties has the same score</param>
-        public IList<NavigationPair> GetScoredMappings(
+        public ListEx<NavigationPair> GetScoredMappings(
             IEnumerable<NavigationSegment<Metadata>> source,
             IEnumerable<NavigationSegment<Metadata>> target,
             Func<NavigationSegment<Metadata>, NavigationSegment<Metadata>, int> getScore,
@@ -72,7 +73,7 @@ namespace SemanticLibrary
             // Instead it may happen that a single source property may be mapped to multiple targets
             // In general this is legit, but we may want to avoid it setting allowOneSourceToMultipleTargets to false
 
-            List<NavigationPair> finalMap = new();
+            ListEx<NavigationPair> finalMap = new();
             HashSet<NavigationSegment<Metadata>> _excludedSources = new();
             foreach (var targetItem in targetList)
             {

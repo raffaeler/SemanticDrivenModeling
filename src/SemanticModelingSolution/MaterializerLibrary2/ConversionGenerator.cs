@@ -156,8 +156,10 @@ namespace MaterializerLibrary
         public Expression GetJsonConversionExpression(NavigationPair nodeMapping,
             Expression sourceExpression)
         {
-            var targetType = nodeMapping.Target.Property.PropertyType.GetOriginalType();
-            var sourceType = nodeMapping.Source.Property.PropertyType.GetOriginalType();
+            var source = nodeMapping.Source.GetLeaf();
+            var target = nodeMapping.Target.GetLeaf();
+            var sourceType = source.Property.PropertyType.GetOriginalType();
+            var targetType = target.Property.PropertyType.GetOriginalType();
 
             if (targetType.Name == "String" ||
                 targetType.Name == "Boolean")

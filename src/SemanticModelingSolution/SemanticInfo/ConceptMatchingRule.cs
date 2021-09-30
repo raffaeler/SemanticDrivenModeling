@@ -52,7 +52,7 @@ namespace SemanticLibrary
                 var flattenedTarget = GraphFlattener.FlattenHierarchy(candidate.Target, _targetTypeSystem);
 
                 var matcher = new AutomaticMapper(0, true);
-                IList<NavigationPair> mappings = matcher.GetScoredMappings(
+                var mappings = matcher.GetScoredMappings(
                     flattenedSource, flattenedTarget, GetPropertyScore, onSelectEquallyScored);
 
                 candidate.Mappings = mappings;

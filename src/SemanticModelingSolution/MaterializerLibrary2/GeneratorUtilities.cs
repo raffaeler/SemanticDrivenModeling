@@ -99,58 +99,52 @@ namespace MaterializerLibrary
             return Expression.Call(writer, writeMethod, propertyNameExpression, valueExpression);
         }
 
-        public static (Type root, IList<(PropertyInfo propertyInfo, PropertyKind propertyKind, Type propCoreType)> segments)
-            CreateSegments(TypeSystem<Metadata> typeSystem, /*ModelNavigationNode*/NavigationSegment<Metadata> modelNavigationNode)
-        {
-            var segments = new List<(PropertyInfo, PropertyKind, Type propCoreType)>();
-            var temp = modelNavigationNode;
-            Type root = null;
-            while (temp != null && (!temp.IsOneToMany || segments.Count == 0))
-            {
-                var propInfo = temp.Property.GetOriginalPropertyInfo(typeSystem);
-                var propCoreType = temp.Property.PropertyType.GetCoreType().GetOriginalType();
-                var propKind = temp.Property.GetKind();
-                if (temp.Previous == null) root = temp.Property.OwnerType.GetOriginalType();
-                temp = temp.Previous;
-                segments.Insert(0, (propInfo, propKind, propCoreType));
-            }
+        //public static (Type root, IList<(PropertyInfo propertyInfo, PropertyKind propertyKind, Type propCoreType)> segments)
+        //    CreateSegments(TypeSystem<Metadata> typeSystem, /*ModelNavigationNode*/NavigationSegment<Metadata> modelNavigationNode)
+        //{
+        //    var segments = new List<(PropertyInfo, PropertyKind, Type propCoreType)>();
+        //    var temp = modelNavigationNode;
+        //    Type root = null;
+        //    while (temp != null && (!temp.IsOneToMany || segments.Count == 0))
+        //    {
+        //        var propInfo = temp.Property.GetOriginalPropertyInfo(typeSystem);
+        //        var propCoreType = temp.Property.PropertyType.GetCoreType().GetOriginalType();
+        //        var propKind = temp.Property.GetKind();
+        //        if (temp.Previous == null) root = temp.Property.OwnerType.GetOriginalType();
+        //        temp = temp.Previous;
+        //        segments.Insert(0, (propInfo, propKind, propCoreType));
+        //    }
 
-            return (root, segments);
-        }
+        //    return (root, segments);
+        //}
 
         /// <summary>
         /// This expression cannot return a typed lambda because
         /// the return type is inside the metadata and not known type at compile time
         /// </summary>
         public static Expression CreateGetValue(TypeSystem<Metadata> typeSystem, ParameterExpression inputObject,
-            /*ModelNavigationNode*/NavigationSegment<Metadata> modelNavigationNode)
+            /*ModelNavigationNode*/NavigationSegment<Metadata> navigation)
         {
-            var (_, segments) = CreateSegments(typeSystem, modelNavigationNode);
-            //var segs = string.Join(".", segments.Select(x => x.propertyInfo.Name));
-
+            var temp = navigation.GetLeaf();
             Expression parent = inputObject;
-            for(int i=0; i<segments.Count; i++)
+            while(temp != null && temp.Property != null)
             {
-                //a.b.c.d
-                //r r v r
-                var segment = segments[i];
-                if (i != 0 && !parent.Type.IsValueType)
+                var propertyInfo = temp.Property.GetOriginalPropertyInfo(typeSystem);
+                if(!temp.Property.PropertyType.IsValueType())
                 {
                     // null check
                     var test = Expression.Equal(parent, Expression.Default(parent.Type));
                     parent = Expression.Condition(test,
-                        Expression.Default(segment.propertyInfo.PropertyType),
-                        Expression.Property(parent, segment.propertyInfo));
+                        Expression.Default(temp.Property.PropertyType.GetOriginalType()),
+                        Expression.Property(parent, propertyInfo));
                 }
                 else
                 {
-                    parent = Expression.Property(parent, segment.propertyInfo);
+                    parent = Expression.Property(parent, propertyInfo);
                 }
+
+                temp = temp.Previous;
             }
-            //foreach (var segment in segments)
-            //{
-            //    parent = Expression.Property(parent, segment.propertyInfo);
-            //}
 
             return parent;
         }

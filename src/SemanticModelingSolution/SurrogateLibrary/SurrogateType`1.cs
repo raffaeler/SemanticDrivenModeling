@@ -66,5 +66,10 @@ namespace SurrogateLibrary
             }
         }
 
+        public override string ToString()
+        {
+            return $"[{Index}] {FullName}";
+        }
+
     }
 }
