@@ -122,10 +122,17 @@ namespace MaterializerLibrary
         /// This expression cannot return a typed lambda because
         /// the return type is inside the metadata and not known type at compile time
         /// </summary>
-        public static Expression CreateGetValue(TypeSystem<Metadata> typeSystem, ParameterExpression inputObject,
-            /*ModelNavigationNode*/NavigationSegment<Metadata> navigation)
+        public static Expression CreateGetValue(TypeSystem<Metadata> typeSystem, string path,
+            ParameterExpression inputObject, /*ModelNavigationNode*/NavigationSegment<Metadata> sourceNavigation)
         {
-            var temp = navigation.GetLeaf();
+            var temp = sourceNavigation.GetRoot().FindForwardByPath(path);
+            temp = temp?.Next;
+            if (temp.Property == null) temp = temp?.Next;
+            if (temp == null)
+            {
+                throw new Exception($"Invalid path: {path}");
+            }
+
             Expression parent = inputObject;
             while(temp != null && temp.Property != null)
             {
@@ -143,7 +150,39 @@ namespace MaterializerLibrary
                     parent = Expression.Property(parent, propertyInfo);
                 }
 
-                temp = temp.Previous;
+                temp = temp.Next;
+            }
+
+            return parent;
+        }
+
+        public static Expression CreateGetEnumerable(TypeSystem<Metadata> typeSystem, string path,
+            ParameterExpression inputObject, NavigationSegment<Metadata> sourceNavigation)
+        {
+            var temp = sourceNavigation.GetRoot().FindForwardByPath(path);
+            if (temp == null)
+            {
+                throw new Exception($"Invalid path: {path}");
+            }
+
+            Expression parent = inputObject;
+            while (temp != null && temp.Property != null)
+            {
+                var propertyInfo = temp.Property.GetOriginalPropertyInfo(typeSystem);
+                if (temp.Path != path && !temp.Property.PropertyType.IsValueType())
+                {
+                    // null check
+                    var test = Expression.Equal(parent, Expression.Default(parent.Type));
+                    parent = Expression.Condition(test,
+                        Expression.Default(temp.Property.PropertyType.GetOriginalType()),
+                        Expression.Property(parent, propertyInfo));
+                }
+                else
+                {
+                    parent = Expression.Property(parent, propertyInfo);
+                }
+
+                temp = temp.Next;
             }
 
             return parent;

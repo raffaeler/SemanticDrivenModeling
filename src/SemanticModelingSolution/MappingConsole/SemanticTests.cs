@@ -9,9 +9,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 using MaterializerLibrary;
-
 using SemanticLibrary;
-
 using SurrogateLibrary;
 
 namespace MappingConsole
@@ -38,11 +36,12 @@ namespace MappingConsole
     internal class SemanticTests
     {
         private DomainBase _domain;
-        private TypeSystem<Metadata> _sourceTypeSystem;
-        private TypeSystem<Metadata> _targetTypeSystem;
-        private SurrogateType<Metadata> _source;
-        private SurrogateType<Metadata> _target;
-        private Mapping _currentMapping;
+        private TypeSystem<Metadata> _orderTypeSystem;
+        private TypeSystem<Metadata> _onlineOrderTypeSystem;
+        private SurrogateType<Metadata> _orderType;
+        private SurrogateType<Metadata> _onlineOrderType;
+        private Mapping _orderToOnlineOrderMapping;
+        private Mapping _onlineOrderToOrderMapping;
 
 
         public void Run()
@@ -62,7 +61,12 @@ namespace MappingConsole
             //DeserializeMappingAndAssert();
 
             DeserializeMapping();
-            SerializeWithMapping();
+            
+            //SerializeOrders();
+            //SerializeOnlineOrders();
+
+            DeserializeOrders();
+            //DeserializeOnlineOrders();
         }
 
         private void AssignSemantic()
@@ -70,74 +74,85 @@ namespace MappingConsole
             var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
             _domain = JsonSerializer.Deserialize<DomainBase>(jsonDomainDefinitions);
 
-            _sourceTypeSystem = new TypeSystem<Metadata>();
-            _source = _sourceTypeSystem.GetOrCreate(typeof(SimpleDomain1.Order));
-            _sourceTypeSystem.UpdateCache();
+            _orderTypeSystem = new TypeSystem<Metadata>();
+            _orderType = _orderTypeSystem.GetOrCreate(typeof(SimpleDomain1.Order));
+            _orderTypeSystem.UpdateCache();
 
-            _targetTypeSystem = new TypeSystem<Metadata>();
-            _target = _targetTypeSystem.GetOrCreate(typeof(SimpleDomain2.OnlineOrder));
-            _targetTypeSystem.UpdateCache();
+            _onlineOrderTypeSystem = new TypeSystem<Metadata>();
+            _onlineOrderType = _onlineOrderTypeSystem.GetOrCreate(typeof(SimpleDomain2.OnlineOrder));
+            _onlineOrderTypeSystem.UpdateCache();
 
             var analysis = new SemanticAnalysis2(_domain);
-            analysis.AssignSemantics(_source);
-            analysis.AssignSemantics(_target);
+            analysis.AssignSemantics(_orderType);
+            analysis.AssignSemantics(_onlineOrderType);
         }
 
         private void ComputeMappings()
         {
-            var matcher = new ConceptMatchingRule(_sourceTypeSystem, _targetTypeSystem, true);
-            var mappings = matcher.ComputeMappings(_source);
-            _currentMapping = mappings.First();
+            var matcher1 = new ConceptMatchingRule(_orderTypeSystem, _onlineOrderTypeSystem, true);
+            var orderToOnlineOrderMappings = matcher1.ComputeMappings(_orderType);
+            _orderToOnlineOrderMapping = orderToOnlineOrderMappings.First();
+
+            var matcher2 = new ConceptMatchingRule(_onlineOrderTypeSystem, _orderTypeSystem, true);
+            var onlineOrderToOrderMappings = matcher2.ComputeMappings(_onlineOrderType);
+            _onlineOrderToOrderMapping = onlineOrderToOrderMappings.First();
         }
 
         private void SerializeMapping()
         {
-            var orderTypeSystem = JsonSerializer.Serialize(_sourceTypeSystem);
-            var onlineOrderTypeSystem = JsonSerializer.Serialize(_targetTypeSystem);
-            var mapping = JsonSerializer.Serialize(_currentMapping);
+            var orderTypeSystem = JsonSerializer.Serialize(_orderTypeSystem);
+            var onlineOrderTypeSystem = JsonSerializer.Serialize(_onlineOrderTypeSystem);
+            var orderToOnlineOrderMappings = JsonSerializer.Serialize(_orderToOnlineOrderMapping);
+            var onlineOrderToOrderMappings = JsonSerializer.Serialize(_onlineOrderToOrderMapping);
             File.WriteAllText("V2OrderTypeSystem.json", orderTypeSystem);
             File.WriteAllText("V2OnlineOrderTypeSystem.json", onlineOrderTypeSystem);
-            File.WriteAllText("V2Order2OnlineOrderMapping.json", mapping);
+            File.WriteAllText("V2Order2OnlineOrderMapping.json", orderToOnlineOrderMappings);
+            File.WriteAllText("V2OnlineOrder2OrderMapping.json", onlineOrderToOrderMappings);
         }
 
         private void DeserializeMapping()
         {
-            var orderTypeSystem = File.ReadAllText("V2OrderTypeSystem.json");
-            var onlineOrderTypeSystem = File.ReadAllText("V2OnlineOrderTypeSystem.json");
-            var mapping = File.ReadAllText("V2Order2OnlineOrderMapping.json");
-            _sourceTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(orderTypeSystem);
-            _targetTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(onlineOrderTypeSystem);
-            _currentMapping = JsonSerializer.Deserialize<Mapping>(mapping);
+            var orderTypeSystemJson = File.ReadAllText("V2OrderTypeSystem.json");
+            var onlineOrderTypeSystemJson = File.ReadAllText("V2OnlineOrderTypeSystem.json");
+            var orderToOnlineOrderMappingsJson = File.ReadAllText("V2Order2OnlineOrderMapping.json");
+            var onlineOrderToOrderMappingsJson = File.ReadAllText("V2OnlineOrder2OrderMapping.json");
+            _orderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(orderTypeSystemJson);
+            _onlineOrderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(onlineOrderTypeSystemJson);
+            _orderToOnlineOrderMapping = JsonSerializer.Deserialize<Mapping>(orderToOnlineOrderMappingsJson);
+            _onlineOrderToOrderMapping = JsonSerializer.Deserialize<Mapping>(onlineOrderToOrderMappingsJson);
 
-            _sourceTypeSystem.UpdateCache();
-            _targetTypeSystem.UpdateCache();
-            _currentMapping.UpdateCache(_sourceTypeSystem, _targetTypeSystem);
+            _orderTypeSystem.UpdateCache();
+            _onlineOrderTypeSystem.UpdateCache();
+            _orderToOnlineOrderMapping.UpdateCache(_orderTypeSystem, _onlineOrderTypeSystem);
+            _onlineOrderToOrderMapping.UpdateCache(_onlineOrderTypeSystem, _orderTypeSystem);
         }
 
         private void DeserializeMappingAndAssert()
         {
-            var orderTypeSystem = File.ReadAllText("V2OrderTypeSystem.json");
-            var onlineOrderTypeSystem = File.ReadAllText("V2OnlineOrderTypeSystem.json");
-            var mapping = File.ReadAllText("V2Order2OnlineOrderMapping.json");
-            var sourceTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(orderTypeSystem);
-            var targetTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(onlineOrderTypeSystem);
-            var currentMapping = JsonSerializer.Deserialize<Mapping>(mapping);
+            var orderTypeSystemJson = File.ReadAllText("V2OrderTypeSystem.json");
+            var onlineOrderTypeSystemJson = File.ReadAllText("V2OnlineOrderTypeSystem.json");
+            var orderToOnlineOrderMappingsJson = File.ReadAllText("V2Order2OnlineOrderMapping.json");
+            var onlineOrderToOrderMappingsJson = File.ReadAllText("V2OnlineOrder2OrderMapping.json");
+            var orderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(orderTypeSystemJson);
+            var onlineOrderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(onlineOrderTypeSystemJson);
+            var orderToOnlineOrderMapping = JsonSerializer.Deserialize<Mapping>(orderToOnlineOrderMappingsJson);
+            var onlineOrderToOrderMapping = JsonSerializer.Deserialize<Mapping>(onlineOrderToOrderMappingsJson);
 
-            sourceTypeSystem.UpdateCache();
-            targetTypeSystem.UpdateCache();
-            currentMapping.UpdateCache(sourceTypeSystem, targetTypeSystem);
-            Debug.Assert(sourceTypeSystem == _sourceTypeSystem);
-            Debug.Assert(sourceTypeSystem == _sourceTypeSystem);
-            Debug.Assert(currentMapping == _currentMapping);
-
-            var diffProps = sourceTypeSystem.Properties.Except(_sourceTypeSystem.Properties).ToArray();
+            orderTypeSystem.UpdateCache();
+            onlineOrderTypeSystem.UpdateCache();
+            orderToOnlineOrderMapping.UpdateCache(orderTypeSystem, onlineOrderTypeSystem);
+            onlineOrderToOrderMapping.UpdateCache(onlineOrderTypeSystem, orderTypeSystem);
+            Debug.Assert(orderTypeSystem == _orderTypeSystem);
+            Debug.Assert(onlineOrderTypeSystem == _onlineOrderTypeSystem);
+            Debug.Assert(orderToOnlineOrderMapping == _orderToOnlineOrderMapping);
+            Debug.Assert(onlineOrderToOrderMapping == _onlineOrderToOrderMapping);
         }
 
-        private void SerializeWithMapping()
+        private void SerializeOrders()
         {
             var settings = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_sourceTypeSystem, _targetTypeSystem, _currentMapping), },
+                Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
             };
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
@@ -146,6 +161,46 @@ namespace MappingConsole
                 JsonSerializer.Deserialize(json, typeof(SimpleDomain2.OnlineOrder[]));
         }
 
+        private void SerializeOnlineOrders()
+        {
+            var settings = new JsonSerializerOptions()
+            {
+                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderTypeSystem, _onlineOrderToOrderMapping), },
+            };
+
+            var sourceObjects = SimpleDomain2.Samples.GetOnlineOrders();
+            var json = JsonSerializer.Serialize(sourceObjects, settings);
+            var targetObjects = (IEnumerable<SimpleDomain1.Order>)
+                JsonSerializer.Deserialize(json, typeof(SimpleDomain1.Order[]));
+        }
+
+        private void DeserializeOrders()
+        {
+            var settings = new JsonSerializerOptions()
+            {
+                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderTypeSystem, _onlineOrderToOrderMapping), },
+            };
+
+            var sourceObjects = SimpleDomain2.Samples.GetOnlineOrders();
+            var json = JsonSerializer.Serialize(sourceObjects);
+
+            var targetObjects = (IEnumerable<SimpleDomain1.Order>)
+                JsonSerializer.Deserialize(json, typeof(SimpleDomain1.Order[]), settings);
+        }
+
+        private void DeserializeOnlineOrders()
+        {
+            var settings = new JsonSerializerOptions()
+            {
+                Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
+            };
+
+            var sourceObjects = SimpleDomain1.Samples.GetOrders();
+            var json = JsonSerializer.Serialize(sourceObjects);
+
+            var targetObjects = (IEnumerable<SimpleDomain2.OnlineOrder>)
+                JsonSerializer.Deserialize(json, typeof(SimpleDomain2.OnlineOrder[]), settings);
+        }
 
     }
 }

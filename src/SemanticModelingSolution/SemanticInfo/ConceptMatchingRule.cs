@@ -133,7 +133,7 @@ namespace SemanticLibrary
             var target = targetRoot.GetLeaf();
 
             var sourceContexts = source.Property.GetOwnerType(_sourceTypeSystem).Info.CandidateConcepts;
-            var targetContexts = target.Property.GetOwnerType(_sourceTypeSystem).Info.CandidateConcepts;
+            var targetContexts = target.Property.GetOwnerType(_targetTypeSystem).Info.CandidateConcepts;
             var isValidated = ValidateContexts(source, target);
 
             if (_enableVerboseLogOnConsole) VerboseLog(source, target, isValidated);

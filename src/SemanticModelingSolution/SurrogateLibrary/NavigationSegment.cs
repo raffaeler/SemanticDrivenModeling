@@ -68,6 +68,30 @@ namespace SurrogateLibrary
         [JsonIgnore]
         public T Info => Property != null ? Property.Info : Type.Info;
 
+        public NavigationSegment<T> FindForwardByPath(string path)
+        {
+            var temp = this;
+            while (temp != null)
+            {
+                if (temp.Path == path) return temp;
+                temp = temp.Next;
+            }
+
+            return null;
+        }
+
+        public NavigationSegment<T> FindBackwardByPath(string path)
+        {
+            var temp = this;
+            while (temp != null)
+            {
+                if (temp.Path == path) return temp;
+                temp = temp.Previous;
+            }
+
+            return null;
+        }
+
         public void SetNext(NavigationSegment<T> next) => this.Next = next;
 
         private void OnEach(Func<NavigationSegment<T>, bool> func)

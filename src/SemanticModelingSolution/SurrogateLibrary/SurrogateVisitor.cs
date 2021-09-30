@@ -81,7 +81,9 @@ namespace SurrogateLibrary
             {
                 collectionPath = path;
                 OnBeginVisitCollectionProperty(property, collectionPath);
-                path += ".$";
+                //path += ".$";
+                var navType = property.PropertyType.GetCoreType();
+                path += $".{navType.Name}";
             }
 
             OnVisitProperty(property, path);

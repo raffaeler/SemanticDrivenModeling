@@ -32,7 +32,7 @@ namespace MaterializerLibrary
 
             OneToManyContext.Reset();
             _codeGenContext = new();
-            _codeGenContext.Push(new SimpleContext(typeof(T)));
+            _codeGenContext.Push(new SimpleContext(typeof(T), typeof(T).Name));
             inputWriter = Expression.Parameter(typeof(Utf8JsonWriter), "writer");
         }
 
@@ -139,7 +139,7 @@ namespace MaterializerLibrary
             }
 
             var currentContext = _codeGenContext.Peek();
-            var accessor = GeneratorUtilities.CreateGetValue(_typeSystem, context.Variable,
+            var accessor = GeneratorUtilities.CreateGetValue(_typeSystem, context.SourcePath, context.Variable,
                 scoredPropertyMapping.Source);
 
             var valueExpression = _conversionGenerator.GetJsonConversionExpression(scoredPropertyMapping, accessor);
@@ -155,11 +155,11 @@ namespace MaterializerLibrary
             Console.WriteLine();
         }
 
-        public override void OnBeginVisitCollectionProperty(SurrogateProperty<Metadata> modelPropertyNode, string path)
+        public override void OnBeginVisitCollectionProperty(SurrogateProperty<Metadata> modelPropertyNode, string targetPath)
         {
             // begin collection
             //var sourcePath = scoredPropertyMapping.Source.GetMapPath();
-            Console.WriteLine($"Start  C> {path} ");
+            Console.WriteLine($"Start  C> {targetPath} ");
             //writer.WriteStartArray(modelPropertyNode.Name);
             var currentContext = _codeGenContext.Peek();
             var writeExpression = GeneratorUtilities.JsonWriteStartArray(inputWriter, modelPropertyNode.Name);
@@ -169,8 +169,8 @@ namespace MaterializerLibrary
             // all the expressions after this must use this as "root"
             // in the end-collection we create the foreach with that variable
 
-            var sourceModelPropertyNode = FindFirstCollectionOnSourceModelPropertyNode(path);
-            var context = new OneToManyContext(_typeSystem, sourceModelPropertyNode, path);
+            var sourceModelPropertyNode = FindFirstCollectionOnSourceModelPropertyNode(targetPath);
+            var context = new OneToManyContext(_typeSystem, sourceModelPropertyNode, targetPath);
             _codeGenContext.Push(context);
         }
 
@@ -202,7 +202,7 @@ namespace MaterializerLibrary
             {
                 if (path.Contains(targetPath))
                 {
-                    navigation = _targetLookup[path].Source;
+                    navigation = _targetLookup[path].Source.GetLeaf();
                     while (navigation != null)
                     {
                         if (navigation.IsOneToMany)// ModelPropertyNode.PropertyKind.IsOneToMany())
@@ -223,6 +223,7 @@ namespace MaterializerLibrary
 
         private interface ICodeGenerationContext
         {
+            string SourcePath { get; }
             NavigationSegment<Metadata> PropertyNode { get; }
             ParameterExpression Variable { get; }
             IList<Expression> Statements { get; }
@@ -230,13 +231,15 @@ namespace MaterializerLibrary
 
         private class SimpleContext : ICodeGenerationContext
         {
-            public SimpleContext(Type type)
+            public SimpleContext(Type type, string sourcePath)
             {
                 PropertyNode = null;
                 Variable = Expression.Parameter(type);
                 Statements = new List<Expression>();
+                SourcePath = sourcePath;
             }
 
+            public string SourcePath { get; }
             public NavigationSegment<Metadata> PropertyNode { get; }
             public ParameterExpression Variable { get; }
             public IList<Expression> Statements { get; }
@@ -252,11 +255,12 @@ namespace MaterializerLibrary
         {
             private static int _id = 0;
             TypeSystem<Metadata> _typeSystem;
-            public OneToManyContext(TypeSystem<Metadata> typeSystem, NavigationSegment<Metadata> collectionNode, string path)
+            public OneToManyContext(TypeSystem<Metadata> typeSystem, NavigationSegment<Metadata> collectionNode, string targetPath)
             {
                 _typeSystem = typeSystem;
                 PropertyNode = collectionNode;
-                Path = path;
+                TargetPath = targetPath;
+                SourcePath = collectionNode.Path;
                 var itemTypeToIterate = PropertyNode.Property.PropertyType.GetCoreType().GetOriginalType();
                 _id++;
                 Variable = Expression.Variable(itemTypeToIterate, $"loopVar{_id}");
@@ -265,7 +269,12 @@ namespace MaterializerLibrary
             }
 
             public NavigationSegment<Metadata> PropertyNode { get; }
-            public string Path { get; }
+            public string TargetPath { get; }
+
+            /// <summary>
+            /// The path of the Variable
+            /// </summary>
+            public string SourcePath { get; }
             public ParameterExpression Variable { get; }
             public IList<Expression> Statements { get; }
             public List<ParameterExpression> BodyVariables { get; }
@@ -274,7 +283,8 @@ namespace MaterializerLibrary
 
             public Expression CreateForEach(ParameterExpression outerObject)
             {
-                var enumerable = GeneratorUtilities.CreateGetValue(_typeSystem, outerObject, PropertyNode);
+                //var enumerable = GeneratorUtilities.CreateGetValue(_typeSystem, SourcePath, outerObject, PropertyNode);
+                var enumerable = GeneratorUtilities.CreateGetEnumerable(_typeSystem, SourcePath, outerObject, PropertyNode);
                 return GeneratorUtilities.ForEach(enumerable, Variable, CreateBody());
             }
 

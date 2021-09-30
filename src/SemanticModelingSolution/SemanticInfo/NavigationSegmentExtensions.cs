@@ -13,7 +13,7 @@ namespace SemanticLibrary
         private const string _dotPathSeparator = ".";
 
         public static string GetObjectMapPath(this NavigationSegment<Metadata> segment)
-            => segment.GetLeaf().PathAlt;
+            => segment.GetLeaf().Path;// PathAlt;
 
 
         public static string GetMapPath(this NavigationSegment<Metadata> segment, bool skipCurrentProperty = false)
@@ -22,7 +22,7 @@ namespace SemanticLibrary
             if (skipCurrentProperty)
                 temp = temp.Previous;
             if (temp == null) return string.Empty;
-            return temp.PathAlt;
+            return temp.Path;// PathAlt;
         }
 
         public static string GetConceptualMapPath(this NavigationSegment<Metadata> segment,
