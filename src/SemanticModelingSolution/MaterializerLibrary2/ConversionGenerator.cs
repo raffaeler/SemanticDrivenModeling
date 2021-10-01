@@ -52,6 +52,7 @@ namespace MaterializerLibrary
         private Dictionary<string, GetConvertedValueDelegate> _cacheGetValue;
         private PropertyInfo _readerTokenType;
         private MethodInfo _readerSkipMethodInfo;
+        private MethodInfo _readerReadMethodInfo;
 
         private Type[] _jsonNumericTypes = new Type[]
         {
@@ -67,6 +68,10 @@ namespace MaterializerLibrary
 
         public delegate void SetPropertiesDelegate(ref Utf8JsonReader reader, object[] instances);
         public delegate object GetConvertedValueDelegate(ref Utf8JsonReader reader);
+
+        public PropertyInfo ReaderTokenType => _readerTokenType;
+        public MethodInfo ReaderSkip => _readerSkipMethodInfo;
+        public MethodInfo ReaderRead => _readerReadMethodInfo;
 
         public ConversionGenerator(/*TypeSystem<Metadata> typeSystem, */ConversionContext conversionContext = null)
         {
@@ -101,6 +106,8 @@ namespace MaterializerLibrary
 
             _readerTokenType = reader.GetProperty("TokenType");
             _readerSkipMethodInfo = reader.GetMethod("Skip");
+            _readerReadMethodInfo = reader.GetMethod("Read");
+
             _readerGetValue = new Dictionary<string, MethodInfo>()
             {
                 { "Boolean",            reader.GetMethod("GetBoolean")          },

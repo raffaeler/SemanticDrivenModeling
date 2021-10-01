@@ -66,12 +66,21 @@ namespace MaterializerLibrary
             _sourcePath = new();
             _objects = new();
         }
-
+/*
         // deserialization:
         // json has the format of a type described in _targetTypeSystem
         // deserialized object is part of the _sourceTypeSystem
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            //var utilities = new DeserializeUtilities<T>(_conversionGenerator);
+            //var exp = utilities.CreateExpression();
+            //var del = exp.Compile();
+            //var instance = del(ref reader, typeToConvert, options);
+
+            //return instance;
+
+
+
             Debug.Assert(SurrogateType.GetFullName(typeToConvert) == _map.Target.FullName);
             InitializeForEachObject();
 
@@ -298,7 +307,7 @@ namespace MaterializerLibrary
 
             return default(T);
         }
-
+*/
         protected virtual void LogState(JsonTokenType jsonTokenType, int depth,
             string sourcePath, IEnumerable<NavigationPair> nodeMappings,
             string message = null)

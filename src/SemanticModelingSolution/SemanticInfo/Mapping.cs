@@ -35,7 +35,7 @@ namespace SemanticLibrary
             foreach (var propertyMapping in Mappings)
             {
                 // _sourceLookup is needed in the Read to deserialize
-                var sourcePath = propertyMapping.Source.GetMapPath();
+                var sourcePath = propertyMapping.Source.GetMapPath(true);
                 if (!sourceLookup.TryGetValue(sourcePath, out var listSource))
                 {
                     listSource = new();

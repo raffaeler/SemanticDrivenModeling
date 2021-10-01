@@ -16,13 +16,10 @@ namespace SemanticLibrary
             => segment.GetLeaf().Path;// PathAlt;
 
 
-        public static string GetMapPath(this NavigationSegment<Metadata> segment, bool skipCurrentProperty = false)
+        public static string GetMapPath(this NavigationSegment<Metadata> segment, bool useAltPath = false)
         {
             var temp = segment.GetLeaf();
-            if (skipCurrentProperty)
-                temp = temp.Previous;
-            if (temp == null) return string.Empty;
-            return temp.Path;// PathAlt;
+            return useAltPath ? temp?.PathAlt : temp?.Path;
         }
 
         public static string GetConceptualMapPath(this NavigationSegment<Metadata> segment,
