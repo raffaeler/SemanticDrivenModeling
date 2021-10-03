@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MaterializerLibrary
 {
-    internal interface IContainer
+    public interface IContainer
     {
         Type Type { get; }
     }

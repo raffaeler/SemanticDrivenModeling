@@ -247,12 +247,12 @@ namespace MaterializerLibrary
             }
         }
 
-        public object Materialize(NavigationPair navigationPair)
+        public IContainer Materialize(NavigationPair navigationPair)
         {
             var targetNavigation = navigationPair.Target.GetLeaf();
             var inst = GetOrCreateInstance(targetNavigation);
-            var instItem = ((IContainerDebug)inst).ObjectItem;//((Container<object>)inst).Item;
-            return instItem;
+            //var instItem = ((IContainerDebug)inst).ObjectItem;//((Container<object>)inst).Item;
+            return inst;
         }
 
         private IContainer GetOrCreateInstance(NavigationSegment<Metadata> targetNavigation)

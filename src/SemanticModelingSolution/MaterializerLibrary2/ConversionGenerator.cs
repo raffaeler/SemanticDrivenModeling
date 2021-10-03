@@ -66,7 +66,7 @@ namespace MaterializerLibrary
             "Int32", "UInt32", "Int64", "UInt64"
         };
 
-        public delegate void SetPropertiesDelegate(ref Utf8JsonReader reader, object[] instances);
+        public delegate void SetPropertiesDelegate(ref Utf8JsonReader reader, IContainer[] instances);
         public delegate object GetConvertedValueDelegate(ref Utf8JsonReader reader);
 
         public PropertyInfo ReaderTokenType => _readerTokenType;
@@ -161,6 +161,9 @@ namespace MaterializerLibrary
             _cacheGetValue = new();
         }
 
+        /// <summary>
+        /// Serialization
+        /// </summary>
         public Expression GetJsonConversionExpression(NavigationPair nodeMapping,
             Expression sourceExpression)
         {
@@ -209,6 +212,9 @@ namespace MaterializerLibrary
             throw new Exception($"Unsupported basic type: {targetType.Namespace}.{targetType.Name}");
         }
 
+        /// <summary>
+        /// Serialization
+        /// </summary>
         private Expression CreateConvertedExpression(IConversion converter, Type sourceType, Type targetType, Expression sourceExpression)
         {
             if (!_converterTypes.TryGetValue(targetType.Name, out var converterType))
@@ -224,6 +230,9 @@ namespace MaterializerLibrary
             return conversionCall;
         }
 
+        /// <summary>
+        /// Deserialization
+        /// </summary>
         public SetPropertiesDelegate GetConverterMultiple(string sourcePath, IReadOnlyCollection<NavigationPair> nodeMappings)
         {
             if (!_cacheSetProperty.TryGetValue(sourcePath, out var lambda))
@@ -251,7 +260,7 @@ namespace MaterializerLibrary
                 throw new ArgumentException($"The type {sourceTypeName} is not valid for reading data from a json source");
             }
 
-            var inputInstances = Expression.Parameter(typeof(object[]), "inputInstancesArray");
+            var inputInstances = Expression.Parameter(typeof(IContainer[]), "inputInstancesArray");
 
             List<Expression> nullStatements = new();
             List<Expression> valueStatements = new();
@@ -327,11 +336,15 @@ namespace MaterializerLibrary
                 ? converterType.GetMethod("FromNull")
                 : converterType.GetMethod("From", new Type[] { sourceType });
 
-            //((Article)instances[i++]).ExpirationDate
+            //((Article)((Container<Article>)instances[i++]).Item).ExpirationDate
+            var typedContainerType = typeof(Container<>).MakeGenericType(targetInstanceType);
+            var itemProperty = typedContainerType.GetProperty("Item");
             var left = Expression.Property(
                 Expression.Convert(
-                    Expression.ArrayIndex(inputInstancesArray, Expression.Constant(index)),
-                        targetInstanceType),
+                    Expression.MakeMemberAccess(
+                        Expression.Convert(
+                            Expression.ArrayIndex(inputInstancesArray, Expression.Constant(index)),
+                                typedContainerType), itemProperty), targetInstanceType),
                 propertyName);
 
             // ((ToDateTimeConversion)_conversion).FromNull()
