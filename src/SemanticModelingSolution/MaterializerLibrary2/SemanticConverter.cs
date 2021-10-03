@@ -54,56 +54,6 @@ namespace MaterializerLibrary
             };
 
             _conversionGenerator = new(context);   // the new is here in order to recycle the generator cache
-
-
-            foreach (var m in map.Mappings
-                .Select(m => (mapping: m, source: m.Source.GetLeafPathAlt(), target: m.Target.GetLeafPath()))
-                .OrderBy(m => m.source))
-            {
-                // retrieve all the "collected item" nodes from left to right
-                var source = m.mapping.Source.GetRoot();
-                List<NavigationSegment<Metadata>> sourceCollectedItems = new();
-                source.OnAllAfter(item =>
-                {
-                    if (item.IsCollectedItem) sourceCollectedItems.Add(item);
-                    return true;
-                });
-
-                // retrieve all the "collected item" nodes from left to right
-                var target = m.mapping.Target.GetRoot();
-                List<NavigationSegment<Metadata>> targetCollectedItems = new();
-                target.OnAllAfter(item =>
-                {
-                    if (item.IsCollectedItem) targetCollectedItems.Add(item);
-                    return true;
-                });
-
-
-                var j = 0;
-                for (int i = 0; i < sourceCollectedItems.Count; i++)
-                {
-                    var sourceCollectedItem = sourceCollectedItems[i];
-                    if (targetCollectedItems.Count <= j) break;
-
-                    var key = sourceCollectedItem.PathAlt;
-                    if (!_targetDeletablePaths.TryGetValue(key, out HashSet<string> deletables))
-                    {
-                        deletables = new HashSet<string>();
-                        _targetDeletablePaths[key] = deletables;
-                    }
-
-                    var targetTemp = targetCollectedItems[j];
-                    while (targetTemp != null && !targetTemp.IsLeaf)
-                    {
-                        deletables.Add(targetTemp.PathAlt);
-                        targetTemp = targetTemp.Next;
-                    }
-
-                    j++;
-                }
-            }
-
-
         }
 
         protected bool LogObjectArrayEnabled { get; set; } = true;
