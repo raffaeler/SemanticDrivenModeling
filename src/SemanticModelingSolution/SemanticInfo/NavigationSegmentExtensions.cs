@@ -12,15 +12,11 @@ namespace SemanticLibrary
     {
         private const string _dotPathSeparator = ".";
 
-        public static string GetObjectMapPath(this NavigationSegment<Metadata> segment)
-            => segment.GetLeaf().Path;// PathAlt;
+        public static string GetLeafPath(this NavigationSegment<Metadata> segment)
+            => segment.GetLeaf().Path;
 
-
-        public static string GetMapPath(this NavigationSegment<Metadata> segment, bool useAltPath = false)
-        {
-            var temp = segment.GetLeaf();
-            return useAltPath ? temp?.PathAlt : temp?.Path;
-        }
+        public static string GetLeafPathAlt(this NavigationSegment<Metadata> segment)
+            => segment.GetLeaf().PathAlt;
 
         public static string GetConceptualMapPath(this NavigationSegment<Metadata> segment,
             string labelFirstLine, int firstPadding, string separator = "\r\n")

@@ -45,6 +45,26 @@ namespace SurrogateLibrary
 
         public T Info { get; internal set; }
 
+        public override Type GetOriginalType()
+        {
+            var assemblyName = AssemblyName == KnownConstants.PlaceholderForSystemAssemblyName
+                ? null : AssemblyName;
+
+            if (this.IsGenericType())
+            {
+                var genericType = TypeHelper.GetEntityType($"{Namespace}.{Name}", assemblyName);
+                if (genericType != null)
+                {
+                    if (genericType.GetGenericArguments().Length == 1)
+                        _type = genericType.MakeGenericType(this.InnerType1.GetOriginalType());
+                    else
+                        _type = genericType.MakeGenericType(this.InnerType1.GetOriginalType(), this.InnerType2.GetOriginalType());
+                }
+            }
+
+            return _type ??= TypeHelper.GetEntityType(FullName, assemblyName);
+        }
+
 
         public void UpdateCache(TypeSystemBase<T> typeSystem)
         {

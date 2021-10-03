@@ -15,34 +15,48 @@ namespace MaterializerLibrary
 {
     public partial class SemanticConverter<T> : JsonConverter<T>
     {
-        public record SourcePath
-        {
-            public SourcePath(string path, bool isArrayElement = false)
-                => (Path, IsArray) = (path, isArrayElement);
+        private readonly IReadOnlyCollection<NavigationPair> _emptyMappings = Array.Empty<NavigationPair>();
 
-            public string Path { get; init; }
-            public bool IsObject { get; set; }
-            public bool IsArray { get; set; }
-            public bool IsArrayElement { get; set; }
+        //ScoredPropertyMapping<ModelNavigationNode>
+        protected Dictionary<string, List<NavigationPair>> _sourceLookup;
+
+        // key is the source path
+        // values are the deletable objects
+        protected Dictionary<string, HashSet<string>> _targetDeletablePaths = new();
+
+        public interface IContainer
+        {
+            Type Type { get; }
         }
 
-        private Stack<SourcePath> _sourcePaths = new();
-        private bool _isFinished;
+        private interface IContainerDebug
+        {
+            object ObjectItem { get; }
+        }
+
+        public class Container<K> : IContainer, IContainerDebug
+        {
+            public Container(K item) { Item = item; }
+            public K Item { get; set; }
+            public Type Type => typeof(K);
+            public object ObjectItem => Item;
+        }
+
+        public Dictionary<string, IContainer> Instances = new();
 
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            //var utilities = new DeserializeUtilities<T>(_conversionGenerator);
-            //var exp = utilities.CreateExpression();
-            //var del = exp.Compile();
+            var utilities = new DeserializeUtilities<T>(_conversionGenerator, _map);
+            var exp = utilities.CreateExpression();
+            var del = exp.Compile();
             //var instance = del(ref reader, typeToConvert, options);
 
             //return instance;
 
-            _isFinished = false;
-            _sourcePaths.Clear();
+            var isFinished = false;
+            JsonPathStack jsonPathStack = new();
 
             Debug.Assert(SurrogateType.GetFullName(typeToConvert) == _map.Target.FullName);
-            InitializeForEachObject();
             IEnumerable<NavigationPair> nodeMappings = null;
 
             do
@@ -51,13 +65,12 @@ namespace MaterializerLibrary
                 {
                     case JsonTokenType.StartArray:
                         {
-                            if (_sourcePaths.TryPeek(out SourcePath path))
+                            if (jsonPathStack.TryPeek(out JsonSourcePath path))
                             {
                                 path.IsArray = true;
                             }
-
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
 #endif
                         }
@@ -66,24 +79,24 @@ namespace MaterializerLibrary
                     case JsonTokenType.EndArray:
                         {
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
 #endif
-                            _sourcePaths.Pop();
+                            jsonPathStack.Pop();
                         }
                         break;
 
                     case JsonTokenType.StartObject:
                         {
-                            var found = _sourcePaths.TryPeek(out SourcePath path);
+                            var found = jsonPathStack.TryPeek(out JsonSourcePath path);
                             if (!found)
                             {
-                                _sourcePaths.Push(new SourcePath(SourceTypeName, false));
+                                path = jsonPathStack.Push(SourceTypeName, false);
                             }
                             else if (path.IsArray)
                             {
                                 // element of a one-to-many
-                                _sourcePaths.Push(new SourcePath(_arrayItemPlaceholder, true));
+                                jsonPathStack.Push(_arrayItemPlaceholder, true);
                             }
                             else
                             {
@@ -92,7 +105,7 @@ namespace MaterializerLibrary
                             }
 
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
 #endif
                         }
@@ -100,14 +113,16 @@ namespace MaterializerLibrary
 
                     case JsonTokenType.EndObject:
                         {
-                            var endObject = _sourcePaths.Pop();
+                            var endObject = jsonPathStack.Pop();
+                            if (endObject.IsArray)
+                            {
+                                RemoveInstance(endObject.Path);
+                            }
 
-                            // todo
-
-                            if (_sourcePaths.Count == 0) _isFinished = true;
+                            if (jsonPathStack.Count == 0) isFinished = true;
 
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
 #endif
 
@@ -118,9 +133,9 @@ namespace MaterializerLibrary
                     case JsonTokenType.PropertyName:
                         {
                             var currentProperty = reader.GetString();
-                            _sourcePaths.Push(new(currentProperty));
+                            jsonPathStack.Push(currentProperty);
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, currentProperty);
 #endif
                         }
@@ -129,13 +144,23 @@ namespace MaterializerLibrary
 
                     case JsonTokenType.String:
                         {
-                            reader.Skip();
+                            var mappings = GetMappingsFor(jsonPathStack.CurrentPath);
+                            if (mappings.Count > 0)
+                            {
+                                var instances = mappings.Select(m => Materialize(m)).ToArray();
+                                var converter = _conversionGenerator.GetConverterMultiple(jsonPathStack.CurrentPath, mappings);
+                                converter(ref reader, instances);
+                            }
+                            else
+                            {
+                                reader.Skip();
+                            }
 
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings);
 #endif
-                            _sourcePaths.Pop();
+                            jsonPathStack.Pop();
                             break;
                         }
 
@@ -144,10 +169,10 @@ namespace MaterializerLibrary
                             reader.Skip();
 
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "(number)");
 #endif
-                            _sourcePaths.Pop();
+                            jsonPathStack.Pop();
                             break;
                         }
 
@@ -156,10 +181,10 @@ namespace MaterializerLibrary
                             reader.Skip();
 
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "null");
 #endif
-                            _sourcePath.Pop();
+                            jsonPathStack.Pop();
                         }
                         break;
 
@@ -168,10 +193,10 @@ namespace MaterializerLibrary
                             reader.Skip();
 
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "true");
 #endif
-                            _sourcePath.Pop();
+                            jsonPathStack.Pop();
                         }
                         break;
 
@@ -180,10 +205,10 @@ namespace MaterializerLibrary
                             reader.Skip();
 
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "false");
 #endif
-                            _sourcePath.Pop();
+                            jsonPathStack.Pop();
                         }
                         break;
 
@@ -192,17 +217,38 @@ namespace MaterializerLibrary
 
                             reader.Skip();
 #if DEBUG
-                            var sourcePath = String.Join(".", _sourcePaths.Reverse().Select(s => s.Path));
+                            var sourcePath = jsonPathStack.CurrentPath;
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
 #endif
                         }
                         break;
                 }
             }
-            while (!_isFinished && reader.Read());
+            while (!isFinished && reader.Read());
 
-            return default(T);
+            var returnItem = (T)((Container<object>)Instances[typeof(T).Name]).Item;
+            Instances.Clear();
+            return returnItem;
         }
 
+        private IReadOnlyCollection<NavigationPair> GetMappingsFor(string sourcePath)
+        {
+            if (!_sourceLookup.TryGetValue(sourcePath, out var mappings))
+            {
+                return _emptyMappings;
+            }
+
+            return mappings;
+        }
+
+        private void RemoveInstance(string sourcePath)
+        {
+            if (!_targetDeletablePaths.TryGetValue(sourcePath, out var deletables)) return;
+
+            foreach (var item in deletables)
+            {
+                Instances.Remove(item);
+            }
+        }
     }
 }

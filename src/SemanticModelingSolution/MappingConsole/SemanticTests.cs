@@ -9,7 +9,9 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 using MaterializerLibrary;
+
 using SemanticLibrary;
+
 using SurrogateLibrary;
 
 namespace MappingConsole
@@ -27,7 +29,7 @@ namespace MappingConsole
     {
         private int x;
         [JsonConstructor]
-        public B(int x) { this.x = x;  X = (double)x; }
+        public B(int x) { this.x = x; X = (double)x; }
 
         public double X { get; init; }
     }
@@ -61,7 +63,7 @@ namespace MappingConsole
             //DeserializeMappingAndAssert();
 
             DeserializeMapping();
-            
+
             //SerializeOrders();
             //SerializeOnlineOrders();
 
@@ -148,6 +150,21 @@ namespace MappingConsole
             Debug.Assert(onlineOrderToOrderMapping == _onlineOrderToOrderMapping);
         }
 
+        private void PrintMap(Mapping mapping)
+        {
+            Console.WriteLine($"Conversion Map: {mapping.Source.FullName} => {mapping.Target.FullName}");
+            foreach (var m in mapping.Mappings
+                .Select(m => (source: m.Source.GetLeafPathAlt(), target: m.Target.GetLeafPathAlt()))
+                .OrderBy(m => m.source))
+            {
+                Console.Write($"{m.source.PadRight(50)}");
+                Console.Write($"{m.target.PadRight(50)}");
+                Console.WriteLine();
+            }
+       
+            Console.WriteLine();
+        }
+
         private void SerializeOrders()
         {
             var settings = new JsonSerializerOptions()
@@ -176,6 +193,8 @@ namespace MappingConsole
 
         private void DeserializeOrders()
         {
+            PrintMap(_onlineOrderToOrderMapping);
+
             var settings = new JsonSerializerOptions()
             {
                 Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderTypeSystem, _onlineOrderToOrderMapping), },

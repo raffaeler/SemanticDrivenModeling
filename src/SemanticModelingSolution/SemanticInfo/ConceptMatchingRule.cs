@@ -75,8 +75,8 @@ namespace SemanticLibrary
             sb.AppendLine($"Mappings:");
             foreach (var map in candidateModelType.Mappings)
             {
-                var sourcePath = map.Source.GetMapPath();
-                var targetPath = map.Target.GetMapPath();
+                var sourcePath = map.Source.GetLeafPath();
+                var targetPath = map.Target.GetLeafPath();
                 sb.Append($"{sourcePath} => {targetPath}");
                 //sb.Append($"{map.Source.ModelPropertyNode.OwnerTypeName}.{map.Source.Name} => {map.Target.ModelPropertyNode.OwnerTypeName}.{map.Target.Name}");
                 sb.AppendLine($" [{map.Evaluation.Score}]");

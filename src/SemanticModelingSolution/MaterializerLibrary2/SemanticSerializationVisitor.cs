@@ -82,7 +82,7 @@ namespace MaterializerLibrary
                 return;
             }
 
-            var sourcePath = scoredPropertyMapping.Source.GetMapPath();
+            var sourcePath = scoredPropertyMapping.Source.GetLeafPath();
             Console.Write($"PathProp> {path} <== Source: {sourcePath}   |   ");
 
             //var expressions = GeneratorUtilities.CreateGetValue<T>(scoredPropertyMapping.Source);

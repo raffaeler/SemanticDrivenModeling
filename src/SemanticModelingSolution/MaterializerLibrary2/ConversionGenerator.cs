@@ -72,6 +72,7 @@ namespace MaterializerLibrary
         public PropertyInfo ReaderTokenType => _readerTokenType;
         public MethodInfo ReaderSkip => _readerSkipMethodInfo;
         public MethodInfo ReaderRead => _readerReadMethodInfo;
+        public Dictionary<string, MethodInfo> ReaderGetValue => _readerGetValue;
 
         public ConversionGenerator(/*TypeSystem<Metadata> typeSystem, */ConversionContext conversionContext = null)
         {
@@ -223,9 +224,11 @@ namespace MaterializerLibrary
             return conversionCall;
         }
 
+        // if it is used in serialization is GetLeafPath
+        // in deserialization is GetLeafPathAlt
         public SetPropertiesDelegate GetConverter(NavigationPair nodeMapping)
         {
-            var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.Property.Name}";
+            var path = nodeMapping.Target.GetLeafPathAlt() + $".{nodeMapping.Target.Property.Name}";
             if (!_cacheSetProperty.TryGetValue(path, out var lambda))
             {
                 var expression = GenerateConversion(
@@ -292,7 +295,7 @@ namespace MaterializerLibrary
             return lambda;
         }
 
-        public SetPropertiesDelegate GetConverterMultiple(string sourcePath, List<NavigationPair> nodeMappings)
+        public SetPropertiesDelegate GetConverterMultiple(string sourcePath, IReadOnlyCollection<NavigationPair> nodeMappings)
         {
             if (!_cacheSetProperty.TryGetValue(sourcePath, out var lambda))
             {
@@ -303,12 +306,12 @@ namespace MaterializerLibrary
             return lambda;
         }
 
-        private Expression<SetPropertiesDelegate> GenerateConversionMultiple(IList<NavigationPair> nodeMappings)
+        private Expression<SetPropertiesDelegate> GenerateConversionMultiple(IReadOnlyCollection<NavigationPair> nodeMappings)
         {
             if (nodeMappings == null) throw new ArgumentNullException(nameof(nodeMappings));
             if (nodeMappings.Count == 0) throw new ArgumentException(nameof(nodeMappings));
 
-            var sourceTypeName = nodeMappings.First().Source.Property.PropertyType.Name;
+            var sourceTypeName = nodeMappings.First().Source.GetLeaf().Property.PropertyType.Name;
             if (!_basicTypes.TryGetValue(sourceTypeName, out Type sourceType))
             {
                 throw new ArgumentException($"The type {sourceTypeName} is not valid for converting data in a json source");
@@ -334,9 +337,9 @@ namespace MaterializerLibrary
             int i = 0;
             foreach (var nodeMapping in nodeMappings)
             {
-                Type targetInstanceType = nodeMapping.Target.Property.OwnerType.GetOriginalType();
-                string targetPropertyTypeName = nodeMapping.Target.Property.PropertyType.Name;
-                string propertyName = nodeMapping.Target.Property.Name;
+                Type targetInstanceType = nodeMapping.Target.GetLeaf().Property.OwnerType.GetOriginalType();
+                string targetPropertyTypeName = nodeMapping.Target.GetLeaf().Property.PropertyType.Name;
+                string propertyName = nodeMapping.Target.GetLeaf().Property.Name;
 
                 if (!_basicTypes.TryGetValue(targetPropertyTypeName, out Type targetPropertyType))
                 {
@@ -379,10 +382,10 @@ namespace MaterializerLibrary
         }
 
 
-
+        // verify pathalt
         public GetConvertedValueDelegate GetValueConverter(NavigationPair nodeMapping)
         {
-            var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.Property.Name}";
+            var path = nodeMapping.Target.GetLeafPathAlt() + $".{nodeMapping.Target.Property.Name}";
             if (!_cacheGetValue.TryGetValue(path, out var lambda))
             {
                 var expression = GenerateValueConversion(

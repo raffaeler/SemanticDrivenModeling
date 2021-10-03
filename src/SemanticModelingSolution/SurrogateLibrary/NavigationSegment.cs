@@ -68,6 +68,12 @@ namespace SurrogateLibrary
         [JsonIgnore]
         public T Info => Property != null ? Property.Info : Type.Info;
 
+        /// <summary>
+        /// Returns the type that must be created during deserialization for this segment
+        /// </summary>
+        public SurrogateType<T> GetSegmentType()
+            => Type != null ? Type : Property.PropertyType;
+
         public NavigationSegment<T> FindForwardByPath(string path)
         {
             var temp = this;
@@ -104,9 +110,9 @@ namespace SurrogateLibrary
             }
         }
 
-        private void OnAllBefore(NavigationSegment<T> start, Func<NavigationSegment<T>, bool> func)
+        public void OnAllBefore(Func<NavigationSegment<T>, bool> func)
         {
-            var temp = start;
+            var temp = this;
             while (temp != null)
             {
                 if (!func(temp)) return;
@@ -114,9 +120,9 @@ namespace SurrogateLibrary
             }
         }
 
-        private void OnAllAfter(NavigationSegment<T> start, Func<NavigationSegment<T>, bool> func)
+        public void OnAllAfter(Func<NavigationSegment<T>, bool> func)
         {
-            var temp = start;
+            var temp = this;
             while (temp != null)
             {
                 if (!func(temp)) return;

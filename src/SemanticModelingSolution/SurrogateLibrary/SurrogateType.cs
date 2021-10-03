@@ -11,7 +11,7 @@ namespace SurrogateLibrary
 {
     public record SurrogateType
     {
-        private Type _type;
+        protected Type _type;
 
         internal ListEx<UInt64> _propertyIndexes;
 
@@ -64,10 +64,16 @@ namespace SurrogateLibrary
         /// This only works when the Type is already loaded in memory
         /// otherwise an Exception will be thrown;
         /// </summary>
-        public Type GetOriginalType()
+        public virtual Type GetOriginalType()
         {
             var assemblyName = AssemblyName == KnownConstants.PlaceholderForSystemAssemblyName
                 ? null : AssemblyName;
+
+            if (this.IsGenericType())
+            {
+                throw new InvalidOperationException($"This can only be resolved on the generic version of SurrogateType<T>");
+            }
+
             return _type ??= TypeHelper.GetEntityType(FullName, assemblyName);
         }
 
