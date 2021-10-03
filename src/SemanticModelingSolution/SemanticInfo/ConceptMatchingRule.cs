@@ -53,7 +53,7 @@ namespace SemanticLibrary
 
                 var matcher = new AutomaticMapper(0, true);
                 var mappings = matcher.GetScoredMappings(
-                    flattenedSource, flattenedTarget, GetPropertyScore, onSelectEquallyScored);
+                    flattenedSource, flattenedTarget, GetPropertyScore, OnSelectEquallyScored);
 
                 candidate.Mappings = mappings;
 
@@ -63,17 +63,17 @@ namespace SemanticLibrary
             return candidateTypes;
         }
 
-        internal string DumpMappings(Mapping candidateModelType)
+        internal string DumpMappings(Mapping mapping)
         {
             var sb = new StringBuilder();
-            var source = candidateModelType.Source;
-            var target = candidateModelType.Target;
+            var source = mapping.Source;
+            var target = mapping.Target;
             sb.Append($"Source type: {source.FullName} => ");
             sb.Append($"Candidate type: {target.FullName}");
 
-            sb.AppendLine($" (Type score: {candidateModelType.Evaluation.Score}) Prop score: {candidateModelType.PropertiesScore}");
+            sb.AppendLine($" (Type score: {mapping.Evaluation.Score}) Prop score: {mapping.PropertiesScore}");
             sb.AppendLine($"Mappings:");
-            foreach (var map in candidateModelType.Mappings)
+            foreach (var map in mapping.Mappings)
             {
                 var sourcePath = map.Source.GetLeafPath();
                 var targetPath = map.Target.GetLeafPath();
@@ -85,7 +85,7 @@ namespace SemanticLibrary
             return sb.ToString();
         }
 
-        private NavigationPair onSelectEquallyScored(List<NavigationPair> mappings)
+        private NavigationPair OnSelectEquallyScored(List<NavigationPair> mappings)
         {
             var firstTarget = mappings.First().Target;
             if (firstTarget.GetAllConceptsFromPath().Select(ttc => ttc.Concept).Contains(KnownBaseConcepts.UniqueIdentity))
@@ -334,28 +334,6 @@ namespace SemanticLibrary
             return conceptsMatch && specifiersMatch;
         }
 
-        //private bool ValidateContexts_old1(ModelNavigationNode source, ModelNavigationNode target)
-        //{
-        //    bool result = true;
-        //    var tempTarget = target;
-        //    while (tempTarget != null)
-        //    {
-        //        var tempSource = source;
-        //        while (result && tempSource != null)
-        //        {
-        //            var intersection = source.ModelPropertyNode.Parent.CandidateConcepts
-        //                .Intersect(tempTarget.ModelPropertyNode.Parent.CandidateConcepts);
-        //            result &= intersection.Any();
-
-        //            tempSource = tempSource.Previous;
-        //        }
-
-        //        tempTarget = tempTarget.Previous;
-        //    }
-
-        //    return result;
-        //}
-
         private void VerboseLog(NavigationSegment<Metadata> sourceRoot,
             NavigationSegment<Metadata> targetRoot, bool isValidated)
         {
@@ -363,14 +341,6 @@ namespace SemanticLibrary
             var source = sourceRoot.GetLeaf();
             var target = targetRoot.GetLeaf();
 
-            //var sourceContexts = source.Parent.CandidateConcepts;
-            //var targetContexts = target.Parent.CandidateConcepts;
-
-            //var srcctx = string.Join(",", sourceContexts.ToArray().Select(s => s.Name));
-            //var tgtctx = string.Join(",", targetContexts.ToArray().Select(s => s.Name));
-
-            //var props = $"{source.Parent.TypeName}[{srcctx}].{source.Property.Name} ==> {target.Parent.TypeName}[{tgtctx}].{target.Property.Name}";
-            ////var ctx = $"{srcctx} ==> {tgtctx}";
             int padding = 60;
             var props = $"{source.Property.ToString().PadRight(padding - 5)} ==> {target.Property.ToString().PadRight(padding)}";
 

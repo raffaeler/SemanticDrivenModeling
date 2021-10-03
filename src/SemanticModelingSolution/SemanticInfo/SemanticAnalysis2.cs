@@ -14,16 +14,11 @@ namespace SemanticLibrary
     public class SemanticAnalysis2
     {
         private DomainBase _domain;
-        //private List<string> _allTerms;
         private List<string> _allComposedTerms;
 
         public SemanticAnalysis2(DomainBase domain)
         {
             _domain = domain;
-            //_allTerms = domain.Links
-            //    .Select(ttc => ttc.Term.Name)
-            //    .Distinct()
-            //    .ToList();
 
             _allComposedTerms = domain.Links
                 .Select(ttc => ttc.Term.Name)
@@ -223,19 +218,6 @@ namespace SemanticLibrary
             //    .ToArray();
             //Debug.Assert(filtered.Length == 1);
             //return filtered.Single();
-        }
-
-        [Obsolete]
-        private TermToConcept ConceptsLinksSelector(string term, IEnumerable<Concept> contexts)
-        {
-            var ttcs = contexts.Select(c => ConceptsLinksSelector(term, c)).ToArray();
-            Debug.Assert(ttcs.Length != 0);
-            if (ttcs.Length == 1)
-            {
-                return ttcs.Single();
-            }
-
-            return ttcs.OrderByDescending(t => t.Weight).First();
         }
 
         private TermToConcept ConceptsLinksSelector(string term, Concept context)

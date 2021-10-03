@@ -50,7 +50,6 @@ namespace SemanticLibrary
             // that received a score (potentially assigned to a target)
             foreach (var targetItem in targetList)
             {
-                if (targetItem.Name == "ShipCity") Debugger.Break();
                 foreach (var sourceItem in source)
                 {
                     var score = getScore(sourceItem, targetItem);

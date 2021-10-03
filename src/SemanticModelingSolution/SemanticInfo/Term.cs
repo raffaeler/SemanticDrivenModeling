@@ -10,17 +10,6 @@ namespace SemanticLibrary
     public record Term(string Name, string Description = "", bool IsUnknown = false)
     {
         private ListEx<string> _altNames = new();
-        //[JsonConstructorAttribute]
-        //internal Term() { }
-
-        //public Term(string name, string description, params string[] terms) :
-        //    this(name, description)
-        //{
-        //    foreach (var term in terms)
-        //    {
-        //        AltNames.Add(term);
-        //    }
-        //}
 
         public ListEx<string> AltNames
         {

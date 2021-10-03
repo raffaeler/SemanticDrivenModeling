@@ -9,6 +9,11 @@ using SurrogateLibrary.Helpers;
 
 namespace SemanticLibrary
 {
+    /// <summary>
+    /// This class is "attached" to SurrogateType and SurrogateProperty
+    /// to associate semantic parameters (concepts, specifiers, etc.)
+    /// to the types and properties
+    /// </summary>
     public record Metadata
     {
         public Metadata()

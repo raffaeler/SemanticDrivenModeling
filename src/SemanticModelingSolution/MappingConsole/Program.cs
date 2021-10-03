@@ -98,7 +98,6 @@ namespace MappingConsole
 
         static void Main(string[] args)
         {
-            //new BoxingTests().Test();
             //new TypeTests().Run();
             new SemanticTests().Run();
 
