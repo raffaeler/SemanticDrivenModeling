@@ -306,51 +306,6 @@ namespace MaterializerLibrary
                     return default(T);
                 }
         */
-        protected virtual void LogState(JsonTokenType jsonTokenType, int depth,
-            string sourcePath, IEnumerable<NavigationPair> nodeMappings,
-            string message = null)
-        {
-            if (!LogObjectArrayEnabled && (
-                jsonTokenType == JsonTokenType.StartArray ||
-                jsonTokenType == JsonTokenType.EndArray ||
-                jsonTokenType == JsonTokenType.StartObject ||
-                jsonTokenType == JsonTokenType.EndObject))
-            {
-                return;
-            }
-
-            Console.Write($"[{depth} {jsonTokenType}] {message}".PadRight(25));
-            bool isFirst = true;
-            if (nodeMappings != null)
-            {
-                foreach (var nodeMapping in nodeMappings)
-                {
-                    if (isFirst)
-                    {
-                        isFirst = false;
-                    }
-                    else
-                    {
-                        Console.Write("".PadRight(25));
-                    }
-
-
-                    //var sourceType = nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType;
-                    //var targetType = nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType;
-                    var sourceType = nodeMapping.Source.Property.PropertyType.GetOriginalType();
-                    var targetType = nodeMapping.Target.Property.PropertyType.GetOriginalType();
-                    Console.Write(sourcePath.PadRight(50));
-                    Console.Write($"{sourceType.Name} -> {targetType.Name}".PadRight(30));
-                    Console.Write(nodeMapping.Target.GetLeafPath());
-                    Console.WriteLine();
-                }
-            }
-            else
-            {
-                Console.Write(sourcePath.PadRight(50));
-                Console.WriteLine();
-            }
-        }
 
 
     }

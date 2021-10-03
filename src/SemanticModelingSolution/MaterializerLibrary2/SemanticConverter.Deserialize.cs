@@ -56,7 +56,6 @@ namespace MaterializerLibrary
             JsonPathStack jsonPathStack = new();
 
             //Debug.Assert(SurrogateType.GetFullName(typeToConvert) == _map.Target.FullName);
-            IEnumerable<NavigationPair> nodeMappings = null;
 
             do
             {
@@ -68,19 +67,14 @@ namespace MaterializerLibrary
                             {
                                 path.IsArray = true;
                             }
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
-#endif
+
+                            //DebugOnlyLogState(reader.TokenType, reader.CurrentDepth, jsonPathStack.CurrentPath, null, "");
                         }
                         break;
 
                     case JsonTokenType.EndArray:
                         {
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
-#endif
+                            //DebugOnlyLogState(reader.TokenType, reader.CurrentDepth, jsonPathStack.CurrentPath, null, "");
                             jsonPathStack.Pop();
                         }
                         break;
@@ -103,10 +97,7 @@ namespace MaterializerLibrary
                                 path.IsObject = true;
                             }
 
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
-#endif
+                            //DebugOnlyLogState(reader.TokenType, reader.CurrentDepth, jsonPathStack.CurrentPath, null, "");
                         }
                         break;
 
@@ -119,10 +110,7 @@ namespace MaterializerLibrary
                             }
 
                             if (jsonPathStack.Count == 0) isFinished = true;
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
-#endif
+                            //DebugOnlyLogState(reader.TokenType, reader.CurrentDepth, jsonPathStack.CurrentPath, null, "");
                         }
                         break;
 
@@ -131,10 +119,7 @@ namespace MaterializerLibrary
                         {
                             var currentProperty = reader.GetString();
                             jsonPathStack.Push(currentProperty);
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            //LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, currentProperty);
-#endif
+                            //DebugOnlyLogState(reader.TokenType, reader.CurrentDepth, jsonPathStack.CurrentPath, null, currentProperty);
                         }
 
                         break;
@@ -156,22 +141,16 @@ namespace MaterializerLibrary
                             {
                                 reader.Skip();
                             }
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings);
-#endif
+
+                            DebugOnlyLogState(reader.TokenType, reader.CurrentDepth, jsonPathStack.CurrentPath, mappings);
                             jsonPathStack.Pop();
                             break;
                         }
 
                     default:
                         {
-
                             reader.Skip();
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "");
-#endif
+                            DebugOnlyLogState(reader.TokenType, reader.CurrentDepth, jsonPathStack.CurrentPath, null, "");
                         }
                         break;
                 }
@@ -365,7 +344,6 @@ namespace MaterializerLibrary
         private Dictionary<string, Func<IContainer, IContainer>> _createOnlyCache = new();
         private IContainer CreateOnly(IContainer parentContainer, NavigationSegment<Metadata> segment, SurrogateType<Metadata> childType)
         {
-            // TODO: check cache using segment.Path
             if (_createOnlyCache.TryGetValue(segment.Path, out var func))
             {
                 return func(parentContainer);
@@ -388,6 +366,43 @@ namespace MaterializerLibrary
             var del = lambda.Compile();
             _createOnlyCache[segment.Path] = del;
             return del(parentContainer);
+        }
+
+        [Conditional("DEBUG")]
+        private void DebugOnlyLogState(JsonTokenType jsonTokenType, int depth, string sourcePath,
+            IReadOnlyCollection<NavigationPair> mappings, string message = null)
+        {
+            if (!LogObjectArrayEnabled && (
+                jsonTokenType == JsonTokenType.StartArray ||
+                jsonTokenType == JsonTokenType.EndArray ||
+                jsonTokenType == JsonTokenType.StartObject ||
+                jsonTokenType == JsonTokenType.EndObject))
+            {
+                return;
+            }
+
+            Console.Write($"[{depth} {jsonTokenType}] {message}".PadRight(25));
+            bool isFirst = true;
+            if (mappings != null && mappings.Count > 0)
+            {
+                foreach (var mapping in mappings)
+                {
+                    if (!isFirst) Console.Write("".PadRight(25));
+                    isFirst = false;
+
+                    var sourceType = mapping.Source.GetLeaf().Property.PropertyType.GetOriginalType();
+                    var targetType = mapping.Target.GetLeaf().Property.PropertyType.GetOriginalType();
+                    Console.Write(sourcePath.PadRight(50));
+                    Console.Write($"{sourceType.Name} -> {targetType.Name}".PadRight(30));
+                    Console.Write(mapping.Target.GetLeafPath());
+                    Console.WriteLine();
+                }
+            }
+            else
+            {
+                Console.Write(sourcePath.PadRight(50));
+                Console.WriteLine();
+            }
         }
 
 
