@@ -16,7 +16,6 @@ using SurrogateLibrary;
 
 /*
 
-
 V2
 
 |                     Method |     Mean |    Error |   StdDev |
