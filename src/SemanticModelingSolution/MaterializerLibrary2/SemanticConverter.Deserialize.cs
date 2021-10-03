@@ -24,25 +24,7 @@ namespace MaterializerLibrary
         // values are the deletable objects
         protected Dictionary<string, HashSet<string>> _targetDeletablePaths = new();
 
-        public interface IContainer
-        {
-            Type Type { get; }
-        }
-
-        private interface IContainerDebug
-        {
-            object ObjectItem { get; }
-        }
-
-        public class Container<K> : IContainer, IContainerDebug
-        {
-            public Container(K item) { Item = item; }
-            public K Item { get; set; }
-            public Type Type => typeof(K);
-            public object ObjectItem => Item;
-        }
-
-        public Dictionary<string, IContainer> Instances = new();
+        private Dictionary<string, IContainer> Instances = new();
 
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -226,7 +208,7 @@ namespace MaterializerLibrary
             }
             while (!isFinished && reader.Read());
 
-            var returnItem = (T)((Container<object>)Instances[typeof(T).Name]).Item;
+            var returnItem = (T)((IContainerDebug)Instances[typeof(T).Name]).ObjectItem;
             Instances.Clear();
             return returnItem;
         }
