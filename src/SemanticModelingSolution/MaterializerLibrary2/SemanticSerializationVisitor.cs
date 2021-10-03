@@ -38,7 +38,7 @@ namespace MaterializerLibrary
 
         public override void OnBeginVisitType(SurrogateType<Metadata> type, string path)
         {
-            Console.WriteLine($"********> {path} [{type.Name}]");
+            //Console.WriteLine($"********> {path} [{type.Name}]");
             //writer.WriteStartObject();
             var currentContext = _codeGenContext.Peek();
             var writeExpression = GeneratorUtilities.JsonWriteStartObject(inputWriter);
@@ -59,7 +59,7 @@ namespace MaterializerLibrary
             if (propertyKind == PropertyKind.OneToOne)
             {
                 // one-to-one
-                Console.WriteLine("1-1");
+                //Console.WriteLine("1-1");
                 //writer.WritePropertyName(modelPropertyNode.Name);
                 var currentContext1 = _codeGenContext.Peek();
                 var writeExpression1 = GeneratorUtilities.JsonWritePropertyName(inputWriter, property.Name);
@@ -78,12 +78,12 @@ namespace MaterializerLibrary
 
             if (!_targetLookup.TryGetValue(path, out var scoredPropertyMapping))
             {
-                Console.WriteLine($"PathProp> {path} unmapped");
+                //Console.WriteLine($"PathProp> {path} unmapped");
                 return;
             }
 
             var sourcePath = scoredPropertyMapping.Source.GetLeafPath();
-            Console.Write($"PathProp> {path} <== Source: {sourcePath}   |   ");
+            //Console.Write($"PathProp> {path} <== Source: {sourcePath}   |   ");
 
             //var expressions = GeneratorUtilities.CreateGetValue<T>(scoredPropertyMapping.Source);
 
@@ -134,7 +134,7 @@ namespace MaterializerLibrary
                 // Source: Order.OrderItems.$.Article.Description
                 // This property should be applied to the [collection].FirstOrDefault() from the parent context
                 // relativeRoot.ModelPropertyNode.PropertyInfo
-                Console.WriteLine("Skipped <special case>");
+                //Console.WriteLine("Skipped <special case>");
                 return;
             }
 
@@ -151,15 +151,15 @@ namespace MaterializerLibrary
             //writer.WriteString()
 
             // basic types
-            Console.Write("B");
-            Console.WriteLine();
+            //Console.Write("B");
+            //Console.WriteLine();
         }
 
         public override void OnBeginVisitCollectionProperty(SurrogateProperty<Metadata> modelPropertyNode, string targetPath)
         {
             // begin collection
             //var sourcePath = scoredPropertyMapping.Source.GetMapPath();
-            Console.WriteLine($"Start  C> {targetPath} ");
+            //Console.WriteLine($"Start  C> {targetPath} ");
             //writer.WriteStartArray(modelPropertyNode.Name);
             var currentContext = _codeGenContext.Peek();
             var writeExpression = GeneratorUtilities.JsonWriteStartArray(inputWriter, modelPropertyNode.Name);
@@ -177,7 +177,7 @@ namespace MaterializerLibrary
         public override void OnEndVisitCollectionProperty(SurrogateProperty<Metadata> modelPropertyNode, string path)
         {
             // end collection
-            Console.WriteLine($"End    C> {path} ");
+            //Console.WriteLine($"End    C> {path} ");
             //writer.WriteEndArray();
 
             var currentContext = _codeGenContext.Pop() as OneToManyContext;

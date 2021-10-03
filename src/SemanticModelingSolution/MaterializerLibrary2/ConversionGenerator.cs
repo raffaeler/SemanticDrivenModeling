@@ -239,6 +239,7 @@ namespace MaterializerLibrary
             {
                 var expression = GenerateConversionMultiple(nodeMappings);
                 lambda = expression.Compile();
+                _cacheSetProperty[sourcePath] = lambda;
             }
 
             return lambda;

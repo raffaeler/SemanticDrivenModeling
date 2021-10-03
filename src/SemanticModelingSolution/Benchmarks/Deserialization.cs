@@ -13,12 +13,14 @@ using MaterializerLibrary;
 using SemanticLibrary;
 
 /*
-|                     Method |      Mean |     Error |    StdDev |
-|--------------------------- |----------:|----------:|----------:|
-|                PlainOrders | 10.944 us | 0.2182 us | 0.3266 us |
-|          PlainOnlineOrders |  7.648 us | 0.1466 us | 0.1440 us |
-| SemanticOrderToOnlineOrder |  6.732 us | 0.1290 us | 0.1380 us |
-| SemanticOnlineOrderToOrder |  6.923 us | 0.0940 us | 0.0833 us |
+V1
+
+|                     Method |         Mean |      Error |     StdDev |
+|--------------------------- |-------------:|-----------:|-----------:|
+|                PlainOrders |     17.95 us |   0.352 us |   0.312 us |
+|          PlainOnlineOrders |     10.23 us |   0.140 us |   0.124 us |
+| SemanticOrderToOnlineOrder | 15,496.51 us | 198.866 us | 186.019 us |
+| SemanticOnlineOrderToOrder | 16,823.67 us | 270.981 us | 240.217 us |
 */
 
 namespace Benchmarks

@@ -51,11 +51,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Benchmarks\Be
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurrogateLibrary", "SurrogateLibrary\SurrogateLibrary.csproj", "{2E54BBD3-233F-49FE-BF19-D9D9C5A4ABE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurrogateLibrary.Tests", "SurrogateLibrary.Tests\SurrogateLibrary.Tests.csproj", "{B17E8DAB-1820-4F98-A80E-604236B525B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurrogateLibrary.Tests", "SurrogateLibrary.Tests\SurrogateLibrary.Tests.csproj", "{B17E8DAB-1820-4F98-A80E-604236B525B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticInfo", "SemanticInfo\SemanticInfo.csproj", "{6522E072-FB97-4B2A-BBCD-9B088A85929F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticInfo", "SemanticInfo\SemanticInfo.csproj", "{6522E072-FB97-4B2A-BBCD-9B088A85929F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaterializerLibrary2", "MaterializerLibrary2\MaterializerLibrary2.csproj", "{4E582D21-923F-4EC6-9192-2F14A24D2178}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaterializerLibrary2", "MaterializerLibrary2\MaterializerLibrary2.csproj", "{4E582D21-923F-4EC6-9192-2F14A24D2178}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks2", "Benchmarks2\Benchmarks2.csproj", "{D3834171-35CD-43CD-8DBF-517D986AC77D}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -154,6 +156,10 @@ Global
 		{4E582D21-923F-4EC6-9192-2F14A24D2178}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E582D21-923F-4EC6-9192-2F14A24D2178}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E582D21-923F-4EC6-9192-2F14A24D2178}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3834171-35CD-43CD-8DBF-517D986AC77D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3834171-35CD-43CD-8DBF-517D986AC77D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3834171-35CD-43CD-8DBF-517D986AC77D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3834171-35CD-43CD-8DBF-517D986AC77D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -178,6 +184,7 @@ Global
 		{32DF45FF-477B-4B0A-A289-F3ECC2D3B1D4} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{B17E8DAB-1820-4F98-A80E-604236B525B9} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 		{4E582D21-923F-4EC6-9192-2F14A24D2178} = {93AC4280-6486-45AA-BF1C-991FCB3CD06F}
+		{D3834171-35CD-43CD-8DBF-517D986AC77D} = {139EDF24-67A1-4BE0-8168-7B2D2841ACA9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDC7C7E5-38C7-49A4-B565-A242960159E4}

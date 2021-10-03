@@ -38,15 +38,16 @@ namespace MaterializerLibrary
         /// <summary>
         /// The cached object used in deserialization
         /// </summary>
-        private Dictionary<string, IContainer> Instances = new();
+        private Dictionary<string, IContainer> Instances;
 
         protected string SourceTypeName => _map.Source.Name;
 
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var utilities = new DeserializeUtilities<T>(_conversionGenerator, _map);
-            var exp = utilities.CreateExpression();
-            var del = exp.Compile();
+            Instances = new();
+            //var utilities = new DeserializeUtilities<T>(_conversionGenerator, _map);
+            //var exp = utilities.CreateExpression();
+            //var del = exp.Compile();
             //var instance = del(ref reader, typeToConvert, options);
 
             //return instance;
@@ -54,7 +55,7 @@ namespace MaterializerLibrary
             var isFinished = false;
             JsonPathStack jsonPathStack = new();
 
-            Debug.Assert(SurrogateType.GetFullName(typeToConvert) == _map.Target.FullName);
+            //Debug.Assert(SurrogateType.GetFullName(typeToConvert) == _map.Target.FullName);
             IEnumerable<NavigationPair> nodeMappings = null;
 
             do
@@ -139,6 +140,10 @@ namespace MaterializerLibrary
                         break;
 
                     case JsonTokenType.String:
+                    case JsonTokenType.Number:
+                    case JsonTokenType.Null:
+                    case JsonTokenType.True:
+                    case JsonTokenType.False:
                         {
                             var mappings = GetMappingsFor(jsonPathStack.CurrentPath);
                             if (mappings.Count > 0)
@@ -151,7 +156,6 @@ namespace MaterializerLibrary
                             {
                                 reader.Skip();
                             }
-
 #if DEBUG
                             var sourcePath = jsonPathStack.CurrentPath;
                             LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings);
@@ -159,54 +163,6 @@ namespace MaterializerLibrary
                             jsonPathStack.Pop();
                             break;
                         }
-
-                    case JsonTokenType.Number:
-                        {
-                            reader.Skip();
-
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "(number)");
-#endif
-                            jsonPathStack.Pop();
-                            break;
-                        }
-
-                    case JsonTokenType.Null:
-                        {
-                            reader.Skip();
-
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "null");
-#endif
-                            jsonPathStack.Pop();
-                        }
-                        break;
-
-                    case JsonTokenType.True:
-                        {
-                            reader.Skip();
-
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "true");
-#endif
-                            jsonPathStack.Pop();
-                        }
-                        break;
-
-                    case JsonTokenType.False:
-                        {
-                            reader.Skip();
-
-#if DEBUG
-                            var sourcePath = jsonPathStack.CurrentPath;
-                            LogState(reader.TokenType, reader.CurrentDepth, sourcePath, nodeMappings, "false");
-#endif
-                            jsonPathStack.Pop();
-                        }
-                        break;
 
                     default:
                         {
@@ -223,7 +179,7 @@ namespace MaterializerLibrary
             while (!isFinished && reader.Read());
 
             var returnItem = ((Container<T>)Instances[typeof(T).Name]).Item;
-            Instances.Clear();
+            Instances = null;
             return returnItem;
         }
 
@@ -334,10 +290,15 @@ namespace MaterializerLibrary
             return parentContainer;
         }
 
+        private Dictionary<string, Func<IContainer, IContainer>> _CreateAndAssignPropertyCache = new();
         private IContainer CreateAndAssignProperty(IContainer parentContainer,
             NavigationSegment<Metadata> segment, SurrogateType<Metadata> childType, AssignmentKind assignmentKind)
         {
             // TODO: check cache using segment.Path
+            if (_CreateAndAssignPropertyCache.TryGetValue(segment.Path, out var func))
+            {
+                return func(parentContainer);
+            }
 
             var childTypeToCreate = childType.GetOriginalType();
             var property = segment.Property?.GetOriginalPropertyInfo(_targetTypeSystem);
@@ -397,12 +358,18 @@ namespace MaterializerLibrary
                 parentContainerParameter);
 
             var del = lambda.Compile();
+            _CreateAndAssignPropertyCache[segment.Path] = del;
             return del(parentContainer);
         }
 
+        private Dictionary<string, Func<IContainer, IContainer>> _createOnlyCache = new();
         private IContainer CreateOnly(IContainer parentContainer, NavigationSegment<Metadata> segment, SurrogateType<Metadata> childType)
         {
             // TODO: check cache using segment.Path
+            if (_createOnlyCache.TryGetValue(segment.Path, out var func))
+            {
+                return func(parentContainer);
+            }
 
             var childTypeToCreate = childType.GetOriginalType();
 
@@ -419,6 +386,7 @@ namespace MaterializerLibrary
                 parentContainerParameter);
 
             var del = lambda.Compile();
+            _createOnlyCache[segment.Path] = del;
             return del(parentContainer);
         }
 
