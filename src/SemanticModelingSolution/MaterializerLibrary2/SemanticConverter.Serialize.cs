@@ -18,7 +18,7 @@ namespace MaterializerLibrary
     public partial class SemanticConverter<T>
     {
         // ScoredPropertyMapping<ModelNavigationNode> => NavigationPair
-        protected Dictionary<string, NavigationPair> _targetLookup = new();
+        protected IDictionary<string, NavigationPair> _targetLookup;
 
         private static Dictionary<Type, Action<Utf8JsonWriter, T>> _writerCache = new();
 

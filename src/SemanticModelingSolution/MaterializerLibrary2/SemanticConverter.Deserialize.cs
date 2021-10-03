@@ -16,22 +16,31 @@ namespace MaterializerLibrary
 {
     public partial class SemanticConverter<T> : JsonConverter<T>
     {
-        private readonly IReadOnlyCollection<NavigationPair> _emptyMappings = Array.Empty<NavigationPair>();
-
-        //ScoredPropertyMapping<ModelNavigationNode>
-        protected Dictionary<string, List<NavigationPair>> _sourceLookup;
-
-        // key is the source path
-        // values are the deletable objects
-        protected Dictionary<string, HashSet<string>> _targetDeletablePaths = new();
-
-        private Dictionary<string, IContainer> Instances = new();
-
         private enum AssignmentKind
         {
             SetOneToOne,
             AddToCollection,
         }
+
+        private readonly IReadOnlyCollection<NavigationPair> _emptyMappings = Array.Empty<NavigationPair>();
+
+        /// <summary>
+        /// The lookup dictionary used in deserialization
+        /// </summary>
+        protected IDictionary<string, List<NavigationPair>> _sourceLookup;
+
+        /// <summary>
+        /// key is the source path
+        /// values are the deletable objects
+        /// </summary>
+        protected IDictionary<string, HashSet<string>> _targetDeletablePaths;
+
+        /// <summary>
+        /// The cached object used in deserialization
+        /// </summary>
+        private Dictionary<string, IContainer> Instances = new();
+
+        protected string SourceTypeName => _map.Source.Name;
 
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

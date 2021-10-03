@@ -40,6 +40,7 @@ namespace MaterializerLibrary
             _targetTypeSystem = targetTypeSystem;
             _map = map;
             (_sourceLookup, _targetLookup) = _map.CreateLookups();
+            _targetDeletablePaths = _map.CreateDeletableLookup();
 
             var context = new ConversionLibrary.ConversionContext()
             {
@@ -100,12 +101,11 @@ namespace MaterializerLibrary
 
                     j++;
                 }
-
-
             }
+
+
         }
 
-        protected string SourceTypeName => _map.Source.Name;
         protected bool LogObjectArrayEnabled { get; set; } = true;
 
         /*

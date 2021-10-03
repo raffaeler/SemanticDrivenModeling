@@ -16,13 +16,13 @@ namespace MaterializerLibrary
     internal class SemanticSerializationVisitor<T> : SurrogateVisitor<Metadata>
     {
         private TypeSystem<Metadata> _typeSystem;
-        protected Dictionary<string, NavigationPair> _targetLookup = new();
+        protected IDictionary<string, NavigationPair> _targetLookup;
         private Stack<ICodeGenerationContext> _codeGenContext;
         private ConversionGenerator _conversionGenerator;
         protected Mapping _map;
         ParameterExpression inputWriter;
 
-        public SemanticSerializationVisitor(TypeSystem<Metadata> typeSystem, Dictionary<string, NavigationPair> targetLookup,
+        public SemanticSerializationVisitor(TypeSystem<Metadata> typeSystem, IDictionary<string, NavigationPair> targetLookup,
             ConversionGenerator conversionGenerator, Mapping map)
         {
             _typeSystem = typeSystem;

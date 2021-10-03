@@ -26,32 +26,6 @@ namespace SemanticLibrary
             }
         }
 
-        public (Dictionary<string, List<NavigationPair>> sourceLookup,
-            Dictionary<string, NavigationPair> targetLookup) CreateLookups()
-        {
-            Dictionary<string, List<NavigationPair>> sourceLookup = new();
-            Dictionary<string, NavigationPair> targetLookup = new();
-
-            foreach (var propertyMapping in Mappings)
-            {
-                // _sourceLookup is needed in the Read to deserialize
-                var sourcePath = propertyMapping.Source.GetLeafPathAlt();
-                if (!sourceLookup.TryGetValue(sourcePath, out var listSource))
-                {
-                    listSource = new();
-                    sourceLookup[sourcePath] = listSource;
-                }
-
-                listSource.Add(propertyMapping);
-
-                // _targetLookup is needed in the Write to serialize
-                // there is no list here because every target only has a single source
-                var targetPath = propertyMapping.Target.GetLeafPath();
-                targetLookup[targetPath] = propertyMapping;
-            }
-
-            return (sourceLookup, targetLookup);
-        }
     }
 
 }
