@@ -65,7 +65,7 @@ namespace MappingConsole
             DeserializeMapping();
 
             //SerializeOrders();
-            //SerializeOnlineOrders();
+            SerializeOnlineOrders();
 
             DeserializeOrders();
             //DeserializeOnlineOrders();

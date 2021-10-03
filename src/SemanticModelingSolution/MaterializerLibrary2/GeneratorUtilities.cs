@@ -188,65 +188,6 @@ namespace MaterializerLibrary
             return parent;
         }
 
-        private static void test()
-        {
-            //Expression.Property(?, propInfo);
-
-            W w = new(
-                new X(
-                    new Y("YName")
-                    ),
-                new List<Z>
-                {
-                    new Z(new List<X>()
-                    {
-                        new X(new Y("YNameC1")),
-                        new X(new Y("YNameC2")),
-                        new X(new Y("YNameC3")),
-                    })
-                });
-
-            Debug.WriteLine(w.X.Y.Name);
-            foreach (var v1 in w.Zs)
-            {
-                foreach (var v2 in v1.Xs)
-                {
-                    Debug.WriteLine(v2.Y.Name);
-                }
-            }
-
-
-            A a = new(new B("B"), new List<B> { new B("B1"), new B("B2") });
-
-            var coll = a.Bs;
-            foreach (var item in coll)
-            {
-                Debug.WriteLine(item.Name);
-            }
-
-
-            var x = a.B;
-            var x1 = a.B.Name;
-            var x2 = a.Bs;
-        }
-
-
-        // maps:
-        // A => W
-        // A.B.Name => W.X.Y.Name
-        // A.Bs.*.Name => W.Zs.*.Xs.*.Name
-
-        private record A(B B, List<B> Bs);
-        private record B(string Name);
-
-        private record W(X X, List<Z> Zs);
-        private record X(Y Y);
-        private record Y(string Name);
-        private record Z(List<X> Xs);
-
-
-
-
         /// <summary>
         /// https://stackoverflow.com/a/52762241/492913
         /// </summary>

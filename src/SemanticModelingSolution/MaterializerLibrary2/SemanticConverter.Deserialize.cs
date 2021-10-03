@@ -22,6 +22,7 @@ namespace MaterializerLibrary
             AddToCollection,
         }
 
+        private const string _arrayItemPlaceholder = "$";
         private readonly IReadOnlyCollection<NavigationPair> _emptyMappings = Array.Empty<NavigationPair>();
 
         /// <summary>
@@ -186,7 +187,7 @@ namespace MaterializerLibrary
         {
             var targetNavigation = navigationPair.Target.GetLeaf();
             var inst = GetOrCreateInstance(targetNavigation);
-            //var instItem = ((IContainerDebug)inst).ObjectItem;//((Container<object>)inst).Item;
+            //var instItem = ((IContainerDebug)inst).ObjectItem;
             return inst;
         }
 
@@ -198,18 +199,13 @@ namespace MaterializerLibrary
             // step 1: walk down the path and find the first cached object
             while (tempTarget != null)
             {
-                var targetPath = tempTarget.PathAlt;
-                if (Instances.TryGetValue(targetPath, out parentContainer)) break;
-
+                if (Instances.TryGetValue(tempTarget.PathAlt, out parentContainer)) break;
                 tempTarget = tempTarget.Previous;
             }
 
             // if nothing is found, take the root
             // if a cached object is find, walk to the next (the first object to be created)
-            if (tempTarget == null)
-                tempTarget = targetNavigation.GetRoot();
-            else
-                tempTarget = tempTarget.Next;
+            tempTarget = (tempTarget == null) ? targetNavigation.GetRoot() : tempTarget.Next;
 
             // step 2: walk forward creating the new object and connecting it to the previous
             // the connection can be a 1-1 or adding an item to the list
@@ -220,8 +216,7 @@ namespace MaterializerLibrary
                 if (tempTarget.IsLeaf) break;
 
                 var type = tempTarget.GetSegmentType();
-                // create object
-                // embed in container
+
                 IContainer newContainer;
                 if (tempTarget.Property != null)
                 {
@@ -273,7 +268,6 @@ namespace MaterializerLibrary
         private IContainer CreateAndAssignProperty(IContainer parentContainer,
             NavigationSegment<Metadata> segment, SurrogateType<Metadata> childType, AssignmentKind assignmentKind)
         {
-            // TODO: check cache using segment.Path
             if (_CreateAndAssignPropertyCache.TryGetValue(segment.Path, out var func))
             {
                 return func(parentContainer);
@@ -298,7 +292,7 @@ namespace MaterializerLibrary
             var assignNewContainer = Expression.Assign(newContainerVar, newContainerObject);
 
             // var parentObject = ((Container<Something>)parentContainer).Item
-            var parentObjectType = parentContainer.Type;// segment.GetSegmentType().GetOriginalType();//property.DeclaringType; //parentContainer.Type;
+            var parentObjectType = parentContainer.Type;
             var parentObjectVar = Expression.Variable(parentObjectType, "parentObject");
             var parentContainerType = typeof(Container<>).MakeGenericType(parentObjectType);
             var itemProperty = parentContainerType.GetProperty("Item");

@@ -9,9 +9,7 @@ using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 
 using MaterializerLibrary;
-
 using SemanticLibrary;
-
 using SurrogateLibrary;
 
 /*
@@ -34,8 +32,6 @@ namespace Benchmarks
         private DomainBase _domain;
         private TypeSystem<Metadata> _orderTypeSystem;
         private TypeSystem<Metadata> _onlineOrderTypeSystem;
-        private SurrogateType<Metadata> _orderType;
-        private SurrogateType<Metadata> _onlineOrderType;
         private Mapping _orderToOnlineOrderMapping;
         private Mapping _onlineOrderToOrderMapping;
 
