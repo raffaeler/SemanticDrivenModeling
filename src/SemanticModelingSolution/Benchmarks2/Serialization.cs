@@ -52,12 +52,12 @@ namespace Benchmarks
 
             _optionsOrdersToOnlineOrders = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
+                Converters = { new SemanticConverterFactory(_orderTypeSystem, _orderToOnlineOrderMapping), },
             };
 
             _optionsOnlineOrdersToOrders = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderTypeSystem, _onlineOrderToOrderMapping), },
+                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _onlineOrderToOrderMapping), },
             };
 
             _orders = SimpleDomain1.Samples.GetOrders();

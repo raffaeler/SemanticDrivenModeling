@@ -15,16 +15,13 @@ namespace MaterializerLibrary
 {
     public class SemanticConverterFactory : JsonConverterFactory
     {
-        protected TypeSystem<Metadata> _sourceTypeSystem;
-        protected TypeSystem<Metadata> _targetTypeSystem;
+        protected TypeSystem<Metadata> _destinationTypeSystem;
 
-        public SemanticConverterFactory(TypeSystem<Metadata> sourceTypeSystem,
-            TypeSystem<Metadata> targetTypeSystem, Mapping map)
+        public SemanticConverterFactory(TypeSystem<Metadata> destinationTypeSystem, Mapping map)
         {
             if (map == null) throw new ArgumentNullException(nameof(map));
 
-            _sourceTypeSystem = sourceTypeSystem;
-            _targetTypeSystem = targetTypeSystem;
+            _destinationTypeSystem = destinationTypeSystem;
             this.Map = map;
         }
 
@@ -59,15 +56,15 @@ namespace MaterializerLibrary
 #endif
             //var converterType = typeof(SemanticConverter<>).MakeGenericType(typeToConvert);
             //var converter = Activator.CreateInstance(converterType,
-            //    new object[] { _sourceTypeSystem, _targetTypeSystem, Map }) as JsonConverter;
+            //    new object[] { _destinationTypeSystem, Map }) as JsonConverter;
 
             var del = GetJsonConverterCreationDelegate(typeToConvert);
-            var converter = del(_sourceTypeSystem, _targetTypeSystem, Map);
+            var converter = del(_destinationTypeSystem, Map);
             return converter;
         }
 
         private delegate JsonConverter CreateConverterDelegate(
-            TypeSystem<Metadata> sourceTypeSystem, TypeSystem<Metadata> targetTypeSystem, Mapping mapping);
+            TypeSystem<Metadata> destinationTypeSystem, Mapping mapping);
 
         private static Dictionary<Type, CreateConverterDelegate> _cache = new();
         private CreateConverterDelegate GetJsonConverterCreationDelegate(Type typeToConvert)
@@ -76,18 +73,16 @@ namespace MaterializerLibrary
             var converterType = typeof(SemanticConverter<>).MakeGenericType(typeToConvert);
             var constructorInfo = converterType.GetConstructor(new Type[]
             {
-                typeof(TypeSystem<Metadata>), typeof(TypeSystem<Metadata>), typeof(Mapping)
+                typeof(TypeSystem<Metadata>), typeof(Mapping)
             });
 
-            var inputSourceTypeSystem = Expression.Parameter(typeof(TypeSystem<Metadata>));
-            var inputTargetTypeSystem = Expression.Parameter(typeof(TypeSystem<Metadata>));
+            var inputDestinationTypeSystem = Expression.Parameter(typeof(TypeSystem<Metadata>));
             var inputMapping = Expression.Parameter(typeof(Mapping));
             var ctor = Expression.New(constructorInfo,
-                Expression.Constant(_sourceTypeSystem),
-                Expression.Constant(_targetTypeSystem),
-                Expression.Constant(Map));
+                inputDestinationTypeSystem,
+                inputMapping);
 
-            var lambda = Expression.Lambda<CreateConverterDelegate>(ctor, inputSourceTypeSystem, inputTargetTypeSystem, inputMapping);
+            var lambda = Expression.Lambda<CreateConverterDelegate>(ctor, inputDestinationTypeSystem, inputMapping);
             del = lambda.Compile();
             _cache[typeToConvert] = del;
             return del;

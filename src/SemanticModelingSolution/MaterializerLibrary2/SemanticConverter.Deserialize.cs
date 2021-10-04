@@ -24,11 +24,17 @@ namespace MaterializerLibrary
 
         private const string _arrayItemPlaceholder = "$";
         private readonly IReadOnlyCollection<NavigationPair> _emptyMappings = Array.Empty<NavigationPair>();
+        protected readonly string _sourceTypeName;
+
+        /// <summary>
+        /// The type system containing the type definition to deserialize
+        /// </summary>
+        protected TypeSystem<Metadata> _deserializationTypeSystem;
 
         /// <summary>
         /// The lookup dictionary used in deserialization
         /// </summary>
-        protected IDictionary<string, List<NavigationPair>> _sourceLookup;
+        protected IDictionary<string, List<NavigationPair>> _sourceDeserializationLookup;
 
         /// <summary>
         /// key is the source path
@@ -41,8 +47,12 @@ namespace MaterializerLibrary
         /// </summary>
         private Dictionary<string, IContainer> Instances;
 
-        protected string SourceTypeName => _map.Source.Name;
+        protected bool LogObjectArrayEnabled { get; set; } = true;
 
+        /// <summary>
+        /// The type T is the type of generated object (target) and
+        /// is part of the target type system
+        /// </summary>
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             Instances = new();
@@ -85,7 +95,7 @@ namespace MaterializerLibrary
                             var found = jsonPathStack.TryPeek(out JsonSourcePath path);
                             if (!found)
                             {
-                                path = jsonPathStack.Push(SourceTypeName, false);
+                                path = jsonPathStack.Push(_sourceTypeName, false);
                             }
                             else if (path.IsArray)
                             {
@@ -134,7 +144,7 @@ namespace MaterializerLibrary
                             var mappings = GetMappingsFor(jsonPathStack.CurrentPath);
                             if (mappings.Count > 0)
                             {
-                                var instances = mappings.Select(m => Materialize(m)).ToArray();
+                                var instances = MaterializeMany(mappings);
                                 var converter = _conversionGenerator.GetConverterMultiple(jsonPathStack.CurrentPath, mappings);
                                 converter(ref reader, instances);
                             }
@@ -165,7 +175,7 @@ namespace MaterializerLibrary
 
         private IReadOnlyCollection<NavigationPair> GetMappingsFor(string sourcePath)
         {
-            if (!_sourceLookup.TryGetValue(sourcePath, out var mappings))
+            if (!_sourceDeserializationLookup.TryGetValue(sourcePath, out var mappings))
             {
                 return _emptyMappings;
             }
@@ -183,12 +193,18 @@ namespace MaterializerLibrary
             }
         }
 
-        public IContainer Materialize(NavigationPair navigationPair)
+        public IContainer[] MaterializeMany(IReadOnlyCollection<NavigationPair> navigations)
         {
-            var targetNavigation = navigationPair.Target.GetLeaf();
-            var inst = GetOrCreateInstance(targetNavigation);
-            //var instItem = ((IContainerDebug)inst).ObjectItem;
-            return inst;
+            var containers = new IContainer[navigations.Count];
+            int i = 0;
+            foreach(var navigationPair in navigations)
+            {
+                var targetNavigation = navigationPair.Target.GetLeaf();
+                containers[i++] = GetOrCreateInstance(targetNavigation);
+                //var instItem = ((IContainerDebug)inst).ObjectItem;
+            }
+
+            return containers;
         }
 
         private IContainer GetOrCreateInstance(NavigationSegment<Metadata> targetNavigation)
@@ -274,7 +290,7 @@ namespace MaterializerLibrary
             }
 
             var childTypeToCreate = childType.GetOriginalType();
-            var property = segment.Property?.GetOriginalPropertyInfo(_targetTypeSystem);
+            var property = segment.Property?.GetOriginalPropertyInfo(_deserializationTypeSystem);
 
             // input variables to the lambda
             var parentContainerParameter = Expression.Parameter(typeof(IContainer), "parentContainer");

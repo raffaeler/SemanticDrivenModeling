@@ -17,10 +17,14 @@ namespace MaterializerLibrary
 {
     public partial class SemanticConverter<T>
     {
-        // ScoredPropertyMapping<ModelNavigationNode> => NavigationPair
-        protected IDictionary<string, NavigationPair> _targetLookup;
+        /// <summary>
+        /// The type system containing the type definition to serialize
+        /// </summary>
+        protected TypeSystem<Metadata> _serializationTypeSystem;
 
         private static Dictionary<Type, Action<Utf8JsonWriter, T>> _writerCache = new();
+
+        protected IDictionary<string, NavigationPair> _targetSerializationLookup;
 
         // serialization:
         // original object (and therefore 'T') is part of the _sourceTypeSystem
@@ -29,7 +33,7 @@ namespace MaterializerLibrary
         {
             if (!_writerCache.TryGetValue(typeof(T), out var transformDelegate))
             {
-                var visitor = new SemanticSerializationVisitor<T>(_sourceTypeSystem, _targetLookup, _conversionGenerator, _map);
+                var visitor = new SemanticSerializationVisitor<T>(_serializationTypeSystem, _targetSerializationLookup, _conversionGenerator, _map);
                 visitor.Visit(_map.Target);
                 var expression = visitor.GetSerializationAction();
                 transformDelegate = expression.Compile();

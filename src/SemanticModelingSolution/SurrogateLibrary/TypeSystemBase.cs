@@ -120,6 +120,12 @@ namespace SurrogateLibrary
             return surrogate;
         }
 
+        public bool Contains(Type type)
+        {
+            var fullName = SurrogateType.GetFullName(type);
+            return TypesByFullName.ContainsKey(fullName);
+        }
+
         public SurrogateProperty<T> ToSurrogate(PropertyInfo propertyInfo, UInt64 index, UInt64 ownerTypeIndex)
         {
             var propertyType = GetOrCreate(propertyInfo.PropertyType);

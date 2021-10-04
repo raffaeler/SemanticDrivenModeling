@@ -50,12 +50,12 @@ namespace Benchmarks
 
             _optionsOrdersToOnlineOrders = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
+                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
             };
 
             _optionsOnlineOrdersToOrders = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderTypeSystem, _onlineOrderToOrderMapping), },
+                Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderToOrderMapping), },
             };
 
             var sourceOrders = SimpleDomain1.Samples.GetOrders();

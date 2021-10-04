@@ -64,11 +64,11 @@ namespace MappingConsole
 
             DeserializeMapping();
 
-            //SerializeOrders();
+            SerializeOrders();
             SerializeOnlineOrders();
 
             DeserializeOrders();
-            //DeserializeOnlineOrders();
+            DeserializeOnlineOrders();
         }
 
         private void AssignSemantic()
@@ -169,7 +169,7 @@ namespace MappingConsole
         {
             var settings = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
+                Converters = { new SemanticConverterFactory(_orderTypeSystem, _orderToOnlineOrderMapping), },
             };
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
@@ -182,7 +182,7 @@ namespace MappingConsole
         {
             var settings = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderTypeSystem, _onlineOrderToOrderMapping), },
+                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _onlineOrderToOrderMapping), },
             };
 
             var sourceObjects = SimpleDomain2.Samples.GetOnlineOrders();
@@ -197,7 +197,7 @@ namespace MappingConsole
 
             var settings = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderTypeSystem, _onlineOrderToOrderMapping), },
+                Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderToOrderMapping), },
             };
 
             var sourceObjects = SimpleDomain2.Samples.GetOnlineOrders();
@@ -211,7 +211,7 @@ namespace MappingConsole
         {
             var settings = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
+                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
             };
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
