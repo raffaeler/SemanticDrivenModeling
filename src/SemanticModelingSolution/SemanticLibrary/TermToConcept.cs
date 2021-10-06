@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SemanticLibrary
 {
-    public record TermToConcept//(Concept Concept, Concept ContextConcept, ConceptSpecifier ConceptSpecifier, Term Term, int Weight)
+    public record TermToConcept
     {
         public TermToConcept()
         {

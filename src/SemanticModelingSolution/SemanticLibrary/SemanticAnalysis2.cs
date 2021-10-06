@@ -7,27 +7,49 @@ using System.Diagnostics;
 using Humanizer;
 
 using SemanticLibrary.Helpers;
+using SurrogateLibrary;
 
 namespace SemanticLibrary
 {
     public class SemanticAnalysis
     {
         private DomainBase _domain;
-        //private List<string> _allTerms;
         private List<string> _allComposedTerms;
 
         public SemanticAnalysis(DomainBase domain)
         {
             _domain = domain;
-            //_allTerms = domain.Links
-            //    .Select(ttc => ttc.Term.Name)
-            //    .Distinct()
-            //    .ToList();
 
             _allComposedTerms = domain.Links
                 .Select(ttc => ttc.Term.Name)
                 .Where(t => t.ToCharArray().Where(c => char.IsUpper(c)).Count() > 1).ToList();
         }
+
+        public void AssignSemantics(SurrogateType<Metadata> surrogateType)
+        {
+            SurrogateVisitor<Metadata> visitor = new();
+            var ts = new TypeSystem<Metadata>();
+            visitor.Visit(surrogateType,
+                (type, _) => OnType(type), null,
+                (property, _) => OnProperty(property), null, null);
+        }
+
+        private void OnType(SurrogateType<Metadata> type)
+        {
+            var classTermToConcepts = this.AnalyzeType(type.Name);
+            Metadata metadata = new(classTermToConcepts);
+            type.SetInfo(metadata);
+        }
+
+        private void OnProperty(SurrogateProperty<Metadata> property)
+        {
+            var type = property.OwnerType;
+            var coreType = property.PropertyType.GetCoreType();
+            var propertyTermToConcepts = this.AnalyzeProperty(type.Info.TermToConcepts, property.Name, coreType);
+            Metadata metadata = new(propertyTermToConcepts);
+            property.SetInfo(metadata);
+        }
+
 
         /// <summary>
         /// Given a type name, it returns the list of its TermToConcept filtered appropriately
@@ -50,7 +72,8 @@ namespace SemanticLibrary
         /// <param name="propertyName"></param>
         /// <param name="propertyType"></param>
         /// <returns></returns>
-        public IList<TermToConcept> AnalyzeProperty(IList<TermToConcept> classTermToConcepts, string propertyName, Type propertyType)
+        public IList<TermToConcept> AnalyzeProperty(IList<TermToConcept> classTermToConcepts,
+            string propertyName, SurrogateType propertyType)
         {
             //var pureConcepts = GetPureConcepts(classTermToConcepts);
             var normalizedTermStrings = LexicalHelper.CamelPascalCaseExtract(_allComposedTerms, propertyName);
@@ -195,19 +218,6 @@ namespace SemanticLibrary
             //    .ToArray();
             //Debug.Assert(filtered.Length == 1);
             //return filtered.Single();
-        }
-
-        [Obsolete]
-        private TermToConcept ConceptsLinksSelector(string term, IEnumerable<Concept> contexts)
-        {
-            var ttcs = contexts.Select(c => ConceptsLinksSelector(term, c)).ToArray();
-            Debug.Assert(ttcs.Length != 0);
-            if (ttcs.Length == 1)
-            {
-                return ttcs.Single();
-            }
-
-            return ttcs.OrderByDescending(t => t.Weight).First();
         }
 
         private TermToConcept ConceptsLinksSelector(string term, Concept context)

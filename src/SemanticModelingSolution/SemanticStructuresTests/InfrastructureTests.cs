@@ -16,24 +16,24 @@ namespace SemanticStructuresTests
     [TestClass]
     public class InfrastructureTests
     {
-        [TestMethod]
-        public void Terms()
-        {
-            // should not throw
-            var data1 = RawDataLoaders.LoadTerms(@"Data\ERP-Terms-01.txt");
-            Assert.IsTrue(data1.Count > 0);
+        //[TestMethod]
+        //public void Terms()
+        //{
+        //    // should not throw
+        //    var data1 = RawDataLoaders.LoadTerms(@"Data\ERP-Terms-01.txt");
+        //    Assert.IsTrue(data1.Count > 0);
 
-            var data2 = RawDataLoaders.LoadTerms(@"Data\ERP-Terms-02.txt");
-            Assert.IsTrue(data2.Count > 0);
+        //    var data2 = RawDataLoaders.LoadTerms(@"Data\ERP-Terms-02.txt");
+        //    Assert.IsTrue(data2.Count > 0);
 
-            var data3 = RawDataLoaders.LoadTerms(@"Data\ERP-Terms-03.txt");
-            Assert.IsTrue(data3.Count > 0);
+        //    var data3 = RawDataLoaders.LoadTerms(@"Data\ERP-Terms-03.txt");
+        //    Assert.IsTrue(data3.Count > 0);
 
-            var dataFinal = RawDataLoaders.MergeTerms(data1, data2, data3);
-            Assert.IsTrue(dataFinal.Count > data1.Count);
-            Assert.IsTrue(dataFinal.Count > data2.Count);
-            Assert.IsTrue(dataFinal.Count > data3.Count);
-        }
+        //    var dataFinal = RawDataLoaders.MergeTerms(data1, data2, data3);
+        //    Assert.IsTrue(dataFinal.Count > data1.Count);
+        //    Assert.IsTrue(dataFinal.Count > data2.Count);
+        //    Assert.IsTrue(dataFinal.Count > data3.Count);
+        //}
 
 
         [TestMethod]

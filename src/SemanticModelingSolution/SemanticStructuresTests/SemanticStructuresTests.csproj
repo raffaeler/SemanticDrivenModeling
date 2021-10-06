@@ -23,7 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MaterializerLibrary\MaterializerLibrary.csproj" />
         <ProjectReference Include="..\ConversionLibrary\ConversionLibrary.csproj" />
         <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
         <ProjectReference Include="..\ModelsFromGithub\ModelsFromGithub.csproj" />
@@ -33,9 +32,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Samples\Relationships.txt">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
         <None Update="Metadata\domain1types.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -44,6 +40,15 @@
         </None>
         <None Update="Metadata\domainDefinitions.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Metadata\OnlineOrderToOrder.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Metadata\OrderToOnlineOrder.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Samples\Relationships.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 

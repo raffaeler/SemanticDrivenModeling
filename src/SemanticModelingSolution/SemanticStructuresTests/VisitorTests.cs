@@ -15,20 +15,20 @@ namespace SemanticStructuresTests
     [TestClass]
     public class VisitorTests
     {
-        [TestMethod]
-        public void ModelNodeVisitorTests()
-        {
-            var domain = new GeneratedCode.Domain();
-            var modelsDomain1 = new DomainTypesGraphVisitor(domain, ERP_Model.Types.All).Visit(null, null, null);
-            var supplier = modelsDomain1.Single(m => m.Type.Name == "Supplier");
-            var delivery = modelsDomain1.Single(m => m.Type.Name == "Delivery");
+        //[TestMethod]
+        //public void ModelNodeVisitorTests()
+        //{
+        //    var domain = new GeneratedCode.Domain();
+        //    var modelsDomain1 = new DomainTypesGraphVisitor(domain, ERP_Model.Types.All).Visit(null, null, null);
+        //    var supplier = modelsDomain1.Single(m => m.Type.Name == "Supplier");
+        //    var delivery = modelsDomain1.Single(m => m.Type.Name == "Delivery");
 
-            var propertiesSupplier = supplier.FlatHierarchyProperties().ToList();
+        //    var propertiesSupplier = supplier.FlatHierarchyProperties().ToList();
 
-            var propertiesdelivery = delivery.FlatHierarchyProperties().ToList();
+        //    var propertiesdelivery = delivery.FlatHierarchyProperties().ToList();
             
 
-            //Assert.AreEqual(, );
-        }
+        //    //Assert.AreEqual(, );
+        //}
     }
 }

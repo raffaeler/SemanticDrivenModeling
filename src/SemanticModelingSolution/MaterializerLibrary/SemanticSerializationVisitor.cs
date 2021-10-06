@@ -9,39 +9,42 @@ using System.Threading.Tasks;
 
 using SemanticLibrary;
 
+using SurrogateLibrary;
+
 namespace MaterializerLibrary
 {
-    internal class SemanticSerializationVisitor<T> : ModelTypeNodeVisitor
+    internal class SemanticSerializationVisitor<T> : SurrogateVisitor<Metadata>
     {
-        protected Dictionary<string, ScoredPropertyMapping<ModelNavigationNode>> _targetLookup = new();
+        private TypeSystem<Metadata> _typeSystem;
+        protected IDictionary<string, NavigationPair> _targetLookup;
         private Stack<ICodeGenerationContext> _codeGenContext;
         private ConversionGenerator _conversionGenerator;
-        protected ScoredTypeMapping _map;
+        //protected Mapping _map;
         ParameterExpression inputWriter;
 
-        public SemanticSerializationVisitor(Dictionary<string, ScoredPropertyMapping<ModelNavigationNode>> targetLookup,
-            ConversionGenerator conversionGenerator, ScoredTypeMapping map)
+        public SemanticSerializationVisitor(TypeSystem<Metadata> typeSystem, IDictionary<string, NavigationPair> targetLookup,
+            ConversionGenerator conversionGenerator)
         {
+            _typeSystem = typeSystem;
             _targetLookup = targetLookup;
             _conversionGenerator = conversionGenerator;
-            _map = map;
 
             OneToManyContext.Reset();
             _codeGenContext = new();
-            _codeGenContext.Push(new SimpleContext(typeof(T)));
+            _codeGenContext.Push(new SimpleContext(typeof(T), typeof(T).Name));
             inputWriter = Expression.Parameter(typeof(Utf8JsonWriter), "writer");
         }
 
-        public override void OnBeginVisitModelTypeNode(ModelTypeNode modelTypeNode, string path)
+        public override void OnBeginVisitType(SurrogateType<Metadata> type, string path)
         {
-            Console.WriteLine($"********> {path} [{modelTypeNode.Type.Name}]");
+            //Console.WriteLine($"********> {path} [{type.Name}]");
             //writer.WriteStartObject();
             var currentContext = _codeGenContext.Peek();
             var writeExpression = GeneratorUtilities.JsonWriteStartObject(inputWriter);
             currentContext.Statements.Add(writeExpression);
         }
 
-        public override void OnEndVisitModelTypeNode(ModelTypeNode modelTypeNode, string path)
+        public override void OnEndVisitType(SurrogateType<Metadata> type, string path)
         {
             //writer.WriteEndObject();
             var currentContext = _codeGenContext.Peek();
@@ -49,20 +52,23 @@ namespace MaterializerLibrary
             currentContext.Statements.Add(writeExpression);
         }
 
-        public override void OnVisitModelPropertyNode(ModelPropertyNode modelPropertyNode, string path)
+        public override void OnVisitProperty(SurrogateProperty<Metadata> property, string path)
         {
-            if (modelPropertyNode.PropertyKind.IsOneToOne())
+            var propertyKind = property.GetKind();
+            if (propertyKind == PropertyKind.OneToOne)
             {
                 // one-to-one
-                Console.WriteLine("1-1");
+                //Console.WriteLine("1-1");
                 //writer.WritePropertyName(modelPropertyNode.Name);
                 var currentContext1 = _codeGenContext.Peek();
-                var writeExpression1 = GeneratorUtilities.JsonWritePropertyName(inputWriter, modelPropertyNode.Name);
+                var writeExpression1 = GeneratorUtilities.JsonWritePropertyName(inputWriter, property.Name);
                 currentContext1.Statements.Add(writeExpression1);
 
                 return;
             }
-            else if (modelPropertyNode.PropertyKind.IsOneToMany())
+            else if (propertyKind == PropertyKind.OneToMany ||
+                propertyKind == PropertyKind.OneToManyBasicType ||
+                propertyKind == PropertyKind.OneToManyEnum)
             {
                 // collection of something
                 // already handled inside the collection callbacks
@@ -71,26 +77,30 @@ namespace MaterializerLibrary
 
             if (!_targetLookup.TryGetValue(path, out var scoredPropertyMapping))
             {
-                Console.WriteLine($"PathProp> {path} unmapped");
+                //Console.WriteLine($"PathProp> {path} unmapped");
                 return;
             }
 
-            var sourcePath = scoredPropertyMapping.Source.GetMapPath();
-            Console.Write($"PathProp> {path} <== Source: {sourcePath}   |   ");
+            var sourcePath = scoredPropertyMapping.Source.GetLeafPath();
+            //Console.Write($"PathProp> {path} <== Source: {sourcePath}   |   ");
 
             //var expressions = GeneratorUtilities.CreateGetValue<T>(scoredPropertyMapping.Source);
 
             // look for the the parent needed to access the chain done with 1-1 and/or basic types 
-            var tempNav = scoredPropertyMapping.Source;
-            ModelNavigationNode relativeRoot = null;
-            SurrogateType relativeRootType = null;
+            var tempNav = scoredPropertyMapping.Source.GetLeaf();
+            NavigationSegment<Metadata> relativeRoot = null;
+            SurrogateType<Metadata> relativeRootType = null;
             while (true)
             {
                 if (tempNav.Previous == null ||
-                    (tempNav.Previous != null && tempNav.Previous.ModelPropertyNode.PropertyKind.IsOneToMany()))
+                    (tempNav.Previous != null && tempNav.Previous.IsOneToMany))//ModelPropertyNode.PropertyKind.IsOneToMany()))
                 {
                     relativeRoot = tempNav;
-                    relativeRootType = tempNav.ModelPropertyNode.Parent.Type;
+                    if (tempNav.Property != null)
+                        relativeRootType = tempNav.Property.OwnerType;
+                    else
+                        relativeRootType = tempNav.Type;
+
                     break;
                 }
 
@@ -123,16 +133,16 @@ namespace MaterializerLibrary
                 // Source: Order.OrderItems.$.Article.Description
                 // This property should be applied to the [collection].FirstOrDefault() from the parent context
                 // relativeRoot.ModelPropertyNode.PropertyInfo
-                Console.WriteLine("Skipped <special case>");
+                //Console.WriteLine("Skipped <special case>");
                 return;
             }
 
             var currentContext = _codeGenContext.Peek();
-            var accessor = GeneratorUtilities.CreateGetValue(context.Variable,
+            var accessor = GeneratorUtilities.CreateGetValue(_typeSystem, context.SourcePath, context.Variable,
                 scoredPropertyMapping.Source);
 
             var valueExpression = _conversionGenerator.GetJsonConversionExpression(scoredPropertyMapping, accessor);
-            var writeExpression = GeneratorUtilities.JsonWriteValue(inputWriter, modelPropertyNode.Name, valueExpression);
+            var writeExpression = GeneratorUtilities.JsonWriteValue(inputWriter, property.Name, valueExpression);
             //var writeExpression = GeneratorUtilities.JsonWriteString(inputWriter,
             //    modelPropertyNode.Name, Expression.Constant(modelPropertyNode.Name));
             currentContext.Statements.Add(writeExpression);
@@ -140,15 +150,15 @@ namespace MaterializerLibrary
             //writer.WriteString()
 
             // basic types
-            Console.Write("B");
-            Console.WriteLine();
+            //Console.Write("B");
+            //Console.WriteLine();
         }
 
-        public override void OnBeginVisitCollectionPropertyNode(ModelPropertyNode modelPropertyNode, string path)
+        public override void OnBeginVisitCollectionProperty(SurrogateProperty<Metadata> modelPropertyNode, string targetPath)
         {
             // begin collection
             //var sourcePath = scoredPropertyMapping.Source.GetMapPath();
-            Console.WriteLine($"Start  C> {path} ");
+            //Console.WriteLine($"Start  C> {targetPath} ");
             //writer.WriteStartArray(modelPropertyNode.Name);
             var currentContext = _codeGenContext.Peek();
             var writeExpression = GeneratorUtilities.JsonWriteStartArray(inputWriter, modelPropertyNode.Name);
@@ -158,15 +168,15 @@ namespace MaterializerLibrary
             // all the expressions after this must use this as "root"
             // in the end-collection we create the foreach with that variable
 
-            var sourceModelPropertyNode = FindFirstCollectionOnSourceModelPropertyNode(path);
-            var context = new OneToManyContext(sourceModelPropertyNode, path);
+            var sourceModelPropertyNode = FindFirstCollectionOnSourceModelPropertyNode(targetPath);
+            var context = new OneToManyContext(_typeSystem, sourceModelPropertyNode, targetPath);
             _codeGenContext.Push(context);
         }
 
-        public override void OnEndVisitCollectionPropertyNode(ModelPropertyNode modelPropertyNode, string path)
+        public override void OnEndVisitCollectionProperty(SurrogateProperty<Metadata> modelPropertyNode, string path)
         {
             // end collection
-            Console.WriteLine($"End    C> {path} ");
+            //Console.WriteLine($"End    C> {path} ");
             //writer.WriteEndArray();
 
             var currentContext = _codeGenContext.Pop() as OneToManyContext;
@@ -184,17 +194,17 @@ namespace MaterializerLibrary
             outerContext.Statements.Add(writeExpression);
         }
 
-        private ModelNavigationNode FindFirstCollectionOnSourceModelPropertyNode(string targetPath)
+        private NavigationSegment<Metadata> FindFirstCollectionOnSourceModelPropertyNode(string targetPath)
         {
-            ModelNavigationNode navigation;
+            NavigationSegment<Metadata> navigation;
             foreach (var path in _targetLookup.Keys)
             {
                 if (path.Contains(targetPath))
                 {
-                    navigation = _targetLookup[path].Source;
+                    navigation = _targetLookup[path].Source.GetLeaf();
                     while (navigation != null)
                     {
-                        if (navigation.ModelPropertyNode.PropertyKind.IsOneToMany())
+                        if (navigation.IsOneToMany)// ModelPropertyNode.PropertyKind.IsOneToMany())
                         {
                             return navigation;
                         }
@@ -212,21 +222,24 @@ namespace MaterializerLibrary
 
         private interface ICodeGenerationContext
         {
-            ModelNavigationNode PropertyNode { get; }
+            string SourcePath { get; }
+            NavigationSegment<Metadata> PropertyNode { get; }
             ParameterExpression Variable { get; }
             IList<Expression> Statements { get; }
         }
 
         private class SimpleContext : ICodeGenerationContext
         {
-            public SimpleContext(Type type)
+            public SimpleContext(Type type, string sourcePath)
             {
                 PropertyNode = null;
                 Variable = Expression.Parameter(type);
                 Statements = new List<Expression>();
+                SourcePath = sourcePath;
             }
 
-            public ModelNavigationNode PropertyNode { get; }
+            public string SourcePath { get; }
+            public NavigationSegment<Metadata> PropertyNode { get; }
             public ParameterExpression Variable { get; }
             public IList<Expression> Statements { get; }
 
@@ -240,19 +253,27 @@ namespace MaterializerLibrary
         private class OneToManyContext : ICodeGenerationContext
         {
             private static int _id = 0;
-            public OneToManyContext(ModelNavigationNode collectionNode, string path)
+            TypeSystem<Metadata> _typeSystem;
+            public OneToManyContext(TypeSystem<Metadata> typeSystem, NavigationSegment<Metadata> collectionNode, string targetPath)
             {
+                _typeSystem = typeSystem;
                 PropertyNode = collectionNode;
-                Path = path;
-                var itemTypeToIterate = PropertyNode.ModelPropertyNode.CoreType.GetOriginalType();
+                TargetPath = targetPath;
+                SourcePath = collectionNode.Path;
+                var itemTypeToIterate = PropertyNode.Property.PropertyType.GetCoreType().GetOriginalType();
                 _id++;
                 Variable = Expression.Variable(itemTypeToIterate, $"loopVar{_id}");
                 Statements = new List<Expression>();
                 BodyVariables = new();
             }
 
-            public ModelNavigationNode PropertyNode { get; }
-            public string Path { get; }
+            public NavigationSegment<Metadata> PropertyNode { get; }
+            public string TargetPath { get; }
+
+            /// <summary>
+            /// The path of the Variable
+            /// </summary>
+            public string SourcePath { get; }
             public ParameterExpression Variable { get; }
             public IList<Expression> Statements { get; }
             public List<ParameterExpression> BodyVariables { get; }
@@ -261,7 +282,8 @@ namespace MaterializerLibrary
 
             public Expression CreateForEach(ParameterExpression outerObject)
             {
-                var enumerable = GeneratorUtilities.CreateGetValue(outerObject, PropertyNode);
+                //var enumerable = GeneratorUtilities.CreateGetValue(_typeSystem, SourcePath, outerObject, PropertyNode);
+                var enumerable = GeneratorUtilities.CreateGetEnumerable(_typeSystem, SourcePath, outerObject, PropertyNode);
                 return GeneratorUtilities.ForEach(enumerable, Variable, CreateBody());
             }
 

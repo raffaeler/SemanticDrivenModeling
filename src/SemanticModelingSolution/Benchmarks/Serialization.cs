@@ -11,27 +11,35 @@ using BenchmarkDotNet.Attributes;
 using MaterializerLibrary;
 using SemanticLibrary;
 
+using SurrogateLibrary;
+
 /*
 
-V1
 
-|                     Method |      Mean |     Error |    StdDev |
-|--------------------------- |----------:|----------:|----------:|
-|                PlainOrders | 10.944 us | 0.2182 us | 0.3266 us |
-|          PlainOnlineOrders |  7.648 us | 0.1466 us | 0.1440 us |
-| SemanticOrderToOnlineOrder |  6.732 us | 0.1290 us | 0.1380 us |
-| SemanticOnlineOrderToOrder |  6.923 us | 0.0940 us | 0.0833 us |
+V2
+
+|                     Method |     Mean |     Error |    StdDev |
+|--------------------------- |---------:|----------:|----------:|
+|                PlainOrders | 9.702 us | 0.1862 us | 0.1992 us |
+|          PlainOnlineOrders | 6.832 us | 0.1318 us | 0.1518 us |
+| SemanticOrderToOnlineOrder | 6.108 us | 0.1186 us | 0.1318 us |
+| SemanticOnlineOrderToOrder | 6.064 us | 0.0987 us | 0.0923 us |
+
 */
 
 namespace Benchmarks
 {
     public class Serialization
     {
-        private ScoredTypeMapping _onlineOrderToOrder;
-        private ScoredTypeMapping _orderToOnlineOrder;
+        private DomainBase _domain;
+        private TypeSystem<Metadata> _orderTypeSystem;
+        private TypeSystem<Metadata> _onlineOrderTypeSystem;
+        private Mapping _orderToOnlineOrderMapping;
+        private Mapping _onlineOrderToOrderMapping;
 
-        private JsonSerializerOptions _optionsOrdersToOnlineOrders;
-        private JsonSerializerOptions _optionsOnlineOrdersToOrders;
+        //private JsonSerializerOptions _optionsOrdersToOnlineOrders;
+        //private JsonSerializerOptions _optionsOnlineOrdersToOrders;
+        private JsonSerializerOptions _options;
 
         private IList<SimpleDomain1.Order> _orders;
         private IList<SimpleDomain2.OnlineOrder> _onlineOrders;
@@ -40,29 +48,55 @@ namespace Benchmarks
         public void Initialize()
         {
             var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
-            var jsonDomain1 = File.ReadAllText("Metadata\\domain1types.json");
-            var jsonDomain2 = File.ReadAllText("Metadata\\domain2types.json");
+            _domain = JsonSerializer.Deserialize<DomainBase>(jsonDomainDefinitions);
+            DeserializeMapping();
 
-            var domain = JsonSerializer.Deserialize<DomainBase>(jsonDomainDefinitions);
-            var utilities = new MappingUtilities(domain);
-            //var m1 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain1, domain);
-            //var m2 = ModelTypeNodeExtensions.DeserializeMany(jsonDomain2, domain);
-            _orderToOnlineOrder = utilities.DeserializeMapping(domain, "Metadata\\OrderToOnlineOrder.json");
-            _onlineOrderToOrder = utilities.DeserializeMapping(domain, "Metadata\\OnlineOrderToOrder.json");
+            //_optionsOrdersToOnlineOrders = new JsonSerializerOptions()
+            //{
+            //    Converters = { new SemanticConverterFactory(_orderTypeSystem, _orderToOnlineOrderMapping), },
+            //};
+
+            //_optionsOnlineOrdersToOrders = new JsonSerializerOptions()
+            //{
+            //    Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _onlineOrderToOrderMapping), },
+            //};
+
+            _options = new JsonSerializerOptions()
+            {
+                Converters = { new SemanticConverterFactory(
+                    new[]{ _orderTypeSystem, _onlineOrderTypeSystem},
+                    new[] {_orderToOnlineOrderMapping, _onlineOrderToOrderMapping}), },
+            };
 
             _orders = SimpleDomain1.Samples.GetOrders();
             _onlineOrders = SimpleDomain2.Samples.GetOnlineOrders();
 
-            _optionsOrdersToOnlineOrders = utilities.CreateSettings(_orderToOnlineOrder);
-            _optionsOnlineOrdersToOrders = utilities.CreateSettings(_onlineOrderToOrder);
 
             JsonSerializer.Serialize(_orders);
             JsonSerializer.Serialize(_onlineOrders);
 
             // let the codegen cache the delegates
-            JsonSerializer.Serialize(_orders, _optionsOrdersToOnlineOrders);
-            JsonSerializer.Serialize(_onlineOrders, _optionsOnlineOrdersToOrders);
+            JsonSerializer.Serialize(_orders, /*_optionsOrdersToOnlineOrders*/_options);
+            JsonSerializer.Serialize(_onlineOrders, /*_optionsOnlineOrdersToOrders*/_options);
         }
+
+        private void DeserializeMapping()
+        {
+            var orderTypeSystemJson = File.ReadAllText("Metadata\\V2OrderTypeSystem.json");
+            var onlineOrderTypeSystemJson = File.ReadAllText("Metadata\\V2OnlineOrderTypeSystem.json");
+            var orderToOnlineOrderMappingsJson = File.ReadAllText("Metadata\\V2Order2OnlineOrderMapping.json");
+            var onlineOrderToOrderMappingsJson = File.ReadAllText("Metadata\\V2OnlineOrder2OrderMapping.json");
+            _orderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(orderTypeSystemJson);
+            _onlineOrderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(onlineOrderTypeSystemJson);
+            _orderToOnlineOrderMapping = JsonSerializer.Deserialize<Mapping>(orderToOnlineOrderMappingsJson);
+            _onlineOrderToOrderMapping = JsonSerializer.Deserialize<Mapping>(onlineOrderToOrderMappingsJson);
+
+            _orderTypeSystem.UpdateCache();
+            _onlineOrderTypeSystem.UpdateCache();
+            _orderToOnlineOrderMapping.UpdateCache(_orderTypeSystem, _onlineOrderTypeSystem);
+            _onlineOrderToOrderMapping.UpdateCache(_onlineOrderTypeSystem, _orderTypeSystem);
+        }
+
 
         [GlobalCleanup]
         public void Cleanup()
@@ -72,25 +106,25 @@ namespace Benchmarks
         [Benchmark]
         public void PlainOrders()
         {
-            JsonSerializer.Serialize(_orders);
+            var temp = JsonSerializer.Serialize(_orders);
         }
 
         [Benchmark]
         public void PlainOnlineOrders()
         {
-            JsonSerializer.Serialize(_onlineOrders);
+            var temp = JsonSerializer.Serialize(_onlineOrders);
         }
 
         [Benchmark]
         public void SemanticOrderToOnlineOrder()
         {
-            JsonSerializer.Serialize(_orders, _optionsOrdersToOnlineOrders);
+            var temp = JsonSerializer.Serialize(_orders, /*_optionsOrdersToOnlineOrders*/_options);
         }
 
         [Benchmark]
         public void SemanticOnlineOrderToOrder()
         {
-            JsonSerializer.Serialize(_onlineOrders, _optionsOnlineOrdersToOrders);
+            var temp = JsonSerializer.Serialize(_onlineOrders, /*_optionsOnlineOrdersToOrders*/_options);
         }
     }
 }

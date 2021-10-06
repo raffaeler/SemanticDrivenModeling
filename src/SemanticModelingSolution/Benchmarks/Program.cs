@@ -10,8 +10,10 @@ namespace Benchmarks
         static void Main(string[] args)
         {
             //var s = new Serialization();
-            var s = new Deserialization();
-            s.Initialize();
+            //var s = new Deserialization();
+            //s.Initialize();
+            //s.SemanticOrderToOnlineOrder();
+            //s.SemanticOnlineOrderToOrder();
 
             var p = new Program();
             p.RunBenchmark();
@@ -20,8 +22,8 @@ namespace Benchmarks
         private int RunBenchmark()
         {
             Summary summary;
-            //summary = BenchmarkRunner.Run<Serialization>();
-            summary = BenchmarkRunner.Run<Deserialization>();
+            summary = BenchmarkRunner.Run<Serialization>();
+            //summary = BenchmarkRunner.Run<Deserialization>();
             return 0;
         }
     }

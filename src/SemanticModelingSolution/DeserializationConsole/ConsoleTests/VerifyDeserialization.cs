@@ -5,8 +5,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-using MaterializerLibrary;
-
 namespace DeserializationConsole
 {
     public class VerifyDeserialization
@@ -23,7 +21,7 @@ namespace DeserializationConsole
                 WriteIndented = true,
                 Converters =
                 {
-                    new VisualizeTrivialConverter<TestA>(),
+                    //new VisualizeTrivialConverter<TestA>(),
                 },
             };
 

@@ -11,6 +11,7 @@ using ConversionLibrary;
 using ConversionLibrary.Converters;
 
 using SemanticLibrary;
+using SurrogateLibrary;
 
 /*
     // methods exposed from the Utf8JsonReader
@@ -51,6 +52,7 @@ namespace MaterializerLibrary
         private Dictionary<string, GetConvertedValueDelegate> _cacheGetValue;
         private PropertyInfo _readerTokenType;
         private MethodInfo _readerSkipMethodInfo;
+        private MethodInfo _readerReadMethodInfo;
 
         private Type[] _jsonNumericTypes = new Type[]
         {
@@ -64,11 +66,20 @@ namespace MaterializerLibrary
             "Int32", "UInt32", "Int64", "UInt64"
         };
 
-        public delegate void SetPropertiesDelegate(ref Utf8JsonReader reader, object[] instances);
+        public delegate void SetPropertiesDelegate(ref Utf8JsonReader reader, IContainer[] instances);
         public delegate object GetConvertedValueDelegate(ref Utf8JsonReader reader);
 
-        public ConversionGenerator(ConversionContext conversionContext = null)
+        public PropertyInfo ReaderTokenType => _readerTokenType;
+        public MethodInfo ReaderSkip => _readerSkipMethodInfo;
+        public MethodInfo ReaderRead => _readerReadMethodInfo;
+        public Dictionary<string, MethodInfo> ReaderGetValue => _readerGetValue;
+        public Dictionary<string, Type> BasicTypes => _basicTypes;
+        public ConversionEngine ConversionEngine => _conversionEngine;
+        public Dictionary<string, Type> ConverterTypes => _converterTypes;
+
+        public ConversionGenerator(/*TypeSystem<Metadata> typeSystem, */ConversionContext conversionContext = null)
         {
+            //_typeSystem = typeSystem;
             _conversionEngine = new ConversionEngine(conversionContext);
 
             _basicTypes = new Dictionary<string, Type>()
@@ -99,6 +110,8 @@ namespace MaterializerLibrary
 
             _readerTokenType = reader.GetProperty("TokenType");
             _readerSkipMethodInfo = reader.GetMethod("Skip");
+            _readerReadMethodInfo = reader.GetMethod("Read");
+
             _readerGetValue = new Dictionary<string, MethodInfo>()
             {
                 { "Boolean",            reader.GetMethod("GetBoolean")          },
@@ -151,11 +164,16 @@ namespace MaterializerLibrary
             _cacheGetValue = new();
         }
 
-        public Expression GetJsonConversionExpression(ScoredPropertyMapping<ModelNavigationNode> nodeMapping,
+        /// <summary>
+        /// Serialization
+        /// </summary>
+        public Expression GetJsonConversionExpression(NavigationPair nodeMapping,
             Expression sourceExpression)
         {
-            var targetType = nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType.GetOriginalType();
-            var sourceType = nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType.GetOriginalType();
+            var source = nodeMapping.Source.GetLeaf();
+            var target = nodeMapping.Target.GetLeaf();
+            var sourceType = source.Property.PropertyType.GetOriginalType();
+            var targetType = target.Property.PropertyType.GetOriginalType();
 
             if (targetType.Name == "String" ||
                 targetType.Name == "Boolean")
@@ -197,6 +215,9 @@ namespace MaterializerLibrary
             throw new Exception($"Unsupported basic type: {targetType.Namespace}.{targetType.Name}");
         }
 
+        /// <summary>
+        /// Serialization
+        /// </summary>
         private Expression CreateConvertedExpression(IConversion converter, Type sourceType, Type targetType, Expression sourceExpression)
         {
             if (!_converterTypes.TryGetValue(targetType.Name, out var converterType))
@@ -212,16 +233,165 @@ namespace MaterializerLibrary
             return conversionCall;
         }
 
-        public SetPropertiesDelegate GetConverter(ScoredPropertyMapping<ModelNavigationNode> nodeMapping)
+        /// <summary>
+        /// Deserialization
+        /// </summary>
+        public SetPropertiesDelegate GetConverterMultiple(string sourcePath,
+            IReadOnlyCollection<NavigationPair> nodeMappings, bool useCache = true)
         {
-            var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.ModelPropertyNode.PropertyInfo.Name}";
+            if (!_cacheSetProperty.TryGetValue(sourcePath, out var lambda))
+            {
+                var expression = GenerateConversionMultiple(nodeMappings);
+                lambda = expression.Compile();
+                if(useCache) _cacheSetProperty[sourcePath] = lambda;
+            }
+
+            return lambda;
+        }
+
+        private Expression<SetPropertiesDelegate> GenerateConversionMultiple(IReadOnlyCollection<NavigationPair> nodeMappings)
+        {
+            if (nodeMappings == null) throw new ArgumentNullException(nameof(nodeMappings));
+            if (nodeMappings.Count == 0) throw new ArgumentException(nameof(nodeMappings));
+
+            var sourceTypeName = nodeMappings.First().Source.GetLeaf().Property.PropertyType.Name;
+            if (!_basicTypes.TryGetValue(sourceTypeName, out Type sourceType))
+            {
+                throw new ArgumentException($"The type {sourceTypeName} is not valid for converting data in a json source");
+            }
+
+            if (!_readerGetValue.TryGetValue(sourceTypeName, out MethodInfo readerMethod))
+            {
+                throw new ArgumentException($"The type {sourceTypeName} is not valid for reading data from a json source");
+            }
+
+            var inputInstances = Expression.Parameter(typeof(IContainer[]), "inputInstancesArray");
+
+            List<Expression> nullStatements = new();
+            List<Expression> valueStatements = new();
+
+            var readerInputParameter = Expression.Parameter(typeof(Utf8JsonReader).MakeByRefType(), "reader");
+
+            // DateTimeOffset val = reader.GetDateTimeOffset();
+            var valueFromReader = Expression.Variable(sourceType, "val");
+            var readerCall = Expression.Assign(valueFromReader, Expression.Call(readerInputParameter, readerMethod));
+            valueStatements.Add(readerCall);
+
+            int i = 0;
+            foreach (var nodeMapping in nodeMappings)
+            {
+                Type targetInstanceType = nodeMapping.Target.GetLeaf().Property.OwnerType.GetOriginalType();
+                string targetPropertyTypeName = nodeMapping.Target.GetLeaf().Property.PropertyType.Name;
+                string propertyName = nodeMapping.Target.GetLeaf().Property.Name;
+
+                if (!_basicTypes.TryGetValue(targetPropertyTypeName, out Type targetPropertyType))
+                {
+                    throw new ArgumentException($"The type {targetPropertyTypeName} is not valid for converting data in a json source");
+                }
+
+                if (!_conversionEngine.ConversionStrings.TryGetValue(targetPropertyTypeName, out IConversion targetConverter))
+                {
+                    throw new ArgumentException($"There is no converter instance for the target type {targetPropertyTypeName}");
+                }
+
+                if (!_converterTypes.TryGetValue(targetPropertyTypeName, out Type converterType))
+                {
+                    throw new ArgumentException($"There is no converter type for the target type {targetPropertyTypeName}");
+                }
+
+                nullStatements.Add(CreateAssignFromStatement(i, inputInstances, null,
+                    sourceType, targetInstanceType, propertyName, targetPropertyType, targetConverter, converterType));
+                valueStatements.Add(CreateAssignFromStatement(i, inputInstances, valueFromReader,
+                    sourceType, targetInstanceType, propertyName, targetPropertyType, targetConverter, converterType));
+                i++;
+            }
+
+            nullStatements.Add(CreateReaderSkip(readerInputParameter));
+
+            var blockNull = Expression.Block(nullStatements);
+            var blockValue = Expression.Block(new ParameterExpression[] { valueFromReader }, valueStatements);
+
+
+
+            // if JsonTokenType is null, I assign the default(targetPropertyType) to the property
+            var IfCondition = Expression.IfThenElse(
+                Expression.MakeBinary(ExpressionType.Equal,
+                    Expression.MakeMemberAccess(readerInputParameter, _readerTokenType), Expression.Constant(JsonTokenType.Null)),
+                blockNull,
+                blockValue);
+
+            var lambda = Expression.Lambda<SetPropertiesDelegate>(IfCondition, readerInputParameter, inputInstances);
+            return lambda;
+        }
+
+        /// <summary>
+        /// Generates a statement like this one:
+        /// ((Article)instances[i++]).ExpirationDate = ((ToDateTimeConversion)_conversion).FromNull();
+        /// ((Article)instances[i++]).ExpirationDate = ((ToDateTimeConversion)_conversion).From(val);
+        /// 
+        /// where "i" is the index and must have the same order as the input instance array object[]
+        /// </summary>
+        private Expression CreateAssignFromStatement(int index,
+            ParameterExpression inputInstancesArray,
+            ParameterExpression fromMethodArgument, Type sourceType,
+            Type targetInstanceType, string propertyName,
+            Type targetPropertyType, IConversion targetConverter, Type converterType)
+        {
+            MethodInfo fromMethod = fromMethodArgument == null
+                ? converterType.GetMethod("FromNull")
+                : converterType.GetMethod("From", new Type[] { sourceType });
+
+            //((Article)((Container<Article>)instances[i++]).Item).ExpirationDate
+            var typedContainerType = typeof(Container<>).MakeGenericType(targetInstanceType);
+
+            // typed version used in the optmized version (better benchmarking results)
+            var itemProperty = typedContainerType.GetProperty("Item");
+            var left = Expression.Property(
+                Expression.Convert(
+                    Expression.MakeMemberAccess(
+                        Expression.Convert(
+                            Expression.ArrayIndex(inputInstancesArray, Expression.Constant(index)),
+                                typedContainerType), itemProperty), targetInstanceType),
+                propertyName);
+
+            //// object version used in the "Reflection" version to make comparison benchmarking tests
+            //var itemProperty = typeof(IContainerDebug).GetProperty("ObjectItem");
+            //var left = Expression.Property(
+            //    Expression.Convert(
+            //        Expression.MakeMemberAccess(
+            //            Expression.Convert(
+            //                Expression.ArrayIndex(inputInstancesArray, Expression.Constant(index)),
+            //                    typeof(IContainerDebug)), itemProperty), targetInstanceType),
+            //    propertyName);
+
+            // ((ToDateTimeConversion)_conversion).FromNull()
+            // or
+            // ((ToDateTimeOffsetConversion)_conversion).From(val);
+            var converterInstance = Expression.Constant(targetConverter);   // _conversion variable
+            var castedConverterInstance = Expression.Convert(converterInstance, converterType);
+            var right = fromMethodArgument == null
+                ? Expression.Call(castedConverterInstance, fromMethod)
+                : Expression.Call(castedConverterInstance, fromMethod, fromMethodArgument);
+
+            return Expression.Assign(left, right);
+        }
+
+        private Expression CreateReaderSkip(ParameterExpression readerInput)
+            => Expression.Call(readerInput, _readerSkipMethodInfo);
+
+
+        // if it is used in serialization is GetLeafPath
+        // in deserialization is GetLeafPathAlt
+        public SetPropertiesDelegate GetConverter(NavigationPair nodeMapping)
+        {
+            var path = nodeMapping.Target.GetLeafPathAlt() + $".{nodeMapping.Target.Property.Name}";
             if (!_cacheSetProperty.TryGetValue(path, out var lambda))
             {
                 var expression = GenerateConversion(
-                    nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType.Name,
-                    nodeMapping.Target.ModelPropertyNode.Parent.Type.GetOriginalType(),
-                    nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType.Name,
-                    nodeMapping.Target.ModelPropertyNode.Name);
+                    nodeMapping.Source.Property.PropertyType.Name,
+                    nodeMapping.Target.Property.OwnerType.GetOriginalType(),
+                    nodeMapping.Target.Property.PropertyType.Name,
+                    nodeMapping.Target.Property.Name);
                 lambda = expression.Compile();
             }
 
@@ -281,102 +451,16 @@ namespace MaterializerLibrary
             return lambda;
         }
 
-        public SetPropertiesDelegate GetConverterMultiple(string sourcePath, List<ScoredPropertyMapping<ModelNavigationNode>> nodeMappings)
+
+        // verify pathalt
+        public GetConvertedValueDelegate GetValueConverter(NavigationPair nodeMapping)
         {
-            if (!_cacheSetProperty.TryGetValue(sourcePath, out var lambda))
-            {
-                var expression = GenerateConversionMultiple(nodeMappings);
-                lambda = expression.Compile();
-            }
-
-            return lambda;
-        }
-
-        private Expression<SetPropertiesDelegate> GenerateConversionMultiple(IList<ScoredPropertyMapping<ModelNavigationNode>> nodeMappings)
-        {
-            if (nodeMappings == null) throw new ArgumentNullException(nameof(nodeMappings));
-            if (nodeMappings.Count == 0) throw new ArgumentException(nameof(nodeMappings));
-
-            var sourceTypeName = nodeMappings.First().Source.ModelPropertyNode.PropertyInfo.PropertyType.Name;
-            if (!_basicTypes.TryGetValue(sourceTypeName, out Type sourceType))
-            {
-                throw new ArgumentException($"The type {sourceTypeName} is not valid for converting data in a json source");
-            }
-
-            if (!_readerGetValue.TryGetValue(sourceTypeName, out MethodInfo readerMethod))
-            {
-                throw new ArgumentException($"The type {sourceTypeName} is not valid for reading data from a json source");
-            }
-
-            var inputInstances = Expression.Parameter(typeof(object[]), "inputInstancesArray");
-
-            List<Expression> nullStatements = new();
-            List<Expression> valueStatements = new();
-
-            var readerInputParameter = Expression.Parameter(typeof(Utf8JsonReader).MakeByRefType(), "reader");
-
-            // DateTimeOffset val = reader.GetDateTimeOffset();
-            var valueFromReader = Expression.Variable(sourceType, "val");
-            var readerCall = Expression.Assign(valueFromReader, Expression.Call(readerInputParameter, readerMethod));
-            valueStatements.Add(readerCall);
-
-            int i = 0;
-            foreach (var nodeMapping in nodeMappings)
-            {
-                Type targetInstanceType = nodeMapping.Target.ModelPropertyNode.Parent.Type.GetOriginalType();
-                string targetPropertyTypeName = nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType.Name;
-                string propertyName = nodeMapping.Target.ModelPropertyNode.Name;
-
-                if (!_basicTypes.TryGetValue(targetPropertyTypeName, out Type targetPropertyType))
-                {
-                    throw new ArgumentException($"The type {targetPropertyTypeName} is not valid for converting data in a json source");
-                }
-
-                if (!_conversionEngine.ConversionStrings.TryGetValue(targetPropertyTypeName, out IConversion targetConverter))
-                {
-                    throw new ArgumentException($"There is no converter instance for the target type {targetPropertyTypeName}");
-                }
-
-                if (!_converterTypes.TryGetValue(targetPropertyTypeName, out Type converterType))
-                {
-                    throw new ArgumentException($"There is no converter type for the target type {targetPropertyTypeName}");
-                }
-
-                nullStatements.Add(CreateAssignFromStatement(i, inputInstances, null,
-                    sourceType, targetInstanceType, propertyName, targetPropertyType, targetConverter, converterType));
-                valueStatements.Add(CreateAssignFromStatement(i, inputInstances, valueFromReader,
-                    sourceType, targetInstanceType, propertyName, targetPropertyType, targetConverter, converterType));
-                i++;
-            }
-
-            nullStatements.Add(CreateReaderSkip(readerInputParameter));
-
-            var blockNull = Expression.Block(nullStatements);
-            var blockValue = Expression.Block(new ParameterExpression[] { valueFromReader }, valueStatements);
-
-
-
-            // if JsonTokenType is null, I assign the default(targetPropertyType) to the property
-            var IfCondition = Expression.IfThenElse(
-                Expression.MakeBinary(ExpressionType.Equal,
-                    Expression.MakeMemberAccess(readerInputParameter, _readerTokenType), Expression.Constant(JsonTokenType.Null)),
-                blockNull,
-                blockValue);
-
-            var lambda = Expression.Lambda<SetPropertiesDelegate>(IfCondition, readerInputParameter, inputInstances);
-            return lambda;
-        }
-
-
-
-        public GetConvertedValueDelegate GetValueConverter(ScoredPropertyMapping<ModelNavigationNode> nodeMapping)
-        {
-            var path = nodeMapping.Target.GetObjectMapPath() + $".{nodeMapping.Target.ModelPropertyNode.PropertyInfo.Name}";
+            var path = nodeMapping.Target.GetLeafPathAlt() + $".{nodeMapping.Target.Property.Name}";
             if (!_cacheGetValue.TryGetValue(path, out var lambda))
             {
                 var expression = GenerateValueConversion(
-                    nodeMapping.Source.ModelPropertyNode.PropertyInfo.PropertyType.Name,
-                    nodeMapping.Target.ModelPropertyNode.PropertyInfo.PropertyType.Name);
+                    nodeMapping.Source.Property.PropertyType.Name,
+                    nodeMapping.Target.Property.PropertyType.Name);
                 lambda = expression.Compile();
             }
 
@@ -432,47 +516,6 @@ namespace MaterializerLibrary
             var lambda = Expression.Lambda<GetConvertedValueDelegate>(resultCast, readerInputParameter);
             return lambda;
         }
-
-
-        /// <summary>
-        /// Generates a statement like this one:
-        /// ((Article)instances[i++]).ExpirationDate = ((ToDateTimeConversion)_conversion).FromNull();
-        /// ((Article)instances[i++]).ExpirationDate = ((ToDateTimeConversion)_conversion).From(val);
-        /// 
-        /// where "i" is the index and must have the same order as the input instance array object[]
-        /// </summary>
-        private Expression CreateAssignFromStatement(int index,
-            ParameterExpression inputInstancesArray,
-            ParameterExpression fromMethodArgument, Type sourceType,
-            Type targetInstanceType, string propertyName,
-            Type targetPropertyType, IConversion targetConverter, Type converterType)
-        {
-            MethodInfo fromMethod = fromMethodArgument == null
-                ? converterType.GetMethod("FromNull")
-                : converterType.GetMethod("From", new Type[] { sourceType });
-
-            //((Article)instances[i++]).ExpirationDate
-            var left = Expression.Property(
-                Expression.Convert(
-                    Expression.ArrayIndex(inputInstancesArray, Expression.Constant(index)),
-                        targetInstanceType),
-                propertyName);
-
-            // ((ToDateTimeConversion)_conversion).FromNull()
-            // or
-            // ((ToDateTimeOffsetConversion)_conversion).From(val);
-            var converterInstance = Expression.Constant(targetConverter);   // _conversion variable
-            var castedConverterInstance = Expression.Convert(converterInstance, converterType);
-            var right = fromMethodArgument == null
-                ? Expression.Call(castedConverterInstance, fromMethod)
-                : Expression.Call(castedConverterInstance, fromMethod, fromMethodArgument);
-
-            return Expression.Assign(left, right);
-        }
-
-        private Expression CreateReaderSkip(ParameterExpression readerInput)
-            => Expression.Call(readerInput, _readerSkipMethodInfo);
-
 
 
         // vNext

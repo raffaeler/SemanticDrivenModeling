@@ -1,4 +1,0 @@
-﻿# this is the list of terms that are not part of the structure
-# they can be added as a proof that terms and concepts can be expanded
-
-Conai	Italian/EU regulation about disposal

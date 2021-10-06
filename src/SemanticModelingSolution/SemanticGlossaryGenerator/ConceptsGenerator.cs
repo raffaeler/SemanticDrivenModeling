@@ -8,8 +8,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-using SemanticLibrary;
-
 namespace SemanticGlossaryGenerator
 {
     //[Generator]

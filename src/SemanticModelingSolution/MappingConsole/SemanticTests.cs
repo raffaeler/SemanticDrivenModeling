@@ -84,7 +84,7 @@ namespace MappingConsole
             _onlineOrderType = _onlineOrderTypeSystem.GetOrCreate(typeof(SimpleDomain2.OnlineOrder));
             _onlineOrderTypeSystem.UpdateCache();
 
-            var analysis = new SemanticAnalysis2(_domain);
+            var analysis = new SemanticAnalysis(_domain);
             analysis.AssignSemantics(_orderType);
             analysis.AssignSemantics(_onlineOrderType);
         }

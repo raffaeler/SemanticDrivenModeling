@@ -33,7 +33,7 @@ namespace DeserializationConsole.ConsoleTests
             //: ((ToDateTimeConversion)_conversion).From(reader.GetDateTimeOffset());
         }
 
-
+/*
         //TestMaterializer("Order", utilities, m1, m2);
         //TestMaterializer("OnlineOrder", utilities, m2, m1);
         public void TestMaterializer(string sourceItem, MappingUtilities utilities, IList<ModelTypeNode> source, IList<ModelTypeNode> target)
@@ -125,7 +125,7 @@ namespace DeserializationConsole.ConsoleTests
             //var targetObjects = utilities.TransformSerialize<SimpleDomain1.Order, SimpleDomain2.OnlineOrder>(
             //    "Order", m1, m2, sourceObjects);
         }
-
+*/
 
     }
 }
