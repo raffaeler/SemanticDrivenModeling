@@ -24,7 +24,6 @@ namespace MaterializerLibrary
 
         private const string _arrayItemPlaceholder = "$";
         private readonly IReadOnlyCollection<NavigationPair> _emptyMappings = Array.Empty<NavigationPair>();
-        protected readonly string _sourceTypeName;
 
         /// <summary>
         /// The type system containing the type definition to deserialize
@@ -32,9 +31,14 @@ namespace MaterializerLibrary
         protected TypeSystem<Metadata> _deserializationTypeSystem;
 
         /// <summary>
-        /// The lookup dictionary used in deserialization
+        /// The lookup dictionary used in deserialization (taken from the source side of the map)
         /// </summary>
-        protected IDictionary<string, List<NavigationPair>> _sourceDeserializationLookup;
+        protected IDictionary<string, List<NavigationPair>> _deserializationLookup;
+
+        ///// <summary>
+        ///// The map used to deserialize
+        ///// </summary>
+        //protected Mapping _deserializeMap;
 
         /// <summary>
         /// key is the source path
@@ -55,8 +59,11 @@ namespace MaterializerLibrary
         /// </summary>
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            // Using the reflection code requires also a change in the ConversionGenerator
+            //return ReadReflection(ref reader, typeToConvert, options);
+
             Instances = new();
-            //var utilities = new DeserializeUtilities<T>(_conversionGenerator, _map);
+            //var utilities = new DeserializeUtilities<T>(_conversionGenerator, _deserializeMap);
             //var exp = utilities.CreateExpression();
             //var del = exp.Compile();
             //var instance = del(ref reader, typeToConvert, options);
@@ -66,7 +73,7 @@ namespace MaterializerLibrary
             var isFinished = false;
             JsonPathStack jsonPathStack = new();
 
-            //Debug.Assert(SurrogateType.GetFullName(typeToConvert) == _map.Target.FullName);
+            //Debug.Assert(SurrogateType.GetFullName(typeToConvert) == _deserializeMap.Target.FullName);
 
             do
             {
@@ -95,7 +102,7 @@ namespace MaterializerLibrary
                             var found = jsonPathStack.TryPeek(out JsonSourcePath path);
                             if (!found)
                             {
-                                path = jsonPathStack.Push(_sourceTypeName, false);
+                                path = jsonPathStack.Push(_externalType.Name, false);
                             }
                             else if (path.IsArray)
                             {
@@ -175,7 +182,7 @@ namespace MaterializerLibrary
 
         private IReadOnlyCollection<NavigationPair> GetMappingsFor(string sourcePath)
         {
-            if (!_sourceDeserializationLookup.TryGetValue(sourcePath, out var mappings))
+            if (!_deserializationLookup.TryGetValue(sourcePath, out var mappings))
             {
                 return _emptyMappings;
             }
@@ -241,7 +248,7 @@ namespace MaterializerLibrary
                     //// Using reflection:
                     //newContainer = new Container<object>(Activator.CreateInstance(type.GetOriginalType()));
                     //var parentItem = ((Container<object>)parentContainer).Item;
-                    //var property = tempTarget.Property.GetOriginalPropertyInfo(_targetTypeSystem);
+                    //var property = tempTarget.Property.GetOriginalPropertyInfo(_deserializationTypeSystem);
                     //var newItem = ((Container<object>)newContainer).Item;
                     //property.SetValue(parentItem, newItem);
 

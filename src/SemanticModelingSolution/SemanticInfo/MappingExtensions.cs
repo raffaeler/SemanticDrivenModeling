@@ -13,11 +13,9 @@ namespace SemanticLibrary
     /// </summary>
     public static class MappingExtensions
     {
-        public static (Dictionary<string, List<NavigationPair>> sourceLookup,
-            Dictionary<string, NavigationPair> targetLookup) CreateLookups(this Mapping map)
+        public static Dictionary<string, List<NavigationPair>> CreateDeserializationLookup(this Mapping map)
         {
             Dictionary<string, List<NavigationPair>> sourceLookup = new();
-            Dictionary<string, NavigationPair> targetLookup = new();
 
             foreach (var propertyMapping in map.Mappings)
             {
@@ -30,14 +28,24 @@ namespace SemanticLibrary
                 }
 
                 listSource.Add(propertyMapping);
+            }
 
+            return sourceLookup;
+        }
+
+        public static Dictionary<string, NavigationPair> CreateSerializationLookup(this Mapping map)
+        {
+            Dictionary<string, NavigationPair> targetLookup = new();
+
+            foreach (var propertyMapping in map.Mappings)
+            {
                 // _targetLookup is needed in the Write to serialize
                 // there is no list here because every target only has a single source
                 var targetPath = propertyMapping.Target.GetLeafPath();
                 targetLookup[targetPath] = propertyMapping;
             }
 
-            return (sourceLookup, targetLookup);
+            return targetLookup;
         }
 
         /// <summary>

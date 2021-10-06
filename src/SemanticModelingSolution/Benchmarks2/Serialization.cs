@@ -37,8 +37,9 @@ namespace Benchmarks
         private Mapping _orderToOnlineOrderMapping;
         private Mapping _onlineOrderToOrderMapping;
 
-        private JsonSerializerOptions _optionsOrdersToOnlineOrders;
-        private JsonSerializerOptions _optionsOnlineOrdersToOrders;
+        //private JsonSerializerOptions _optionsOrdersToOnlineOrders;
+        //private JsonSerializerOptions _optionsOnlineOrdersToOrders;
+        private JsonSerializerOptions _options;
 
         private IList<SimpleDomain1.Order> _orders;
         private IList<SimpleDomain2.OnlineOrder> _onlineOrders;
@@ -50,14 +51,21 @@ namespace Benchmarks
             _domain = JsonSerializer.Deserialize<DomainBase>(jsonDomainDefinitions);
             DeserializeMapping();
 
-            _optionsOrdersToOnlineOrders = new JsonSerializerOptions()
-            {
-                Converters = { new SemanticConverterFactory(_orderTypeSystem, _orderToOnlineOrderMapping), },
-            };
+            //_optionsOrdersToOnlineOrders = new JsonSerializerOptions()
+            //{
+            //    Converters = { new SemanticConverterFactory(_orderTypeSystem, _orderToOnlineOrderMapping), },
+            //};
 
-            _optionsOnlineOrdersToOrders = new JsonSerializerOptions()
+            //_optionsOnlineOrdersToOrders = new JsonSerializerOptions()
+            //{
+            //    Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _onlineOrderToOrderMapping), },
+            //};
+
+            _options = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _onlineOrderToOrderMapping), },
+                Converters = { new SemanticConverterFactory(
+                    new[]{ _orderTypeSystem, _onlineOrderTypeSystem},
+                    new[] {_orderToOnlineOrderMapping, _onlineOrderToOrderMapping}), },
             };
 
             _orders = SimpleDomain1.Samples.GetOrders();
@@ -68,8 +76,8 @@ namespace Benchmarks
             JsonSerializer.Serialize(_onlineOrders);
 
             // let the codegen cache the delegates
-            JsonSerializer.Serialize(_orders, _optionsOrdersToOnlineOrders);
-            JsonSerializer.Serialize(_onlineOrders, _optionsOnlineOrdersToOrders);
+            JsonSerializer.Serialize(_orders, /*_optionsOrdersToOnlineOrders*/_options);
+            JsonSerializer.Serialize(_onlineOrders, /*_optionsOnlineOrdersToOrders*/_options);
         }
 
         private void DeserializeMapping()
@@ -110,13 +118,13 @@ namespace Benchmarks
         [Benchmark]
         public void SemanticOrderToOnlineOrder()
         {
-            var temp = JsonSerializer.Serialize(_orders, _optionsOrdersToOnlineOrders);
+            var temp = JsonSerializer.Serialize(_orders, /*_optionsOrdersToOnlineOrders*/_options);
         }
 
         [Benchmark]
         public void SemanticOnlineOrderToOrder()
         {
-            var temp = JsonSerializer.Serialize(_onlineOrders, _optionsOnlineOrdersToOrders);
+            var temp = JsonSerializer.Serialize(_onlineOrders, /*_optionsOnlineOrdersToOrders*/_options);
         }
     }
 }

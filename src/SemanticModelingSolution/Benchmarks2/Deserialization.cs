@@ -14,7 +14,16 @@ using SurrogateLibrary;
 
 /*
 
-V2
+Using reflection:
+
+|                     Method |         Mean |      Error |     StdDev |
+|--------------------------- |-------------:|-----------:|-----------:|
+|                PlainOrders |     18.83 us |   0.376 us |   0.386 us |
+|          PlainOnlineOrders |     11.42 us |   0.202 us |   0.189 us |
+| SemanticOrderToOnlineOrder | 18,175.24 us | 235.091 us | 196.312 us |
+| SemanticOnlineOrderToOrder | 21,196.31 us | 304.601 us | 284.924 us | 
+
+Using code generation:
 
 |                     Method |     Mean |    Error |   StdDev |
 |--------------------------- |---------:|---------:|---------:|

@@ -15,17 +15,24 @@ namespace MaterializerLibrary
 {
     public class SemanticConverterFactory : JsonConverterFactory
     {
-        protected TypeSystem<Metadata> _destinationTypeSystem;
-
-        public SemanticConverterFactory(TypeSystem<Metadata> destinationTypeSystem, Mapping map)
+        public SemanticConverterFactory(TypeSystem<Metadata> typeSystem, Mapping map)
+            : this(new[] { typeSystem }, new[] { map })
         {
+            if (typeSystem == null) throw new ArgumentNullException(nameof(typeSystem));
             if (map == null) throw new ArgumentNullException(nameof(map));
-
-            _destinationTypeSystem = destinationTypeSystem;
-            this.Map = map;
         }
 
-        public Mapping Map { get; }
+        public SemanticConverterFactory(IEnumerable<TypeSystem<Metadata>> typeSystems, IEnumerable<Mapping> maps)
+        {
+            if (typeSystems == null) throw new ArgumentNullException(nameof(typeSystems));
+            if (maps == null) throw new ArgumentNullException(nameof(maps));
+
+            this.TypeSystems = typeSystems;
+            this.Maps = maps;
+        }
+
+        public IEnumerable<TypeSystem<Metadata>> TypeSystems { get; }
+        public IEnumerable<Mapping> Maps { get; }
 
         public override bool CanConvert(Type typeToConvert)
         {
@@ -33,20 +40,25 @@ namespace MaterializerLibrary
             Console.Write($"SemanticConverterFactory.CanConvert> {typeToConvert.Name} ");
 #endif
             var fullName = SurrogateType.GetFullName(typeToConvert);
-            if (Map == null ||
-                (fullName != Map.Target.FullName &&
-                fullName != Map.Source.FullName))
+            var isInMaps = Maps.Any(m =>
+                    m.Target.FullName == fullName ||
+                    m.Source.FullName == fullName);
+
+            var isInTypeSystems = TypeSystems.Any(t =>
+                     t.TypesByFullName.ContainsKey(fullName));
+
+            if (isInMaps && isInTypeSystems)
             {
 #if DEBUG
-                Console.WriteLine("No");
+                Console.WriteLine("Yes");
 #endif
-                return false;
+                return true;
             }
 
 #if DEBUG
-            Console.WriteLine("Yes");
+            Console.WriteLine("No");
 #endif
-            return true;
+            return false;
         }
 
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
@@ -59,12 +71,12 @@ namespace MaterializerLibrary
             //    new object[] { _destinationTypeSystem, Map }) as JsonConverter;
 
             var del = GetJsonConverterCreationDelegate(typeToConvert);
-            var converter = del(_destinationTypeSystem, Map);
+            var converter = del(TypeSystems, Maps);
             return converter;
         }
 
         private delegate JsonConverter CreateConverterDelegate(
-            TypeSystem<Metadata> destinationTypeSystem, Mapping mapping);
+            IEnumerable<TypeSystem<Metadata>> typeSystems, IEnumerable<Mapping> maps);
 
         private static Dictionary<Type, CreateConverterDelegate> _cache = new();
         private CreateConverterDelegate GetJsonConverterCreationDelegate(Type typeToConvert)
@@ -73,11 +85,11 @@ namespace MaterializerLibrary
             var converterType = typeof(SemanticConverter<>).MakeGenericType(typeToConvert);
             var constructorInfo = converterType.GetConstructor(new Type[]
             {
-                typeof(TypeSystem<Metadata>), typeof(Mapping)
+                typeof(IEnumerable<TypeSystem<Metadata>>), typeof(IEnumerable<Mapping>)
             });
 
-            var inputDestinationTypeSystem = Expression.Parameter(typeof(TypeSystem<Metadata>));
-            var inputMapping = Expression.Parameter(typeof(Mapping));
+            var inputDestinationTypeSystem = Expression.Parameter(typeof(IEnumerable<TypeSystem<Metadata>>));
+            var inputMapping = Expression.Parameter(typeof(IEnumerable<Mapping>));
             var ctor = Expression.New(constructorInfo,
                 inputDestinationTypeSystem,
                 inputMapping);

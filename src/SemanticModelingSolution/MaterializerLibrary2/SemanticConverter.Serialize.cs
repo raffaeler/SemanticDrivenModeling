@@ -24,7 +24,14 @@ namespace MaterializerLibrary
 
         private static Dictionary<Type, Action<Utf8JsonWriter, T>> _writerCache = new();
 
-        protected IDictionary<string, NavigationPair> _targetSerializationLookup;
+        /// <summary>
+        /// The serialization lookup map (taken from the target side of the map)
+        /// </summary>
+        protected IDictionary<string, NavigationPair> _serializationLookup;
+
+
+        //protected Mapping _serializeMap;
+
 
         // serialization:
         // original object (and therefore 'T') is part of the _sourceTypeSystem
@@ -33,8 +40,9 @@ namespace MaterializerLibrary
         {
             if (!_writerCache.TryGetValue(typeof(T), out var transformDelegate))
             {
-                var visitor = new SemanticSerializationVisitor<T>(_serializationTypeSystem, _targetSerializationLookup, _conversionGenerator, _map);
-                visitor.Visit(_map.Target);
+                var visitor = new SemanticSerializationVisitor<T>(_serializationTypeSystem, _serializationLookup,
+                    _conversionGenerator, /*_serializeMap*/null);
+                visitor.Visit(_externalType);
                 var expression = visitor.GetSerializationAction();
                 transformDelegate = expression.Compile();
                 _writerCache[typeof(T)] = transformDelegate;

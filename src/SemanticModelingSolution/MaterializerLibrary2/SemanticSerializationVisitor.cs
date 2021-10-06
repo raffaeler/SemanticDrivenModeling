@@ -19,7 +19,7 @@ namespace MaterializerLibrary
         protected IDictionary<string, NavigationPair> _targetLookup;
         private Stack<ICodeGenerationContext> _codeGenContext;
         private ConversionGenerator _conversionGenerator;
-        protected Mapping _map;
+        //protected Mapping _map;
         ParameterExpression inputWriter;
 
         public SemanticSerializationVisitor(TypeSystem<Metadata> typeSystem, IDictionary<string, NavigationPair> targetLookup,
@@ -28,7 +28,7 @@ namespace MaterializerLibrary
             _typeSystem = typeSystem;
             _targetLookup = targetLookup;
             _conversionGenerator = conversionGenerator;
-            _map = map;
+            //_map = map;
 
             OneToManyContext.Reset();
             _codeGenContext = new();

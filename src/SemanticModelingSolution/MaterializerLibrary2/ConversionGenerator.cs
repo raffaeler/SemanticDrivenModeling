@@ -73,6 +73,9 @@ namespace MaterializerLibrary
         public MethodInfo ReaderSkip => _readerSkipMethodInfo;
         public MethodInfo ReaderRead => _readerReadMethodInfo;
         public Dictionary<string, MethodInfo> ReaderGetValue => _readerGetValue;
+        public Dictionary<string, Type> BasicTypes => _basicTypes;
+        public ConversionEngine ConversionEngine => _conversionEngine;
+        public Dictionary<string, Type> ConverterTypes => _converterTypes;
 
         public ConversionGenerator(/*TypeSystem<Metadata> typeSystem, */ConversionContext conversionContext = null)
         {
@@ -233,13 +236,14 @@ namespace MaterializerLibrary
         /// <summary>
         /// Deserialization
         /// </summary>
-        public SetPropertiesDelegate GetConverterMultiple(string sourcePath, IReadOnlyCollection<NavigationPair> nodeMappings)
+        public SetPropertiesDelegate GetConverterMultiple(string sourcePath,
+            IReadOnlyCollection<NavigationPair> nodeMappings, bool useCache = true)
         {
             if (!_cacheSetProperty.TryGetValue(sourcePath, out var lambda))
             {
                 var expression = GenerateConversionMultiple(nodeMappings);
                 lambda = expression.Compile();
-                _cacheSetProperty[sourcePath] = lambda;
+                if(useCache) _cacheSetProperty[sourcePath] = lambda;
             }
 
             return lambda;
@@ -339,6 +343,8 @@ namespace MaterializerLibrary
 
             //((Article)((Container<Article>)instances[i++]).Item).ExpirationDate
             var typedContainerType = typeof(Container<>).MakeGenericType(targetInstanceType);
+
+            // typed version used in the optmized version (better benchmarking results)
             var itemProperty = typedContainerType.GetProperty("Item");
             var left = Expression.Property(
                 Expression.Convert(
@@ -347,6 +353,16 @@ namespace MaterializerLibrary
                             Expression.ArrayIndex(inputInstancesArray, Expression.Constant(index)),
                                 typedContainerType), itemProperty), targetInstanceType),
                 propertyName);
+
+            //// object version used in the "Reflection" version to make comparison benchmarking tests
+            //var itemProperty = typeof(IContainerDebug).GetProperty("ObjectItem");
+            //var left = Expression.Property(
+            //    Expression.Convert(
+            //        Expression.MakeMemberAccess(
+            //            Expression.Convert(
+            //                Expression.ArrayIndex(inputInstancesArray, Expression.Constant(index)),
+            //                    typeof(IContainerDebug)), itemProperty), targetInstanceType),
+            //    propertyName);
 
             // ((ToDateTimeConversion)_conversion).FromNull()
             // or

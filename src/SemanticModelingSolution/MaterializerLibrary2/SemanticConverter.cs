@@ -16,28 +16,47 @@ namespace MaterializerLibrary
 {
     public partial class SemanticConverter<T> : JsonConverter<T>
     {
-        protected Mapping _map;
         private ConversionGenerator _conversionGenerator;
+
+        /// <summary>
+        /// The "other" type of the conversion (T is the one owned by the running code)
+        /// </summary>
+        protected readonly SurrogateType<Metadata> _externalType;
 
         /// <summary>
         /// Important note: the instance of the JsonConverter is recycled during the same deserialization
         /// therefore anything that should not be recycled must be re-initialized in the Read/Write method
         /// </summary>
-        public SemanticConverter(TypeSystem<Metadata> destinationTypeSystem, Mapping map)
+        public SemanticConverter(IEnumerable<TypeSystem<Metadata>> typeSystems, IEnumerable<Mapping> maps)
         {
-            if (!destinationTypeSystem.Contains(typeof(T)))
+            var fullTypeName = SurrogateType.GetFullName(typeof(T));
+            var destinationTypeSystem = typeSystems.FirstOrDefault(t => t.Contains(typeof(T)));
+
+            if (destinationTypeSystem == null)
             {
-                throw new ArgumentException($"The type system must contain the type {typeof(T).FullName}");
+                throw new ArgumentException($"One of the type systems must contain the type {typeof(T).FullName}");
             }
-            
+
             _serializationTypeSystem = destinationTypeSystem;
             _deserializationTypeSystem = destinationTypeSystem;
-            _map = map;
-            _sourceTypeName = _map.Source.Name;
 
-            (_sourceDeserializationLookup, _targetSerializationLookup) = _map.CreateLookups();
-            _targetDeletablePaths = _map.CreateDeletableLookup();
+            Mapping map;
+            map = maps.FirstOrDefault(m => m.Source.FullName == fullTypeName);
+            if (map != null)
+            {
+                CanSerialize = true;
+                _serializationLookup = map.CreateSerializationLookup();
+                _externalType = map.Target;
+            }
 
+            map = maps.FirstOrDefault(m => m.Target.FullName == fullTypeName);
+            if (map != null)
+            {
+                CanDeserialize = true;
+                _deserializationLookup = map.CreateDeserializationLookup();
+                _targetDeletablePaths = map.CreateDeletableLookup();
+                _externalType = map.Source;
+            }
 
             var context = new ConversionLibrary.ConversionContext()
             {
@@ -52,5 +71,8 @@ namespace MaterializerLibrary
 
             _conversionGenerator = new(context);   // the new is here in order to recycle the generator cache
         }
+
+        public bool CanSerialize { get; }
+        public bool CanDeserialize { get; }
     }
 }

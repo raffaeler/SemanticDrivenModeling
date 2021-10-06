@@ -65,7 +65,7 @@ namespace MappingConsole
             DeserializeMapping();
 
             SerializeOrders();
-            SerializeOnlineOrders();
+            //SerializeOnlineOrders();
 
             DeserializeOrders();
             DeserializeOnlineOrders();
@@ -169,7 +169,10 @@ namespace MappingConsole
         {
             var settings = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_orderTypeSystem, _orderToOnlineOrderMapping), },
+                //Converters = { new SemanticConverterFactory(_orderTypeSystem, _orderToOnlineOrderMapping), },
+                Converters = { new SemanticConverterFactory(
+                    new[]{ _orderTypeSystem, _onlineOrderTypeSystem},
+                    new[] {_orderToOnlineOrderMapping, _onlineOrderToOrderMapping}), },
             };
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
@@ -182,7 +185,10 @@ namespace MappingConsole
         {
             var settings = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _onlineOrderToOrderMapping), },
+                //Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _onlineOrderToOrderMapping), },
+                Converters = { new SemanticConverterFactory(
+                    new[]{ _orderTypeSystem, _onlineOrderTypeSystem},
+                    new[] {_orderToOnlineOrderMapping, _onlineOrderToOrderMapping}), },
             };
 
             var sourceObjects = SimpleDomain2.Samples.GetOnlineOrders();
@@ -197,7 +203,10 @@ namespace MappingConsole
 
             var settings = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderToOrderMapping), },
+                //Converters = { new SemanticConverterFactory(_orderTypeSystem, _onlineOrderToOrderMapping), },
+                Converters = { new SemanticConverterFactory(
+                    new[]{ _orderTypeSystem, _onlineOrderTypeSystem},
+                    new[] {_orderToOnlineOrderMapping, _onlineOrderToOrderMapping}), },
             };
 
             var sourceObjects = SimpleDomain2.Samples.GetOnlineOrders();
@@ -211,7 +220,10 @@ namespace MappingConsole
         {
             var settings = new JsonSerializerOptions()
             {
-                Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
+                //Converters = { new SemanticConverterFactory(_onlineOrderTypeSystem, _orderToOnlineOrderMapping), },
+                Converters = { new SemanticConverterFactory(
+                    new[]{ _orderTypeSystem, _onlineOrderTypeSystem},
+                    new[] {_orderToOnlineOrderMapping, _onlineOrderToOrderMapping}), },
             };
 
             var sourceObjects = SimpleDomain1.Samples.GetOrders();
