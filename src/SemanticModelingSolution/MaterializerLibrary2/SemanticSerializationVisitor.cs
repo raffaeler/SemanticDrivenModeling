@@ -23,12 +23,11 @@ namespace MaterializerLibrary
         ParameterExpression inputWriter;
 
         public SemanticSerializationVisitor(TypeSystem<Metadata> typeSystem, IDictionary<string, NavigationPair> targetLookup,
-            ConversionGenerator conversionGenerator, Mapping map)
+            ConversionGenerator conversionGenerator)
         {
             _typeSystem = typeSystem;
             _targetLookup = targetLookup;
             _conversionGenerator = conversionGenerator;
-            //_map = map;
 
             OneToManyContext.Reset();
             _codeGenContext = new();

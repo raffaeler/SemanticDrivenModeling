@@ -64,7 +64,7 @@ namespace MaterializerLibrary
                             var found = jsonPathStack.TryPeek(out JsonSourcePath path);
                             if (!found)
                             {
-                                path = jsonPathStack.Push(_externalType.Name, false);
+                                path = jsonPathStack.Push(ExternalType.Name, false);
                             }
                             else if (path.IsArray)
                             {

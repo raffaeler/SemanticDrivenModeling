@@ -9,7 +9,6 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 using SemanticLibrary;
-
 using SurrogateLibrary;
 
 namespace MaterializerLibrary
@@ -19,60 +18,46 @@ namespace MaterializerLibrary
         private ConversionGenerator _conversionGenerator;
 
         /// <summary>
-        /// The "other" type of the conversion (T is the one owned by the running code)
-        /// </summary>
-        protected readonly SurrogateType<Metadata> _externalType;
-
-        /// <summary>
         /// Important note: the instance of the JsonConverter is recycled during the same deserialization
         /// therefore anything that should not be recycled must be re-initialized in the Read/Write method
         /// </summary>
-        public SemanticConverter(IEnumerable<TypeSystem<Metadata>> typeSystems, IEnumerable<Mapping> maps)
+        public SemanticConverter(SemanticConverterParameters parameters)
         {
-            var fullTypeName = SurrogateType.GetFullName(typeof(T));
-            var destinationTypeSystem = typeSystems.FirstOrDefault(t => t.Contains(typeof(T)));
+            InternalType = parameters.InternalType;
+            ExternalType = parameters.ExternalType;
 
-            if (destinationTypeSystem == null)
-            {
-                throw new ArgumentException($"One of the type systems must contain the type {typeof(T).FullName}");
-            }
+            _serializationTypeSystem = parameters.TypeSystem;
+            _deserializationTypeSystem = parameters.TypeSystem;
 
-            _serializationTypeSystem = destinationTypeSystem;
-            _deserializationTypeSystem = destinationTypeSystem;
+            CanSerialize = parameters.CanSerialize;
+            CanDeserialize = parameters.CanDeserialize;
 
-            Mapping map;
-            map = maps.FirstOrDefault(m => m.Source.FullName == fullTypeName);
-            if (map != null)
-            {
-                CanSerialize = true;
-                _serializationLookup = map.CreateSerializationLookup();
-                _externalType = map.Target;
-            }
+            _serializationLookup = parameters.SerializationLookup;
+            _deserializationLookup = parameters.DeserializationLookup;
+            _targetDeletablePaths = parameters.DeletableLookup;
 
-            map = maps.FirstOrDefault(m => m.Target.FullName == fullTypeName);
-            if (map != null)
-            {
-                CanDeserialize = true;
-                _deserializationLookup = map.CreateDeserializationLookup();
-                _targetDeletablePaths = map.CreateDeletableLookup();
-                _externalType = map.Source;
-            }
-
-            var context = new ConversionLibrary.ConversionContext()
-            {
-                OnNotSupported = (converter, value) =>
-                {
-#if DEBUG
-                    Console.WriteLine($"Conversion of a value from {value} To {converter.TargetType.Name} is not supported");
-#endif
-                    return converter.TargetType.GetDefaultValue();
-                },
-            };
-
-            _conversionGenerator = new(context);   // the new is here in order to recycle the generator cache
+            _conversionGenerator = new(parameters.ConversionContext);
         }
 
+        /// <summary>
+        /// The "other" type of the conversion (T is the one owned by the running code)
+        /// </summary>
+        public SurrogateType<Metadata> ExternalType { get; }
+
+        /// <summary>
+        /// The internal type (the 'T' / typeToConvert type)
+        /// which is known from the CLR
+        /// </summary>
+        public SurrogateType<Metadata> InternalType { get; }
+
+        /// <summary>
+        /// The loaded map allows to serialize the type
+        /// </summary>
         public bool CanSerialize { get; }
+
+        /// <summary>
+        /// The loaded map allows to deserialize the type
+        /// </summary>
         public bool CanDeserialize { get; }
     }
 }

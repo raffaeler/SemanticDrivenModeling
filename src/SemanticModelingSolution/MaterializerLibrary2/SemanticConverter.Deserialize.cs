@@ -35,11 +35,6 @@ namespace MaterializerLibrary
         /// </summary>
         protected IDictionary<string, List<NavigationPair>> _deserializationLookup;
 
-        ///// <summary>
-        ///// The map used to deserialize
-        ///// </summary>
-        //protected Mapping _deserializeMap;
-
         /// <summary>
         /// key is the source path
         /// values are the deletable objects
@@ -102,7 +97,7 @@ namespace MaterializerLibrary
                             var found = jsonPathStack.TryPeek(out JsonSourcePath path);
                             if (!found)
                             {
-                                path = jsonPathStack.Push(_externalType.Name, false);
+                                path = jsonPathStack.Push(ExternalType.Name, false);
                             }
                             else if (path.IsArray)
                             {

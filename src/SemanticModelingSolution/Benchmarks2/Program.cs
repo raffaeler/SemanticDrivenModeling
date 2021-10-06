@@ -22,8 +22,8 @@ namespace Benchmarks
         private int RunBenchmark()
         {
             Summary summary;
-            //summary = BenchmarkRunner.Run<Serialization>();
-            summary = BenchmarkRunner.Run<Deserialization>();
+            summary = BenchmarkRunner.Run<Serialization>();
+            //summary = BenchmarkRunner.Run<Deserialization>();
             return 0;
         }
     }

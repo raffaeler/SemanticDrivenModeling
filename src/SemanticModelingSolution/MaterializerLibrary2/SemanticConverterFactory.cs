@@ -66,35 +66,48 @@ namespace MaterializerLibrary
 #if DEBUG
             Console.WriteLine($"SemanticConverterFactory.CreateConverter> {typeToConvert.Name}");
 #endif
+
+            var context = new ConversionLibrary.ConversionContext()
+            {
+                OnNotSupported = (converter, value) =>
+                {
+#if DEBUG
+                    Console.WriteLine($"Conversion of a value from {value} To {converter.TargetType.Name} is not supported");
+#endif
+                    return converter.TargetType.GetDefaultValue();
+                },
+            };
+
+            SemanticConverterParameters pars = new(typeToConvert, TypeSystems, Maps, context);
+
             //var converterType = typeof(SemanticConverter<>).MakeGenericType(typeToConvert);
             //var converter = Activator.CreateInstance(converterType,
             //    new object[] { _destinationTypeSystem, Map }) as JsonConverter;
 
             var del = GetJsonConverterCreationDelegate(typeToConvert);
-            var converter = del(TypeSystems, Maps);
+            var converter = del(pars);
             return converter;
         }
 
         private delegate JsonConverter CreateConverterDelegate(
-            IEnumerable<TypeSystem<Metadata>> typeSystems, IEnumerable<Mapping> maps);
+            SemanticConverterParameters parameters);
 
         private static Dictionary<Type, CreateConverterDelegate> _cache = new();
         private CreateConverterDelegate GetJsonConverterCreationDelegate(Type typeToConvert)
         {
             if (_cache.TryGetValue(typeToConvert, out CreateConverterDelegate del)) return del;
+
             var converterType = typeof(SemanticConverter<>).MakeGenericType(typeToConvert);
             var constructorInfo = converterType.GetConstructor(new Type[]
             {
-                typeof(IEnumerable<TypeSystem<Metadata>>), typeof(IEnumerable<Mapping>)
+                typeof(SemanticConverterParameters)
             });
 
-            var inputDestinationTypeSystem = Expression.Parameter(typeof(IEnumerable<TypeSystem<Metadata>>));
-            var inputMapping = Expression.Parameter(typeof(IEnumerable<Mapping>));
+            var inputParameters = Expression.Parameter(typeof(SemanticConverterParameters));
             var ctor = Expression.New(constructorInfo,
-                inputDestinationTypeSystem,
-                inputMapping);
+                inputParameters);
 
-            var lambda = Expression.Lambda<CreateConverterDelegate>(ctor, inputDestinationTypeSystem, inputMapping);
+            var lambda = Expression.Lambda<CreateConverterDelegate>(ctor, inputParameters);
             del = lambda.Compile();
             _cache[typeToConvert] = del;
             return del;
