@@ -4,111 +4,132 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
+using MaterializerLibrary;
+
 using Microsoft.Extensions.Options;
 
 using SemanticLibrary;
+
+using SurrogateLibrary;
 
 namespace ApiServer
 {
     public class MetadataService
     {
-    //    private readonly MetadataConfiguration _metadataConfiguration;
-    //    private DomainBase _domain;
-    //    private Dictionary<string, ScoredTypeMapping> _mappings = new();
+        private readonly MetadataConfiguration _metadataConfiguration;
 
         public MetadataService(IOptions<MetadataConfiguration> metadataOptions)
         {
-    //        _metadataConfiguration = metadataOptions.Value;
+            _metadataConfiguration = metadataOptions.Value;
 
-    //        if(_metadataConfiguration.DomainDefinitionsFile == null)
-    //            throw new ArgumentException(nameof(MetadataConfiguration.DomainDefinitionsFile));
+            if (_metadataConfiguration.DomainDefinitionsFile == null)
+                throw new ArgumentException(nameof(MetadataConfiguration.DomainDefinitionsFile));
 
-    //        if(_metadataConfiguration.DomainTypes == null)
-    //            throw new ArgumentException(nameof(MetadataConfiguration.DomainTypes));
+            if (_metadataConfiguration.TypeSystemFilenames == null ||
+                _metadataConfiguration.TypeSystemFilenames.Any(t => !File.Exists(t)))
+            {
+                throw new Exception("One or more TypeSystem serialization files is missing");
+            }
 
-    //        if (!File.Exists(_metadataConfiguration.DomainDefinitionsFile))
-    //        {
-    //            throw new System.Exception("The configuration does not contain a valid domain definition file for the domain");
-    //        }
+            if (_metadataConfiguration.MappingFilenames == null ||
+                _metadataConfiguration.MappingFilenames.Any(m => !File.Exists(m)))
+            {
+                throw new Exception("One or more Mapping serialization files is missing");
+            }
 
-    //        foreach(var value in _metadataConfiguration.DomainTypes.Values)
-    //        {
-    //            if(!File.Exists(value))
-    //                throw new System.Exception("The configuration does not contain a valid domain definition file for the domain types");
-    //        }
-    //    }
+            var jsonDomain = File.ReadAllText(_metadataConfiguration.DomainDefinitionsFile);
+            Domain = JsonSerializer.Deserialize<DomainBase>(jsonDomain);
 
-    //    public ScoredTypeMapping GetMapping(string fullTypeName)
-    //    {
-    //        if (!_mappings.TryGetValue(fullTypeName, out ScoredTypeMapping mapping))
-    //        {
-    //            if (!_metadataConfiguration.DomainTypes.TryGetValue(fullTypeName, out string filename))
-    //            {
-    //                throw new Exception("Mapping not found. You can trigger auto-generation here");
-    //            }
+            TypeSystems = new List<TypeSystem<Metadata>>();
+            foreach (var file in _metadataConfiguration.TypeSystemFilenames)
+            {
+                var json = File.ReadAllText(file);
+                TypeSystems.Add(JsonSerializer.Deserialize<TypeSystem<Metadata>>(json));
+            }
 
-    //            mapping = DeserializeMapping(_domain, filename);
-    //            _mappings[fullTypeName] = mapping;
-    //        }
+            Mappings = new List<Mapping>();
+            foreach (var file in _metadataConfiguration.MappingFilenames)
+            {
+                var json = File.ReadAllText(file);
+                Mappings.Add(JsonSerializer.Deserialize<Mapping>(json));
+            }
 
-    //        return mapping;
+            JsonOptions = new JsonSerializerOptions()
+            {
+                Converters = { new SemanticConverterFactory(TypeSystems, Mappings) },
+            };
         }
 
-    //    public ScoredTypeMapping DeserializeMapping(DomainBase domain, string mappingFilename)
-    //    {
-    //        var jsonMapping = File.ReadAllText(mappingFilename);
-    //        var mapping = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
-    //        return mapping;
-    //    }
+        private DomainBase Domain { get; }
+        public IList<TypeSystem<Metadata>> TypeSystems { get; }
+        public IList<Mapping> Mappings { get; }
+        public JsonSerializerOptions JsonOptions { get; }
+
+        public Mapping CreateAutoMapping(TypeSystem<Metadata> typeSystem1, TypeSystem<Metadata> typeSystem2,
+            SurrogateType<Metadata> sourceRootType)
+        {
+            var matcher = new ConceptMatchingRule(typeSystem1, typeSystem2, false);
+            var mappings = matcher.ComputeMappings(sourceRootType);
+            return mappings.First();
+        }
 
 
-    //    public DomainBase Domain
-    //    {
-    //        get
-    //        {
-    //            _domain ??= LoadDomain();
-    //            return _domain;
-    //        }
-    //    }
 
-    //    public IList<ModelTypeNode> ReadModelTypeNodes(string domainName)
-    //    {
-    //        if (!_metadataConfiguration.DomainTypes.TryGetValue(domainName, out string filename))
-    //        {
-    //            throw new Exception($"There is no entry in the configuration for {domainName}");
-    //        }
+        //    public ScoredTypeMapping DeserializeMapping(DomainBase domain, string mappingFilename)
+        //    {
+        //        var jsonMapping = File.ReadAllText(mappingFilename);
+        //        var mapping = ModelTypeNodeExtensions.DeserializeMapping(jsonMapping, domain);
+        //        return mapping;
+        //    }
 
-    //        return ModelTypeNodeExtensions.DeserializeMany(filename, Domain);
-    //    }
 
-    //    private DomainBase LoadDomain()
-    //    {
-    //        try
-    //        {
-    //            var filename = _metadataConfiguration.DomainDefinitionsFile;
-    //            var domain = JsonSerializer.Deserialize<DomainBase>(filename);
-    //            return domain;
-    //        }
-    //        catch (System.Exception)
-    //        {
-    //            throw;
-    //        }
-    //    }
+        //    public DomainBase Domain
+        //    {
+        //        get
+        //        {
+        //            _domain ??= LoadDomain();
+        //            return _domain;
+        //        }
+        //    }
 
-    //    private ScoredTypeMapping GetMappings(string sourceTypeName,
-    //        IList<ModelTypeNode> source, IList<ModelTypeNode> target)
-    //    {
-    //        var sourceType = source.First(t => t.Type.Name == sourceTypeName);  // i.e. "OnlineOrder"
-    //        var mapping = CreateMappingsFor(sourceType, target);
-    //        return mapping;
-    //    }
+        //    public IList<ModelTypeNode> ReadModelTypeNodes(string domainName)
+        //    {
+        //        if (!_metadataConfiguration.DomainTypes.TryGetValue(domainName, out string filename))
+        //        {
+        //            throw new Exception($"There is no entry in the configuration for {domainName}");
+        //        }
 
-    //    private ScoredTypeMapping CreateMappingsFor(ModelTypeNode source, IList<ModelTypeNode> candidateTargets)
-    //    {
-    //        var matcher = new ConceptMatchingRule(true);
-    //        matcher.ComputeMappings(source, candidateTargets);
-    //        return matcher.CandidateTypes.First();
-    //    }
+        //        return ModelTypeNodeExtensions.DeserializeMany(filename, Domain);
+        //    }
+
+        //    private DomainBase LoadDomain()
+        //    {
+        //        try
+        //        {
+        //            var filename = _metadataConfiguration.DomainDefinitionsFile;
+        //            var domain = JsonSerializer.Deserialize<DomainBase>(filename);
+        //            return domain;
+        //        }
+        //        catch (System.Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+
+        //    private ScoredTypeMapping GetMappings(string sourceTypeName,
+        //        IList<ModelTypeNode> source, IList<ModelTypeNode> target)
+        //    {
+        //        var sourceType = source.First(t => t.Type.Name == sourceTypeName);  // i.e. "OnlineOrder"
+        //        var mapping = CreateMappingsFor(sourceType, target);
+        //        return mapping;
+        //    }
+
+        //    private ScoredTypeMapping CreateMappingsFor(ModelTypeNode source, IList<ModelTypeNode> candidateTargets)
+        //    {
+        //        var matcher = new ConceptMatchingRule(true);
+        //        matcher.ComputeMappings(source, candidateTargets);
+        //        return matcher.CandidateTypes.First();
+        //    }
 
     }
 }
