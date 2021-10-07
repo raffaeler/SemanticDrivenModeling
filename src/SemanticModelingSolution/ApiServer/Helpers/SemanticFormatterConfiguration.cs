@@ -27,7 +27,7 @@ namespace ApiServer
             var inputLogger = _factory.CreateLogger<SemanticJsonInputFormatter>();
             var outputLogger = _factory.CreateLogger<SemanticJsonOutputFormatter>();
 
-            options.InputFormatters.Insert(0, new SemanticJsonInputFormatter(_metadataService, _jsonOptions, inputLogger));
+            options.InputFormatters.Insert(0, new SemanticJsonInputFormatter(_metadataService, inputLogger));
             options.OutputFormatters.Insert(0, new SemanticJsonOutputFormatter(_metadataService, outputLogger));
         }
     }

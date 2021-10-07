@@ -59,6 +59,7 @@ namespace ApiServer
                 Mappings.Add(mapping);
             }
 
+            JsonDefaultOptions = new JsonSerializerOptions();
             JsonOptions = new JsonSerializerOptions()
             {
                 Converters = { new SemanticConverterFactory(TypeSystems, Mappings) },
@@ -69,6 +70,7 @@ namespace ApiServer
         public IList<TypeSystem<Metadata>> TypeSystems => _typeSystems;
         public IList<Mapping> Mappings { get; }
         public JsonSerializerOptions JsonOptions { get; }
+        public JsonSerializerOptions JsonDefaultOptions { get; }
         public System.Text.Json.Serialization.JsonConverter JsonConverterFactory => JsonOptions.Converters.First();
 
         public Mapping CreateAutoMapping(TypeSystem<Metadata> typeSystem1, TypeSystem<Metadata> typeSystem2,

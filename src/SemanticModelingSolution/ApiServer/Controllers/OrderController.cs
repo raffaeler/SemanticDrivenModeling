@@ -30,6 +30,14 @@ namespace ApiServer.Controllers
         [HttpPost]
         public void Post(IEnumerable<Order> orders)
         {
+            Console.WriteLine($"POST media type: {HttpContext.Request.ContentType}");
+            
+            if (orders?.FirstOrDefault()?.OrderItems == null)
+            {
+                Console.WriteLine($"Wrong media type");
+                return;
+            }
+
             foreach (var order in orders)
             {
                 Console.WriteLine($"{order.Id} - {order.OrderItems.Count}");
