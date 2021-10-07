@@ -27,6 +27,12 @@ namespace ApiServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var metadataSection = Configuration.GetSection("Metadata");
+            services.Configure<MetadataConfiguration>(metadataSection);
+            var metadataConfiguration = metadataSection.Get<MetadataConfiguration>();
+            var metadataServiceInstance = new MetadataService(metadataConfiguration);
+            services.AddSingleton(metadataServiceInstance);
+            services.AddSingleton(typeof(RepositoryService));
 
             services.AddControllers(options =>
             {
@@ -35,12 +41,14 @@ namespace ApiServer
                     .OfType<SystemTextJsonInputFormatter>()
                     .FirstOrDefault();
 
-                //jsonFormatter.SerializerOptions.Converters.Add();
-                
+                //jsonFormatter.SerializerOptions.Converters.Add(metadataServiceInstance.JsonConverterFactory);
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(metadataServiceInstance.JsonConverterFactory);
             });
 
-            services.Configure<MetadataConfiguration>(Configuration.GetSection("Metadata"));
-            services.AddSingleton(typeof(MetadataService));
+
 
             services.AddSwaggerGen(c =>
             {

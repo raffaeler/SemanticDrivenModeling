@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-
 namespace ApiServer.Controllers
 {
     [ApiController]
@@ -19,5 +18,7 @@ namespace ApiServer.Controllers
         {
             _metadataService = metadataService;
         }
+
+
     }
 }

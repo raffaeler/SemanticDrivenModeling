@@ -18,7 +18,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void BasicTypes()
         {
-            TypeSystem ts = new TypeSystem();
+            TypeSystem ts = new TypeSystem("id1");
 
             Assert.IsNotNull(ts.Types);
             Assert.IsNotNull(ts.TypesByFullName);
@@ -33,7 +33,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void UpdateCacheTest()
         {
-            TypeSystem ts = new TypeSystem();
+            TypeSystem ts = new TypeSystem("id1");
             var orderType1 = ts.GetOrCreate(typeof(SimpleDomain1.Order));
             var orderType2 = ts.GetOrCreate(typeof(SimpleDomain1.Order));
             Assert.AreEqual(orderType1, orderType2);
@@ -60,7 +60,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void NoCircularReference()
         {
-            var ts = new TypeSystem();
+            var ts = new TypeSystem("id1");
             var ta = ts.GetOrCreate(typeof(TA));
             ts.UpdateCache();
         }
@@ -75,7 +75,7 @@ namespace SurrogateLibrary.Tests
             var t5 = typeof(string);
             var t6 = typeof(TypeTests);
 
-            var ts = new TypeSystem();
+            var ts = new TypeSystem("id1");
             var s1 = ts.GetOrCreate(t1);
             var s2 = ts.GetOrCreate(t2);
             var s3 = ts.GetOrCreate(t3);
@@ -89,7 +89,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void Serialization1()
         {
-            var ts = new TypeSystem();
+            var ts = new TypeSystem("id1");
             var ta = ts.GetOrCreate(typeof(TA));
 
             var json = JsonSerializer.Serialize(ta);
@@ -103,7 +103,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void Serialization2()
         {
-            var ts = new TypeSystem<Info>();
+            var ts = new TypeSystem<Info>("id1");
             var order = ts.GetOrCreate(typeof(SimpleDomain1.Order));
             order.SetInfo(new(1, "Raf"));
 
@@ -125,7 +125,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void CollectionsAndCollected()
         {
-            var ts = new TypeSystem<Info>();
+            var ts = new TypeSystem<Info>("id1");
             var order = ts.GetOrCreate(typeof(SimpleDomain1.Order));
             ts.UpdateCache();
 
@@ -148,7 +148,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void Navigation()
         {
-            var ts = new TypeSystem<Info>();
+            var ts = new TypeSystem<Info>("id1");
             var order = ts.GetOrCreate(typeof(SimpleDomain1.Order));
             ts.UpdateCache();
 

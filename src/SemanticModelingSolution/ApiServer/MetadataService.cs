@@ -17,10 +17,11 @@ namespace ApiServer
     public class MetadataService
     {
         private readonly MetadataConfiguration _metadataConfiguration;
+        private List<TypeSystem<Metadata>> _typeSystems;
 
-        public MetadataService(IOptions<MetadataConfiguration> metadataOptions)
+        public MetadataService(MetadataConfiguration configuration)
         {
-            _metadataConfiguration = metadataOptions.Value;
+            _metadataConfiguration = configuration;
 
             if (_metadataConfiguration.DomainDefinitionsFile == null)
                 throw new ArgumentException(nameof(MetadataConfiguration.DomainDefinitionsFile));
@@ -40,18 +41,22 @@ namespace ApiServer
             var jsonDomain = File.ReadAllText(_metadataConfiguration.DomainDefinitionsFile);
             Domain = JsonSerializer.Deserialize<DomainBase>(jsonDomain);
 
-            TypeSystems = new List<TypeSystem<Metadata>>();
+            _typeSystems = new List<TypeSystem<Metadata>>();
             foreach (var file in _metadataConfiguration.TypeSystemFilenames)
             {
                 var json = File.ReadAllText(file);
-                TypeSystems.Add(JsonSerializer.Deserialize<TypeSystem<Metadata>>(json));
+                var typeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(json);
+                typeSystem.UpdateCache();
+                _typeSystems.Add(typeSystem);
             }
 
             Mappings = new List<Mapping>();
             foreach (var file in _metadataConfiguration.MappingFilenames)
             {
                 var json = File.ReadAllText(file);
-                Mappings.Add(JsonSerializer.Deserialize<Mapping>(json));
+                var mapping = JsonSerializer.Deserialize<Mapping>(json);
+                mapping.UpdateCache(_typeSystems);
+                Mappings.Add(mapping);
             }
 
             JsonOptions = new JsonSerializerOptions()
@@ -61,9 +66,10 @@ namespace ApiServer
         }
 
         private DomainBase Domain { get; }
-        public IList<TypeSystem<Metadata>> TypeSystems { get; }
+        public IList<TypeSystem<Metadata>> TypeSystems => _typeSystems;
         public IList<Mapping> Mappings { get; }
         public JsonSerializerOptions JsonOptions { get; }
+        public System.Text.Json.Serialization.JsonConverter JsonConverterFactory => JsonOptions.Converters.First();
 
         public Mapping CreateAutoMapping(TypeSystem<Metadata> typeSystem1, TypeSystem<Metadata> typeSystem2,
             SurrogateType<Metadata> sourceRootType)

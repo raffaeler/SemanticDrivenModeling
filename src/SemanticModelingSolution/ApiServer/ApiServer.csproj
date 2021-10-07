@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MaterializerLibrary\MaterializerLibrary.csproj" />
     <ProjectReference Include="..\SemanticLibrary\SemanticLibrary.csproj" />
+    <ProjectReference Include="..\SimpleDomain1\SimpleDomain1.csproj" />
   </ItemGroup>
 
   <ItemGroup>

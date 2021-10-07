@@ -23,8 +23,9 @@ namespace SurrogateLibrary
         private UInt64 _typeIndex = 0;
         private UInt64 _propertyIndex = 0;
 
-        internal TypeSystemBase(ITypeSystemFactory<T> factory)
+        internal TypeSystemBase(string identifier, ITypeSystemFactory<T> factory)
         {
+            Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
             _factory = factory;
             _types = new();
             _typesByFullName = new();
@@ -47,9 +48,10 @@ namespace SurrogateLibrary
             BindingFlags.Instance | BindingFlags.Public;
 
         [System.Text.Json.Serialization.JsonConstructor]
-        internal TypeSystemBase(IReadOnlyDictionary<UInt64, SurrogateType<T>> types,
+        internal TypeSystemBase(string identifier, IReadOnlyDictionary<UInt64, SurrogateType<T>> types,
             IReadOnlyDictionary<UInt64, SurrogateProperty<T>> properties, ITypeSystemFactory<T> factory)
         {
+            Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
             _factory = factory;
             _types = new ConcurrentDictionaryEx<UInt64, SurrogateType<T>>(types);
             _properties = new ConcurrentDictionaryEx<UInt64, SurrogateProperty<T>>(properties);
@@ -78,6 +80,7 @@ namespace SurrogateLibrary
 
         }
 
+        public string Identifier { get; }
         public IReadOnlyDictionary<UInt64, SurrogateType<T>> Types => _types;
         public IReadOnlyDictionary<UInt64, SurrogateProperty<T>> Properties => _properties;
         public IReadOnlyDictionary<string, SurrogateType<T>> TypesByFullName => _typesByFullName;

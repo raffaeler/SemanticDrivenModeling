@@ -9,12 +9,12 @@ namespace SurrogateLibrary
 {
     public record TypeSystem<T> : TypeSystemBase<T>
     {
-        public TypeSystem() : base(new TypeSystemFactory()) { }
+        public TypeSystem(string identifier) : base(identifier, new TypeSystemFactory()) { }
 
         [JsonConstructor]
-        public TypeSystem(IReadOnlyDictionary<UInt64, SurrogateType<T>> types,
+        public TypeSystem(string identifier, IReadOnlyDictionary<UInt64, SurrogateType<T>> types,
             IReadOnlyDictionary<UInt64, SurrogateProperty<T>> properties)
-            : base(types, properties, new TypeSystemFactory())
+            : base(identifier, types, properties, new TypeSystemFactory())
         {
         }
 

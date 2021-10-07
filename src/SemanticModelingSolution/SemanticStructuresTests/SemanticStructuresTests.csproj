@@ -32,19 +32,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Metadata\domain1types.json">
+        <None Update="Metadata\V2OnlineOrder2OrderMapping.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Metadata\domain2types.json">
+        <None Update="Metadata\V2OnlineOrderTypeSystem.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Metadata\domainDefinitions.json">
+        <None Update="Metadata\V2Order2OnlineOrderMapping.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Metadata\OnlineOrderToOrder.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Metadata\OrderToOnlineOrder.json">
+        <None Update="Metadata\V2OrderTypeSystem.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="Samples\Relationships.txt">

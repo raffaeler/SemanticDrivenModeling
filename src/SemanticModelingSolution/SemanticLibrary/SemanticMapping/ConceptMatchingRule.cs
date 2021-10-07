@@ -39,7 +39,7 @@ namespace SemanticLibrary
 
             var candidateTypes = targets
                 .Where(t => t.Info != null)
-                .Select(target => new Mapping(
+                .Select(target => new Mapping(_sourceTypeSystem.Identifier, _targetTypeSystem.Identifier,
                     source, target, new Evaluation(GetTypeScore(source, target))))
                 .OrderByDescending(t => t.Evaluation.Score)
                 .Where(o => o.Evaluation.Score > MinimumScoreForTypes)

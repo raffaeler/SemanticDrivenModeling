@@ -28,7 +28,6 @@ namespace SemanticLibrary
         public void AssignSemantics(SurrogateType<Metadata> surrogateType)
         {
             SurrogateVisitor<Metadata> visitor = new();
-            var ts = new TypeSystem<Metadata>();
             visitor.Visit(surrogateType,
                 (type, _) => OnType(type), null,
                 (property, _) => OnProperty(property), null, null);

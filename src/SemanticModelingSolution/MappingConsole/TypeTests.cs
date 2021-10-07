@@ -52,7 +52,7 @@ namespace MappingConsole
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
             };
 
-            TypeSystem ts = new TypeSystem();
+            TypeSystem ts = new TypeSystem("order");
             ts.GetOrCreate(typeof(SimpleDomain1.Order));
             ts.GetOrCreate(typeof(TA));
             ts.UpdateCache();
@@ -113,7 +113,7 @@ namespace MappingConsole
             var q5 = t5.ToStringEx(true);
             var q6 = t6.ToStringEx(true);
 
-            var ts = new TypeSystem();
+            var ts = new TypeSystem("one");
 
             var s1 = ts.GetOrCreate(t1);
             var s2 = ts.GetOrCreate(t2);
@@ -155,7 +155,7 @@ namespace MappingConsole
             var q5 = t5.ToStringEx(true);
             var q6 = t6.ToStringEx(true);
 
-            var ts = new TypeSystem<Info>();
+            var ts = new TypeSystem<Info>("one");
 
             var s1 = ts.GetOrCreate(t1);
             var s2 = ts.GetOrCreate(t2);

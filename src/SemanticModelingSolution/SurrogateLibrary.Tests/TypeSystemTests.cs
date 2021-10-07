@@ -23,7 +23,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void TestTyped()
         {
-            var ts = new TypeSystem<Info>();
+            var ts = new TypeSystem<Info>("id1");
 
             var t1 = typeof(List<string>);
             var t2 = typeof(IDictionary<string, Action<int>>);
@@ -60,7 +60,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void TestUntyped()
         {
-            var ts = new TypeSystem();
+            var ts = new TypeSystem("id1");
 
             var t1 = typeof(List<string>);
             var t2 = typeof(IDictionary<string, Action<int>>);
@@ -95,7 +95,7 @@ namespace SurrogateLibrary.Tests
         [TestMethod]
         public void TestNavigation()
         {
-            TypeSystem ts = new TypeSystem();
+            TypeSystem ts = new TypeSystem("id1");
             ts.GetOrCreate(typeof(SimpleDomain1.Order));
             ts.UpdateCache();
             if (!ts.TryGetSurrogateTypeByName("SimpleDomain1.Order", out var entryPointOrder)) Assert.Fail("not found");

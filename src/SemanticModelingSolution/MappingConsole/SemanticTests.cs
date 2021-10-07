@@ -57,10 +57,10 @@ namespace MappingConsole
             var u2 = JsonSerializer.Deserialize<Concept>(ju);
             Debug.Assert(u2 == u);
 
-            //AssignSemantic();
-            //ComputeMappings();
-            //SerializeMapping();
-            //DeserializeMappingAndAssert();
+            AssignSemantic();
+            ComputeMappings();
+            SerializeMapping();
+            DeserializeMappingAndAssert();
 
             DeserializeMapping();
 
@@ -76,11 +76,11 @@ namespace MappingConsole
             var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
             _domain = JsonSerializer.Deserialize<DomainBase>(jsonDomainDefinitions);
 
-            _orderTypeSystem = new TypeSystem<Metadata>();
+            _orderTypeSystem = new TypeSystem<Metadata>("order");
             _orderType = _orderTypeSystem.GetOrCreate(typeof(SimpleDomain1.Order));
             _orderTypeSystem.UpdateCache();
 
-            _onlineOrderTypeSystem = new TypeSystem<Metadata>();
+            _onlineOrderTypeSystem = new TypeSystem<Metadata>("onlineorder");
             _onlineOrderType = _onlineOrderTypeSystem.GetOrCreate(typeof(SimpleDomain2.OnlineOrder));
             _onlineOrderTypeSystem.UpdateCache();
 

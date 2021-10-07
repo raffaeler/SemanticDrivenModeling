@@ -18,9 +18,9 @@ namespace SemanticLibrary
             return JsonSerializer.Deserialize<DomainBase>(jsonDomainDefinitions);
         }
 
-        public TypeSystem<Metadata> TypeSystemCreate(params Type[] domainTypes)
+        public TypeSystem<Metadata> TypeSystemCreate(string identifier, params Type[] domainTypes)
         {
-            var typeSystem = new TypeSystem<Metadata>();
+            var typeSystem = new TypeSystem<Metadata>(identifier);
             foreach (var domainType in domainTypes)
             {
                 var surrogateType = typeSystem.GetOrCreate(domainType);

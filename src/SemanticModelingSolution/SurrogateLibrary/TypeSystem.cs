@@ -10,12 +10,12 @@ namespace SurrogateLibrary
     public record VoidType;
     public record TypeSystem : TypeSystemBase<VoidType>
     {
-        public TypeSystem() : base(new TypeSystemFactory()) { }
+        public TypeSystem(string identifier) : base(identifier, new TypeSystemFactory()) { }
 
         [JsonConstructor]
-        public TypeSystem(IReadOnlyDictionary<UInt64, SurrogateType<VoidType>> types,
+        public TypeSystem(string identifier, IReadOnlyDictionary<UInt64, SurrogateType<VoidType>> types,
             IReadOnlyDictionary<UInt64, SurrogateProperty<VoidType>> properties)
-            : base(types, properties, new TypeSystemFactory())
+            : base(identifier, types, properties, new TypeSystemFactory())
         {
         }
 
