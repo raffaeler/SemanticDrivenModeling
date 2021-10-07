@@ -9,19 +9,21 @@ namespace ApiServer
         private readonly MetadataService _metadataService;
         private readonly ILoggerFactory _factory;
         private readonly JsonOptions _jsonOptions;
-        public SemanticFormatterConfiguration(MetadataService metadataService, /*JsonOptions options, */ILoggerFactory loggerFactory)
+
+        public SemanticFormatterConfiguration(MetadataService metadataService, ILoggerFactory loggerFactory)
         {
             _metadataService = metadataService;
             _factory = loggerFactory;
-            //_jsonOptions = options;
             _jsonOptions = new JsonOptions();
         }
 
         public void Configure(MvcOptions options)
         {
-            var logger = _factory.CreateLogger<SemanticJsonInputFormatter>();
-            var formatter = new SemanticJsonInputFormatter(_metadataService, _jsonOptions, logger);
-            options.InputFormatters.Insert(0, formatter);
+            var inputLogger = _factory.CreateLogger<SemanticJsonInputFormatter>();
+            var outputLogger = _factory.CreateLogger<SemanticJsonOutputFormatter>();
+
+            options.InputFormatters.Insert(0, new SemanticJsonInputFormatter(_metadataService, _jsonOptions, inputLogger));
+            options.OutputFormatters.Insert(0, new SemanticJsonOutputFormatter(_metadataService, outputLogger));
         }
     }
 

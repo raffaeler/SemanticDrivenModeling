@@ -15,14 +15,12 @@ namespace ApiServer
     {
         private readonly MetadataService _metadataService;
 
-        //private readonly SystemTextJsonInputFormatter _inner;
-
-        //public SemanticJsonInputFormatter(MetadataService metadataService, SystemTextJsonInputFormatter inner)
         public SemanticJsonInputFormatter(MetadataService metadataService,
             JsonOptions jsonOptions, ILogger<SemanticJsonInputFormatter> logger)
             : base(jsonOptions, logger)
         {
             jsonOptions.JsonSerializerOptions.Converters.Add(metadataService.JsonConverterFactory);
+
             SupportedMediaTypes.Clear();
 
             SupportedMediaTypes.Add(new Microsoft.Net.Http.Headers.MediaTypeHeaderValue(
@@ -31,7 +29,6 @@ namespace ApiServer
             SupportedMediaTypes.Add(new Microsoft.Net.Http.Headers.MediaTypeHeaderValue(
                 "application/sdm.erpV2+json"));
             _metadataService = metadataService;
-            //_inner = inner;
         }
 
         public override bool CanRead(InputFormatterContext context)
@@ -45,10 +42,5 @@ namespace ApiServer
                 "application/sdm.erpV2+json"
             };
         }
-
-        //public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding)
-        //{
-        //    return _inner.ReadRequestBodyAsync(context, encoding);
-        //}
     }
 }

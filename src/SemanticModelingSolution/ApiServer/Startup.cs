@@ -27,36 +27,20 @@ namespace ApiServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // load the metadata configuration written in appsettings.json
             var metadataSection = Configuration.GetSection("Metadata");
             services.Configure<MetadataConfiguration>(metadataSection);
             var metadataConfiguration = metadataSection.Get<MetadataConfiguration>();
+
+            // add the metadataservice in the DI
             var metadataServiceInstance = new MetadataService(metadataConfiguration);
             services.AddSingleton(metadataServiceInstance);
+
+            // configure a sample repository
             services.AddSingleton(typeof(RepositoryService));
 
-            services.AddControllers(options =>
-            {
-                // Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter // => "application/*+json"
-                var jsonFormatter = options.InputFormatters
-                    .OfType<SystemTextJsonInputFormatter>()
-                    .FirstOrDefault();
-
-                //var jsonOptions = new Microsoft.AspNetCore.Mvc.JsonOptions();
-                //jsonOptions.JsonSerializerOptions.Converters.Add(metadataServiceInstance.JsonConverterFactory);
-                //var logger = logFactory.CreateLogger<SemanticJsonInputFormatter>();
-
-
-                options.OutputFormatters.Insert(0, new SemanticJsonOutputFormatter(metadataServiceInstance));
-                //options.InputFormatters.Insert(0, new SemanticJsonInputFormatter(metadataServiceInstance,
-                //    jsonFormatter));
-            })
-            //.AddJsonOptions(options =>
-            //{
-            //    options.JsonSerializerOptions.Converters.Add(metadataServiceInstance.JsonConverterFactory);
-            //})
-            ;
-
-            services.ConfigureOptions<SemanticFormatterConfiguration>();
+            services.AddControllers();
+            services.ConfigureOptions<SemanticFormatterConfiguration>();    // input/output formatters
 
 
             services.AddSwaggerGen(c =>

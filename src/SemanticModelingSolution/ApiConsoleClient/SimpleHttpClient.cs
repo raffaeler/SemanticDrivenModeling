@@ -47,6 +47,11 @@ namespace ApiConsoleClient
 
         public Task Resend()
         {
+            if (string.IsNullOrEmpty(_jsonGetResponse))
+            {
+                Console.WriteLine("Make a get (G) first");
+            }
+
             return SendNew(_jsonGetResponse, "application/sdm.erpV1+json");
         }
 
