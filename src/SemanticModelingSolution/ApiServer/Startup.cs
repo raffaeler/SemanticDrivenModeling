@@ -37,7 +37,7 @@ namespace ApiServer
             services.AddSingleton(metadataServiceInstance);
 
             // configure a sample repository
-            services.AddSingleton(typeof(RepositoryService));
+            services.AddTransient(typeof(RepositoryService));
 
             services.AddControllers();
             services.ConfigureOptions<SemanticFormatterConfiguration>();    // input/output formatters

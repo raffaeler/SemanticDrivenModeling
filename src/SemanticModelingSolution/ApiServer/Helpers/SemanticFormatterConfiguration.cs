@@ -4,6 +4,11 @@ using Microsoft.Extensions.Options;
 
 namespace ApiServer
 {
+    /// <summary>
+    /// This configuration class is used to delay the configuration of
+    /// the input formatter which requires the logger (not available
+    /// in the Startup.ConfigureServices)
+    /// </summary>
     public class SemanticFormatterConfiguration : IConfigureOptions<MvcOptions>
     {
         private readonly MetadataService _metadataService;
