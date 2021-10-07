@@ -27,5 +27,14 @@ namespace ApiServer.Controllers
             return _repositoryService.GetOrders();
         }
 
+        [HttpPost]
+        public void Post(IEnumerable<Order> orders)
+        {
+            foreach (var order in orders)
+            {
+                Console.WriteLine($"{order.Id} - {order.OrderItems.Count}");
+            }
+        }
+
     }
 }

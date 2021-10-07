@@ -39,9 +39,14 @@ namespace ApiConsoleClient
                         return;
                     }
 
-                    if (keyInfo.Key == ConsoleKey.S)
+                    if (keyInfo.Key == ConsoleKey.G)
                     {
                         await _client.MakeGet();
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.P)
+                    {
+                        await _client.Resend();
                     }
 
                     if (keyInfo.Key == ConsoleKey.R)

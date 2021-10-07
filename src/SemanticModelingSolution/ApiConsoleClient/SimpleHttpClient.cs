@@ -15,6 +15,8 @@ namespace ApiConsoleClient
         private readonly ILogger<SimpleHttpClient> _logger;
         private readonly HttpClient _client;
 
+        private string _jsonGetResponse;
+
         public SimpleHttpClient(ILogger<SimpleHttpClient> logger, HttpClient client)
         {
             _logger = logger;
@@ -23,11 +25,15 @@ namespace ApiConsoleClient
 
         public async Task MakeGet()
         {
+            //var mediaType = "application/json";
+            //var mediaType = "application/sem.iot+json;domain=iamraf;version=1.0";
+
             try
             {
-                using (var response = await _client.GetAsync("http://www.google.com"))
+                using (var response = await _client.GetAsync("http://localhost:5000/Order"))
                 {
                     response.EnsureSuccessStatusCode();
+                    _jsonGetResponse = await response.Content.ReadAsStringAsync();
                 }
             }
             catch (Exception err)
@@ -39,45 +45,21 @@ namespace ApiConsoleClient
             }
         }
 
-        private async Task SendReuse(string textMessage)
+        public Task Resend()
         {
-            try
-            {
-                var message = $"\"{textMessage}\"";
-
-                using (var content = new StringContent(message, Encoding.UTF8, "application/json"))
-                {
-                    using (var response = await _client.PostAsync("http://localhost:5000/Logger", content))
-                    {
-                        response.EnsureSuccessStatusCode();
-                    }
-                }
-            }
-            catch (Exception err)
-            {
-                var errorText = err.ToString();
-                Debug.WriteLine(errorText);
-
-                await _client.PostAsync("Logger",
-                    new StringContent(errorText, Encoding.UTF8, "application/json"));
-            }
+            return SendNew(_jsonGetResponse, "application/sdm.erpV1+json");
         }
 
-        // This does not cause the exceptions
-        private async Task SendNew(string textMessage)
+
+        private async Task SendNew(string jsonMessage, string mediaType)
         {
             try
             {
-                var message = $"\"{textMessage}\"";
-
-                using (var freshClient = new HttpClient())
+                using (var content = new StringContent(jsonMessage, Encoding.UTF8, mediaType))
                 {
-                    using (var content = new StringContent(message, Encoding.UTF8, "application/json"))
+                    using (var response = await _client.PostAsync("http://localhost:5000/Order", content))
                     {
-                        using (var response = await freshClient.PostAsync("http://localhost:5000/Logger", content))
-                        {
-                            response.EnsureSuccessStatusCode();
-                        }
+                        response.EnsureSuccessStatusCode();
                     }
                 }
             }

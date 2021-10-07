@@ -43,7 +43,11 @@ namespace ApiConsoleClient
             services.AddHttpClient<SimpleHttpClient>("Simple", client =>
             {
                 client.BaseAddress = new Uri(baseUrl);
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                client.DefaultRequestHeaders.Add("Accept", new[]
+                {
+                    "application/sdm.erpV1+json",
+                });
+
                 client.DefaultRequestHeaders.Add("User-Agent", "ApiConsoleClient 1.0");
             })
             .AddHttpMessageHandler(() =>
