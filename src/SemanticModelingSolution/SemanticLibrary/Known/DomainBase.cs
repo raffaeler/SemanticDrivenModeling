@@ -12,6 +12,7 @@ namespace SemanticLibrary
     /// </summary>
     public class DomainBase
     {
+        public string Name { get; init; }
         public virtual List<TermToConcept> Links { get; init; } = new()
         {
             new TermToConcept(KnownBaseConcepts.UniqueIdentity, KnownBaseConcepts.Any, KnownBaseConceptSpecifiers.None, KnownBaseTerms.Id, 100),

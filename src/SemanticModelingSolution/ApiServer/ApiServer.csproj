@@ -6,10 +6,10 @@
 
   <ItemGroup>
     <Content Remove="Metadata\domainDefinitions.json" />
-    <Content Remove="Metadata\V2OnlineOrder2OrderMapping.json" />
-    <Content Remove="Metadata\V2OnlineOrderTypeSystem.json" />
-    <Content Remove="Metadata\V2Order2OnlineOrderMapping.json" />
-    <Content Remove="Metadata\V2OrderTypeSystem.json" />
+    <Content Remove="Metadata\OnlineOrder2OrderMapping.json" />
+    <Content Remove="Metadata\OnlineOrderTypeSystem.json" />
+    <Content Remove="Metadata\Order2OnlineOrderMapping.json" />
+    <Content Remove="Metadata\OrderTypeSystem.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,16 +26,16 @@
     <None Include="Metadata\domainDefinitions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Metadata\V2OnlineOrder2OrderMapping.json">
+    <None Include="Metadata\OnlineOrder2OrderMapping.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Metadata\V2OnlineOrderTypeSystem.json">
+    <None Include="Metadata\OnlineOrderTypeSystem.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Metadata\V2Order2OnlineOrderMapping.json">
+    <None Include="Metadata\Order2OnlineOrderMapping.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Metadata\V2OrderTypeSystem.json">
+    <None Include="Metadata\OrderTypeSystem.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

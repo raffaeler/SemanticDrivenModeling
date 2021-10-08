@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\ErpDomain\ErpDomain.csproj" />
         <ProjectReference Include="..\MaterializerLibrary\MaterializerLibrary.csproj" />
         <ProjectReference Include="..\ModelsFromGithub\ModelsFromGithub.csproj" />
         <ProjectReference Include="..\NorthwindModels\NorthwindModels.csproj" />
@@ -23,9 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Metadata\domainDefinitions.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+      <Folder Include="Metadata\" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

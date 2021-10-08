@@ -32,16 +32,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Metadata\V2OnlineOrder2OrderMapping.json">
+        <None Update="Metadata\OnlineOrder2OrderMapping.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Metadata\V2OnlineOrderTypeSystem.json">
+        <None Update="Metadata\OnlineOrderTypeSystem.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Metadata\V2Order2OnlineOrderMapping.json">
+        <None Update="Metadata\Order2OnlineOrderMapping.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Metadata\V2OrderTypeSystem.json">
+        <None Update="Metadata\OrderTypeSystem.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="Samples\Relationships.txt">

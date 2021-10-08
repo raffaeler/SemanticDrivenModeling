@@ -87,7 +87,7 @@ namespace SemanticGlossaryGenerator
 
                     _uniqueness.Add(word);
                     GenerateField(context, sb, word, description, comments, aliases);
-                });
+                }, null);
 
             using var file = fileInfo.OpenText();
             string line;

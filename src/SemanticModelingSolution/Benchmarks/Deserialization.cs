@@ -83,10 +83,10 @@ namespace Benchmarks
 
         private void DeserializeMapping()
         {
-            var orderTypeSystemJson = File.ReadAllText("Metadata\\V2OrderTypeSystem.json");
-            var onlineOrderTypeSystemJson = File.ReadAllText("Metadata\\V2OnlineOrderTypeSystem.json");
-            var orderToOnlineOrderMappingsJson = File.ReadAllText("Metadata\\V2Order2OnlineOrderMapping.json");
-            var onlineOrderToOrderMappingsJson = File.ReadAllText("Metadata\\V2OnlineOrder2OrderMapping.json");
+            var orderTypeSystemJson = File.ReadAllText("Metadata\\OrderTypeSystem.json");
+            var onlineOrderTypeSystemJson = File.ReadAllText("Metadata\\OnlineOrderTypeSystem.json");
+            var orderToOnlineOrderMappingsJson = File.ReadAllText("Metadata\\Order2OnlineOrderMapping.json");
+            var onlineOrderToOrderMappingsJson = File.ReadAllText("Metadata\\OnlineOrder2OrderMapping.json");
             _orderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(orderTypeSystemJson);
             _onlineOrderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(onlineOrderTypeSystemJson);
             _orderToOnlineOrderMapping = JsonSerializer.Deserialize<Mapping>(orderToOnlineOrderMappingsJson);

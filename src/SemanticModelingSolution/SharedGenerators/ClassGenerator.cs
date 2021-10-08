@@ -398,5 +398,13 @@ namespace SemanticGlossaryGenerator.Helpers
                                 expression)))));
         }
 
+        public StatementSyntax CreateSimpleAssignment(string variableName, string stringLiteral)
+        {
+            return SyntaxFactory.ExpressionStatement(
+                SyntaxFactory.AssignmentExpression(
+                SyntaxKind.SimpleAssignmentExpression,
+                SyntaxFactory.IdentifierName(variableName),
+                CreateStringLiteralExpression(stringLiteral)));
+        }
     }
 }

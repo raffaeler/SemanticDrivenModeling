@@ -6,6 +6,7 @@ namespace SemanticGlossaryGenerator
 {
     /// <summary>
     /// Parser of a simple textual file format. Rules:
+    /// - Lines starting with * are assignment to properties of the Domain class: *Name=IoT assign the string IoT to Name
     /// - Every content is a separate line
     /// - Lines starting by "#" are totally ignored (internal comments)
     /// - Empty lines are ignored
@@ -18,6 +19,7 @@ namespace SemanticGlossaryGenerator
     /// </summary>
     public class SimplifiedTextParser
     {
+        public static readonly string VariableTag = "*";
         public static readonly string InternalCommentTag = "#";
         public static readonly string GeneratedCommentTag = "//";
         public static readonly string DescriptionTag = "$";
@@ -28,14 +30,16 @@ namespace SemanticGlossaryGenerator
         private string _word;
         private string _description;
         private Action<string, string, List<string>, List<string>> _commit;
+        private Action<string, string> _varAssignment;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="commit">A lambda taking word, description, comments, aliases</param>
-        public SimplifiedTextParser(Action<string, string, List<string>, List<string>> commit)
+        public SimplifiedTextParser(Action<string, string, List<string>, List<string>> commit, Action<string, string> varAssignment)
         {
             _commit = commit;
+            _varAssignment = varAssignment;
         }
 
         public void Feed(string line)
@@ -57,6 +61,16 @@ namespace SemanticGlossaryGenerator
                 if (_word != null) Emit(_word, _description);
 
                 AddComment(line);
+                return;
+            }
+
+            if (line.StartsWith(VariableTag))
+            {
+                if (_varAssignment == null) return;
+                var stripped = line.TrimStart('*');
+                var parts = stripped.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length != 2) return;
+                _varAssignment(parts[0].Trim(), parts[1].Trim());
                 return;
             }
 
@@ -111,7 +125,7 @@ namespace SemanticGlossaryGenerator
 
             _commit(word,
                 description == null ? string.Empty : description,
-                _comments == null? new List<string>() : _comments,
+                _comments == null ? new List<string>() : _comments,
                 _aliases == null ? new List<string>() : _aliases);
             Reset();
         }

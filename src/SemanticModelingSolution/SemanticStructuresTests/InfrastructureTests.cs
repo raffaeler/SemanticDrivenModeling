@@ -43,6 +43,7 @@ namespace SemanticStructuresTests
             var fileInfo = new FileInfo("Samples\\Relationships.txt");
             var index = 0;
             var results = new (int, int, int)[] { (5, 1, 3), (5, 2, 2) };
+            var varAssignment = new Dictionary<string, string>();
 
             var parser = new SimplifiedRelationshipsParser(
                 (List<string> words, string description, List<string> comments, List<List<string>> aliases) =>
@@ -54,7 +55,8 @@ namespace SemanticStructuresTests
                 Assert.AreEqual(wordsCount, words.Count, "words");
                 Assert.AreEqual(aliasSubCount, aliases[aliasCount - 1].Count, "aliases");
                 index++;
-            });
+            },
+                (name, value) => varAssignment[name] = value);
 
             using var file = fileInfo.OpenText();
             string line;

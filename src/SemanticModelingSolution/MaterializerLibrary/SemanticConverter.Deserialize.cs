@@ -54,6 +54,12 @@ namespace MaterializerLibrary
         /// </summary>
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            if (!CanDeserialize)
+            {
+                return JsonSerializer.Deserialize<T>(ref reader, CloneWithoutSelf(options));
+            }
+
+
             // Using the reflection code requires also a change in the ConversionGenerator
             //return ReadReflection(ref reader, typeToConvert, options);
 

@@ -59,5 +59,17 @@ namespace MaterializerLibrary
         /// The loaded map allows to deserialize the type
         /// </summary>
         public bool CanDeserialize { get; }
+
+        private JsonSerializerOptions CloneWithoutSelf(JsonSerializerOptions options)
+        {
+            var emptyOptions = new JsonSerializerOptions(options);
+            var todelete = emptyOptions.Converters.Where(c => c is SemanticConverterFactory).ToArray();
+            foreach (var del in todelete)
+            {
+                emptyOptions.Converters.Remove(del);
+            }
+
+            return emptyOptions;
+        }
     }
 }

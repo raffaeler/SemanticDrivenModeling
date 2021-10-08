@@ -54,13 +54,16 @@ namespace ApiServer
             var objectType = context.Object?.GetType() ?? context.ObjectType ?? typeof(object);
 
 
-            if (!context.HttpContext.Request.Headers.TryGetValue("Accept", out var acceptValues))
+            //if (!context.HttpContext.Request.Headers.TryGetValue("Accept", out var acceptValues))
+            //    acceptValues = new Microsoft.Extensions.Primitives.StringValues("application/json");
+            var headers = context.HttpContext.Request.GetTypedHeaders();
+            if(headers.Accept.Count == 0)
             {
-                acceptValues = new Microsoft.Extensions.Primitives.StringValues("application/json");
+                headers.Accept.Add(new Microsoft.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
             }
 
             var responseStream = httpContext.Response.Body;
-            var options = GetSerializerOptions(acceptValues);
+            var options = GetSerializerOptions(headers.Accept);
             if (selectedEncoding.CodePage == Encoding.UTF8.CodePage)
             {
                 await JsonSerializer.SerializeAsync(responseStream, context.Object, objectType, options);
@@ -101,7 +104,7 @@ namespace ApiServer
 
         }
 
-        protected virtual JsonSerializerOptions GetSerializerOptions(Microsoft.Extensions.Primitives.StringValues acceptValues)
+        protected virtual JsonSerializerOptions GetSerializerOptions(IList<Microsoft.Net.Http.Headers.MediaTypeHeaderValue> accepts)
         {
             return SerializerOptions;
         }

@@ -35,6 +35,12 @@ namespace MaterializerLibrary
         // json will have the format of a type described in _targetTypeSystem
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
+            if (!CanSerialize)
+            {
+                JsonSerializer.Serialize(writer, value, CloneWithoutSelf(options));
+                return;
+            }
+
             if (!_writerCache.TryGetValue(typeof(T), out var transformDelegate))
             {
                 var visitor = new SemanticSerializationVisitor<T>(_serializationTypeSystem, _serializationLookup,

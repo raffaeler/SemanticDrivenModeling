@@ -40,6 +40,7 @@
 # Please note that a term having the same string of the Concept is also defined ("UnitMass")
 # 
 
+*Name=Erp
 
 Product
     :Material : 100

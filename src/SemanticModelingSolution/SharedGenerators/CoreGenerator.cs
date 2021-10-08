@@ -91,6 +91,7 @@ namespace SemanticGlossaryGenerator
             HashSet<string> specifiersUniqueness = new HashSet<string>();
             HashSet<string> termsUniqueness = new HashSet<string>();
             HashSet<string> contexts = new HashSet<string>();
+            Dictionary<string, string> assignments = new();
 
             List<ExpressionSyntax> links = new List<ExpressionSyntax>();
             var parser = new SimplifiedRelationshipsParser(
@@ -198,7 +199,8 @@ namespace SemanticGlossaryGenerator
 
                     Concepts.Members.Add(Concepts.CreateStaticField(comments?.ToArray(), ConceptClassName, mainConcept,
                         Concepts.CreateInitializersWithExpressions(ConceptClassName, expressions.ToArray())));
-                });
+                },
+                (name, value) => assignments[name] = value);
 
             using var file = fileInfo.OpenText();
             string line;
@@ -217,8 +219,17 @@ namespace SemanticGlossaryGenerator
                 }
             }
 
-            var statements = links
-                .Select(e => Domain.CreateAddCollection(TermToConceptPropertyName, e));
+            List<StatementSyntax> statements = new();
+            foreach(var assignment in assignments)
+            {
+                // Warning: we are assuming the variable specified in assignment.Key
+                // is already declared (like Name in DomainBase)
+                // Anything else should be declared in the derived class being created
+                statements.Add(Domain.CreateSimpleAssignment(assignment.Key, assignment.Value));
+            }
+
+            statements.AddRange(links
+                .Select(e => Domain.CreateAddCollection(TermToConceptPropertyName, e)));
 
             Domain.Members.Add(Domain.CreateConstructor(Array.Empty<string>(), statements.ToArray()));
         }

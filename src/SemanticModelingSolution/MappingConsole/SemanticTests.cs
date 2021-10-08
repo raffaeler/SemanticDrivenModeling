@@ -57,6 +57,7 @@ namespace MappingConsole
             var u2 = JsonSerializer.Deserialize<Concept>(ju);
             Debug.Assert(u2 == u);
 
+            //SerializeDomainDefinitions();
             AssignSemantic();
             ComputeMappings();
             SerializeMapping();
@@ -71,16 +72,23 @@ namespace MappingConsole
             DeserializeOnlineOrders();
         }
 
+        private void SerializeDomainDefinitions()
+        {
+            var domain = new GeneratedCode.Domain();
+            var jsonDomainDefinitions = JsonSerializer.Serialize(domain);
+            File.WriteAllText("domainDefinitions.json", jsonDomainDefinitions);
+        }
+
         private void AssignSemantic()
         {
-            var jsonDomainDefinitions = File.ReadAllText("Metadata\\domainDefinitions.json");
+            var jsonDomainDefinitions = File.ReadAllText("domainDefinitions.json");
             _domain = JsonSerializer.Deserialize<DomainBase>(jsonDomainDefinitions);
 
-            _orderTypeSystem = new TypeSystem<Metadata>("order");
+            _orderTypeSystem = new TypeSystem<Metadata>("order_ts_v1");
             _orderType = _orderTypeSystem.GetOrCreate(typeof(SimpleDomain1.Order));
             _orderTypeSystem.UpdateCache();
 
-            _onlineOrderTypeSystem = new TypeSystem<Metadata>("onlineorder");
+            _onlineOrderTypeSystem = new TypeSystem<Metadata>("onlineorder_ts_v2");
             _onlineOrderType = _onlineOrderTypeSystem.GetOrCreate(typeof(SimpleDomain2.OnlineOrder));
             _onlineOrderTypeSystem.UpdateCache();
 
@@ -92,11 +100,11 @@ namespace MappingConsole
         private void ComputeMappings()
         {
             var matcher1 = new ConceptMatchingRule(_orderTypeSystem, _onlineOrderTypeSystem, true);
-            var orderToOnlineOrderMappings = matcher1.ComputeMappings("V1", _orderType);
+            var orderToOnlineOrderMappings = matcher1.ComputeMappings("Order to OnlineOrder", _orderType);
             _orderToOnlineOrderMapping = orderToOnlineOrderMappings.First();
 
             var matcher2 = new ConceptMatchingRule(_onlineOrderTypeSystem, _orderTypeSystem, true);
-            var onlineOrderToOrderMappings = matcher2.ComputeMappings("V2", _onlineOrderType);
+            var onlineOrderToOrderMappings = matcher2.ComputeMappings("OnlineOrder to Order", _onlineOrderType);
             _onlineOrderToOrderMapping = onlineOrderToOrderMappings.First();
         }
 
@@ -106,18 +114,18 @@ namespace MappingConsole
             var onlineOrderTypeSystem = JsonSerializer.Serialize(_onlineOrderTypeSystem);
             var orderToOnlineOrderMappings = JsonSerializer.Serialize(_orderToOnlineOrderMapping);
             var onlineOrderToOrderMappings = JsonSerializer.Serialize(_onlineOrderToOrderMapping);
-            File.WriteAllText("V2OrderTypeSystem.json", orderTypeSystem);
-            File.WriteAllText("V2OnlineOrderTypeSystem.json", onlineOrderTypeSystem);
-            File.WriteAllText("V2Order2OnlineOrderMapping.json", orderToOnlineOrderMappings);
-            File.WriteAllText("V2OnlineOrder2OrderMapping.json", onlineOrderToOrderMappings);
+            File.WriteAllText("OrderTypeSystem.json", orderTypeSystem);
+            File.WriteAllText("OnlineOrderTypeSystem.json", onlineOrderTypeSystem);
+            File.WriteAllText("Order2OnlineOrderMapping.json", orderToOnlineOrderMappings);
+            File.WriteAllText("OnlineOrder2OrderMapping.json", onlineOrderToOrderMappings);
         }
 
         private void DeserializeMapping()
         {
-            var orderTypeSystemJson = File.ReadAllText("V2OrderTypeSystem.json");
-            var onlineOrderTypeSystemJson = File.ReadAllText("V2OnlineOrderTypeSystem.json");
-            var orderToOnlineOrderMappingsJson = File.ReadAllText("V2Order2OnlineOrderMapping.json");
-            var onlineOrderToOrderMappingsJson = File.ReadAllText("V2OnlineOrder2OrderMapping.json");
+            var orderTypeSystemJson = File.ReadAllText("OrderTypeSystem.json");
+            var onlineOrderTypeSystemJson = File.ReadAllText("OnlineOrderTypeSystem.json");
+            var orderToOnlineOrderMappingsJson = File.ReadAllText("Order2OnlineOrderMapping.json");
+            var onlineOrderToOrderMappingsJson = File.ReadAllText("OnlineOrder2OrderMapping.json");
             _orderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(orderTypeSystemJson);
             _onlineOrderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(onlineOrderTypeSystemJson);
             _orderToOnlineOrderMapping = JsonSerializer.Deserialize<Mapping>(orderToOnlineOrderMappingsJson);
@@ -131,10 +139,10 @@ namespace MappingConsole
 
         private void DeserializeMappingAndAssert()
         {
-            var orderTypeSystemJson = File.ReadAllText("V2OrderTypeSystem.json");
-            var onlineOrderTypeSystemJson = File.ReadAllText("V2OnlineOrderTypeSystem.json");
-            var orderToOnlineOrderMappingsJson = File.ReadAllText("V2Order2OnlineOrderMapping.json");
-            var onlineOrderToOrderMappingsJson = File.ReadAllText("V2OnlineOrder2OrderMapping.json");
+            var orderTypeSystemJson = File.ReadAllText("OrderTypeSystem.json");
+            var onlineOrderTypeSystemJson = File.ReadAllText("OnlineOrderTypeSystem.json");
+            var orderToOnlineOrderMappingsJson = File.ReadAllText("Order2OnlineOrderMapping.json");
+            var onlineOrderToOrderMappingsJson = File.ReadAllText("OnlineOrder2OrderMapping.json");
             var orderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(orderTypeSystemJson);
             var onlineOrderTypeSystem = JsonSerializer.Deserialize<TypeSystem<Metadata>>(onlineOrderTypeSystemJson);
             var orderToOnlineOrderMapping = JsonSerializer.Deserialize<Mapping>(orderToOnlineOrderMappingsJson);

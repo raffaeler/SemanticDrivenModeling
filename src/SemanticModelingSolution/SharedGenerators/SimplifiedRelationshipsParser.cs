@@ -11,9 +11,10 @@ namespace SemanticGlossaryGenerator
         private Action<List<string>, string, List<string>, List<List<string>>> _commit;
         private char[] _listSep = new char[] { ':' };
 
-        public SimplifiedRelationshipsParser(Action<List<string>, string, List<string>, List<List<string>>> commit)
+        public SimplifiedRelationshipsParser(Action<List<string>, string, List<string>, List<List<string>>> commit,
+            Action<string, string> varAssignment)
         {
-            _parser = new SimplifiedTextParser(OnParsed);
+            _parser = new SimplifiedTextParser(OnParsed, varAssignment);
             _commit = commit;
         }
 

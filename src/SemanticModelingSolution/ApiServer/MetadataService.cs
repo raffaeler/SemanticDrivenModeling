@@ -73,7 +73,7 @@ namespace ApiServer
         public JsonSerializerOptions JsonDefaultOptions { get; }
         public System.Text.Json.Serialization.JsonConverter JsonConverterFactory => JsonOptions.Converters.First();
 
-        public Mapping CreateAutoMapping(string mapIdentifier, 
+        public Mapping CreateAutoMapping(string mapIdentifier,
             TypeSystem<Metadata> typeSystem1, TypeSystem<Metadata> typeSystem2,
             SurrogateType<Metadata> sourceRootType)
         {
@@ -82,6 +82,61 @@ namespace ApiServer
             return mappings.First();
         }
 
+        public void AddMapping(Mapping mapping)
+        {
+            mapping.UpdateCache(_typeSystems);
+            Mappings.Add(mapping);
+        }
+
+        /// <summary>
+        /// Returns the serialization settings used by the output formatter:
+        /// MediaType (built from Target Type name and version), Target type
+        /// and json options
+        /// </summary>
+        public IDictionary<string, JsonSerializerOptions> GetSerializationSettings()
+        {
+            Dictionary<string, JsonSerializerOptions> options = new();
+            foreach (var mapping in Mappings)
+            {
+                var typeName = mapping.Target.Name;
+                var typeSystem = TypeSystems.FirstOrDefault(ts => ts.Identifier == mapping.TargetTypeSystemIdentifier);
+                if (typeSystem == null) continue;
+
+                var subtype = $"sdm.{Domain.Name}.{typeName}.{typeSystem.Identifier}";
+
+                options[subtype] = new JsonSerializerOptions()
+                {
+                    Converters = { new SemanticConverterFactory(TypeSystems, new[] { mapping }) },
+                };
+            }
+
+            return options;
+        }
+
+        /// <summary>
+        /// Returns the deserialization settings used by the input formatter:
+        /// MediaType (built from Target Type name and version), Target type
+        /// and json options
+        /// </summary>
+        public IDictionary<string, JsonSerializerOptions> GetDeserializationSettings()
+        {
+            Dictionary<string, JsonSerializerOptions> options = new();
+            foreach (var mapping in Mappings)
+            {
+                var typeName = mapping.Source.Name;
+                var typeSystem = TypeSystems.FirstOrDefault(ts => ts.Identifier == mapping.SourceTypeSystemIdentifier);
+                if (typeSystem == null) continue;
+
+                var subtype = $"sdm.{Domain.Name}.{typeName}.{typeSystem.Identifier}";
+
+                options[subtype] = new JsonSerializerOptions()
+                {
+                    Converters = { new SemanticConverterFactory(TypeSystems, new[] { mapping }) },
+                };
+            }
+
+            return options;
+        }
 
 
         //    public ScoredTypeMapping DeserializeMapping(DomainBase domain, string mappingFilename)
