@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
+
 namespace ApiServer
 {
     public class Startup
@@ -35,33 +36,11 @@ namespace ApiServer
 
             services.AddControllers();
             services.ConfigureOptions<SemanticFormatterConfiguration>();    // input/output formatters
-
+            services.ConfigureOptions<SemanticSwaggerConfiguration>();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiServer", Version = "v1" });
-                //c.SchemaFilterDescriptors.Add(new Swashbuckle.AspNetCore.SwaggerGen.FilterDescriptor()
-                //{
-                //    Type = typeof(SdmOpenApiFilter),
-                //    Arguments = new[] { metadataServiceInstance },
-                //}) ;
-
-                //c.MapType(typeof(SimpleDomain1.Order), () => new OpenApiSchema()
-                //{
-                //    Type = "OnlineOrder",
-                //    Properties = new Dictionary<string, OpenApiSchema>(),
-                //});
-
-                c.SchemaGeneratorOptions.CustomTypeMappings.Add(typeof(SimpleDomain1.Order), () => new OpenApiSchema()
-                {
-                    Type = "OnlineOrder",
-                    Properties = new Dictionary<string, OpenApiSchema>()
-                    {
-                        { "Id", new OpenApiSchema() { Type = "Guid" } },
-                        { "Description", new OpenApiSchema() { Type = "string" } },
-                    }
-                });
-
             });
         }
 
