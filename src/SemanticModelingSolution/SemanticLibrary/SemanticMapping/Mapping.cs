@@ -21,7 +21,7 @@ namespace SemanticLibrary
     /// <param name="Source">The root type for the source model</param>
     /// <param name="Target">The root type for the target model</param>
     /// <param name="Evaluation">The class describing the evaluation parameters</param>
-    public record Mapping(string SourceTypeSystemIdentifier, string TargetTypeSystemIdentifier, string MapIdentifier,
+    public record Mapping(string MapIdentifier, string SourceTypeSystemIdentifier, string TargetTypeSystemIdentifier, 
         SurrogateType<Metadata> Source, SurrogateType<Metadata> Target, Evaluation Evaluation)
     {
         /// <summary>
@@ -41,7 +41,7 @@ namespace SemanticLibrary
         /// <param name="typeSystems"></param>
         public void UpdateCache(params TypeSystem<Metadata>[] typeSystems)
         {
-            UpdateCache(typeSystems);
+            UpdateCache((IReadOnlyCollection<TypeSystem<Metadata>>)typeSystems);
         }
 
         /// <summary>
