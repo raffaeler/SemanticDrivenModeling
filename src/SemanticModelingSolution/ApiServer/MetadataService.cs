@@ -19,9 +19,9 @@ namespace ApiServer
         private readonly MetadataConfiguration _metadataConfiguration;
         private List<TypeSystem<Metadata>> _typeSystems;
 
-        public MetadataService(MetadataConfiguration configuration)
+        public MetadataService(IOptions<MetadataConfiguration> configurationOptions)
         {
-            _metadataConfiguration = configuration;
+            _metadataConfiguration = configurationOptions.Value;
 
             if (_metadataConfiguration.DomainDefinitionsFile == null)
                 throw new ArgumentException(nameof(MetadataConfiguration.DomainDefinitionsFile));

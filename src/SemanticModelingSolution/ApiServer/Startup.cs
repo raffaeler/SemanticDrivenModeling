@@ -27,14 +27,8 @@ namespace ApiServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // load the metadata configuration written in appsettings.json
-            var metadataSection = Configuration.GetSection("Metadata");
-            services.Configure<MetadataConfiguration>(metadataSection);
-            var metadataConfiguration = metadataSection.Get<MetadataConfiguration>();
-
-            // add the metadataservice in the DI
-            var metadataServiceInstance = new MetadataService(metadataConfiguration);
-            services.AddSingleton(metadataServiceInstance);
+            services.Configure<MetadataConfiguration>(Configuration.GetSection("Metadata"));
+            services.AddSingleton(typeof(MetadataService));
 
             // configure a sample repository
             services.AddTransient(typeof(RepositoryService));
