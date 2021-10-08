@@ -32,14 +32,14 @@ namespace SemanticLibrary
             //_logOnlyValidated = true;
         }
 
-        public IList<Mapping> ComputeMappings(SurrogateType<Metadata> source,
+        public IList<Mapping> ComputeMappings(string mapIdentifier, SurrogateType<Metadata> source,
             int minimumScore = MinimumScoreForTypes)
         {
             var targets = _targetTypeSystem.Types.Values.Where(t => !t.IsBasicType);
 
             var candidateTypes = targets
                 .Where(t => t.Info != null)
-                .Select(target => new Mapping(_sourceTypeSystem.Identifier, _targetTypeSystem.Identifier,
+                .Select(target => new Mapping(mapIdentifier, _sourceTypeSystem.Identifier, _targetTypeSystem.Identifier,
                     source, target, new Evaluation(GetTypeScore(source, target))))
                 .OrderByDescending(t => t.Evaluation.Score)
                 .Where(o => o.Evaluation.Score > MinimumScoreForTypes)

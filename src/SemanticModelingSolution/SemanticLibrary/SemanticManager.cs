@@ -30,11 +30,12 @@ namespace SemanticLibrary
             return typeSystem;
         }
 
-        public Mapping CreateAutoMapping(TypeSystem<Metadata> typeSystem1, TypeSystem<Metadata> typeSystem2,
+        public Mapping CreateAutoMapping(string mapIdentifier,
+            TypeSystem<Metadata> typeSystem1, TypeSystem<Metadata> typeSystem2,
             SurrogateType<Metadata> sourceRootType)
         {
             var matcher = new ConceptMatchingRule(typeSystem1, typeSystem2, true);
-            var mappings = matcher.ComputeMappings(sourceRootType);
+            var mappings = matcher.ComputeMappings(mapIdentifier, sourceRootType);
             return mappings.First();
         }
     }

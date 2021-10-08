@@ -92,11 +92,11 @@ namespace MappingConsole
         private void ComputeMappings()
         {
             var matcher1 = new ConceptMatchingRule(_orderTypeSystem, _onlineOrderTypeSystem, true);
-            var orderToOnlineOrderMappings = matcher1.ComputeMappings(_orderType);
+            var orderToOnlineOrderMappings = matcher1.ComputeMappings("V1", _orderType);
             _orderToOnlineOrderMapping = orderToOnlineOrderMappings.First();
 
             var matcher2 = new ConceptMatchingRule(_onlineOrderTypeSystem, _orderTypeSystem, true);
-            var onlineOrderToOrderMappings = matcher2.ComputeMappings(_onlineOrderType);
+            var onlineOrderToOrderMappings = matcher2.ComputeMappings("V2", _onlineOrderType);
             _onlineOrderToOrderMapping = onlineOrderToOrderMappings.First();
         }
 
