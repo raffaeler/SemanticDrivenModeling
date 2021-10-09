@@ -12,6 +12,11 @@ using Microsoft.Extensions.Logging;
 
 namespace ApiServer
 {
+    /// <summary>
+    /// A custom formatter that can change JsonSerializerOptions at every request
+    /// Base class source code:
+    /// https://github.com/dotnet/aspnetcore/tree/main/src/Mvc/Mvc.Core/src/Formatters
+    /// </summary>
     public class BaseJsonOutputFormatter : TextOutputFormatter
     {
         private readonly ILogger<SemanticJsonOutputFormatter> _logger;
