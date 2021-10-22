@@ -1,4 +1,4 @@
-﻿# Definitions for the IoT domain
+﻿# Definitions for the IoT domain [Work in progress]
 
 # ========== Start of Units
 
