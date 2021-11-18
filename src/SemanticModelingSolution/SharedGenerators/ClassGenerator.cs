@@ -39,7 +39,9 @@ namespace SemanticGlossaryGenerator.Helpers
             var nspaceDeclaration = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(Namespace));
 
             var classDeclaration = SyntaxFactory.ClassDeclaration(ClassName);
-            classDeclaration = classDeclaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+            classDeclaration = classDeclaration.AddModifiers(
+                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                SyntaxFactory.Token(SyntaxKind.PartialKeyword));
             classDeclaration = AddBaseType(classDeclaration);
 
 
