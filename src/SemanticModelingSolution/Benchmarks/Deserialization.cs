@@ -14,7 +14,7 @@ using SurrogateLibrary;
 
 /*
 
-Using reflection:
+Using reflection (.NET 5):
 
 |                     Method |         Mean |      Error |     StdDev |
 |--------------------------- |-------------:|-----------:|-----------:|
@@ -23,7 +23,7 @@ Using reflection:
 | SemanticOrderToOnlineOrder | 18,175.24 us | 235.091 us | 196.312 us |
 | SemanticOnlineOrderToOrder | 21,196.31 us | 304.601 us | 284.924 us | 
 
-Using code generation:
+Using code generation (.NET 5):
 
 |                     Method |     Mean |    Error |   StdDev |
 |--------------------------- |---------:|---------:|---------:|
@@ -31,6 +31,15 @@ Using code generation:
 |          PlainOnlineOrders | 10.23 us | 0.172 us | 0.205 us |
 | SemanticOrderToOnlineOrder | 32.91 us | 0.638 us | 0.655 us |
 | SemanticOnlineOrderToOrder | 28.59 us | 0.519 us | 0.433 us |
+
+Using code generation (.NET 6):
+
+|                     Method |      Mean |     Error |    StdDev |
+|--------------------------- |----------:|----------:|----------:|
+|                PlainOrders | 15.984 us | 0.2327 us | 0.2177 us |
+|          PlainOnlineOrders |  9.308 us | 0.1468 us | 0.1373 us |
+| SemanticOrderToOnlineOrder | 27.519 us | 0.4234 us | 0.3754 us |
+| SemanticOnlineOrderToOrder | 25.577 us | 0.4833 us | 0.4521 us |
 
 */
 

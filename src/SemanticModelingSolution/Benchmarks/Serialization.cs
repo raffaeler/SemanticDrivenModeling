@@ -15,8 +15,9 @@ using SurrogateLibrary;
 
 /*
 
-
 V2
+
+.NET 5
 
 |                     Method |     Mean |     Error |    StdDev |
 |--------------------------- |---------:|----------:|----------:|
@@ -24,6 +25,16 @@ V2
 |          PlainOnlineOrders | 6.832 us | 0.1318 us | 0.1518 us |
 | SemanticOrderToOnlineOrder | 6.108 us | 0.1186 us | 0.1318 us |
 | SemanticOnlineOrderToOrder | 6.064 us | 0.0987 us | 0.0923 us |
+
+
+.NET 6
+
+|                     Method |     Mean |     Error |    StdDev |
+|--------------------------- |---------:|----------:|----------:|
+|                PlainOrders | 9.110 us | 0.1206 us | 0.1069 us |
+|          PlainOnlineOrders | 5.973 us | 0.1042 us | 0.0924 us |
+| SemanticOrderToOnlineOrder | 5.029 us | 0.0574 us | 0.0509 us |
+| SemanticOnlineOrderToOrder | 5.559 us | 0.1088 us | 0.1253 us |
 
 */
 

@@ -30,11 +30,17 @@ namespace ApiConsoleClient
 
             try
             {
-                using (var response = await _client.GetAsync("http://localhost:5000/Order"))
-                {
-                    response.EnsureSuccessStatusCode();
-                    _jsonGetResponse = await response.Content.ReadAsStringAsync();
-                }
+                using var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5000/Order");
+                //request.Headers.Add("Accept", )
+                using var response = await _client.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+                response.EnsureSuccessStatusCode();
+                _jsonGetResponse = await response.Content.ReadAsStringAsync();
+
+                //using (var response = await _client.GetAsync("http://localhost:5000/Order"))
+                //{
+                //    response.EnsureSuccessStatusCode();
+                //    _jsonGetResponse = await response.Content.ReadAsStringAsync();
+                //}
             }
             catch (Exception err)
             {
