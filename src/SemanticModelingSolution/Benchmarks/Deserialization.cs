@@ -32,14 +32,14 @@ Using code generation (.NET 5):
 | SemanticOrderToOnlineOrder | 32.91 us | 0.638 us | 0.655 us |
 | SemanticOnlineOrderToOrder | 28.59 us | 0.519 us | 0.433 us |
 
-Using code generation (.NET 6):
+Using code generation (.NET 6 - entire solution):
 
 |                     Method |      Mean |     Error |    StdDev |
 |--------------------------- |----------:|----------:|----------:|
-|                PlainOrders | 15.984 us | 0.2327 us | 0.2177 us |
-|          PlainOnlineOrders |  9.308 us | 0.1468 us | 0.1373 us |
-| SemanticOrderToOnlineOrder | 27.519 us | 0.4234 us | 0.3754 us |
-| SemanticOnlineOrderToOrder | 25.577 us | 0.4833 us | 0.4521 us |
+|                PlainOrders | 15.666 us | 0.3114 us | 0.4564 us |
+|          PlainOnlineOrders |  9.232 us | 0.1827 us | 0.3052 us |
+| SemanticOrderToOnlineOrder | 27.614 us | 0.5451 us | 0.6277 us |
+| SemanticOnlineOrderToOrder | 25.235 us | 0.4215 us | 0.4140 us |
 
 */
 

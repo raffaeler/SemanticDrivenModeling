@@ -27,7 +27,7 @@ V2
 | SemanticOnlineOrderToOrder | 6.064 us | 0.0987 us | 0.0923 us |
 
 
-.NET 6
+.NET 6 (exe only)
 
 |                     Method |     Mean |     Error |    StdDev |
 |--------------------------- |---------:|----------:|----------:|
@@ -35,6 +35,16 @@ V2
 |          PlainOnlineOrders | 5.973 us | 0.1042 us | 0.0924 us |
 | SemanticOrderToOnlineOrder | 5.029 us | 0.0574 us | 0.0509 us |
 | SemanticOnlineOrderToOrder | 5.559 us | 0.1088 us | 0.1253 us |
+
+
+.NET 6 (entire solution)
+
+|                     Method |     Mean |     Error |    StdDev |
+|--------------------------- |---------:|----------:|----------:|
+|                PlainOrders | 9.049 us | 0.1805 us | 0.3768 us |
+|          PlainOnlineOrders | 5.990 us | 0.1068 us | 0.0999 us |
+| SemanticOrderToOnlineOrder | 4.961 us | 0.0982 us | 0.1206 us |
+| SemanticOnlineOrderToOrder | 5.301 us | 0.1022 us | 0.0798 us |
 
 */
 
